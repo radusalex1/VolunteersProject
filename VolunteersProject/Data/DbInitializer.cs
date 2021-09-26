@@ -32,19 +32,20 @@ namespace VolunteersProject.Data
             }
             context.SaveChanges();
 
-            var contribution = new Contribution[]
+            var contributions = new Contribution[]
             {
-                new Contribution{ID=1000,Name="Voluntar Tabara",Credits=5},
-                new Contribution{ID=1001,Name="Participare Sedinta",Credits=2},
-                new Contribution{ID=1010,Name="Participare Proiect",Credits=6},
-                new Contribution{ID=1011,Name="Participare Concurs",Credits=4},
-                new Contribution{ID=1100,Name="Contributie Hub",Credits=7},
-                new Contribution{ID=1101,Name="Sef Departament",Credits=6},
-                new Contribution{ID=1110,Name="Presedinte",Credits=7},
-                new Contribution{ID=1111,Name="Vice Presedinte",Credits=8},
+                new Contribution{Name="Voluntar Tabara",Credits=5},
+                new Contribution{Name="Participare Sedinta",Credits=2},
+                new Contribution{Name="Participare Proiect",Credits=6},
+                new Contribution{Name="Participare Concurs",Credits=4},
+                new Contribution{Name="Contributie Hub",Credits=7},
+                new Contribution{Name="Sef Departament",Credits=6},
+                new Contribution{Name="Presedinte",Credits=7},
+                new Contribution{Name="Vice Presedinte",Credits=8},
             };
-            foreach (Contribution c in contribution)
+            foreach (Contribution c in contributions)
             {
+              
                 context.Contributions.Add(c);
             }
             context.SaveChanges();
