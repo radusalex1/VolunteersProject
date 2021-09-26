@@ -11,6 +11,14 @@ namespace VolunteersProject.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string City { get; set; }
+        public DateTime BirthDate { get; set; }
+        public int Age
+        {
+            get
+            {
+                return DateTime.Today.Year - BirthDate.Year;
+            }
+        }
         public ICollection<Enrollment> Enrollments{ get; set; }
         public string FullName
         {
@@ -19,5 +27,7 @@ namespace VolunteersProject.Models
                 return $"{this.Name} {this.Surname}";
             }
         }
+        public DateTime JoinHubDate { get; set; }
+      
     }
 }
