@@ -22,7 +22,7 @@ namespace VolunteersProject.Controllers
         // GET: Enrollments
         public async Task<IActionResult> Index()
         {
-            var volunteersContext = _context.Enrollments.Include(e => e.volunteer);
+            var volunteersContext = _context.Enrollments.Include(e =>e.volunteer);
             return View(await volunteersContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace VolunteersProject.Controllers
             }
 
             var enrollment = await _context.Enrollments
-                .Include(e => e.volunteer)
+                .Include(v => v.volunteer)
                 .FirstOrDefaultAsync(m => m.EnrollmentID == id);
             if (enrollment == null)
             {

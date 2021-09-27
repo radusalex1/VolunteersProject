@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -20,9 +21,42 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await _context.Volunteers.ToListAsync());
+            ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["AgeSortParam"] = sortOrder == "Age" ? "Age_desc" : "Age";
+            ViewData["CitySortParam"] = sortOrder == "City" ? "City_desc" : "City";
+            ViewData["JoinHubDateParam"] = sortOrder == "JoinHubDate" ? "JoinHubDate_desc" : "JoinHubDate";
+            var students = from s in _context.Volunteers
+                           select s;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    students = students.OrderByDescending(s => s.Name);
+                    break;
+                case "Age":
+                    students = students.OrderBy(s => s.BirthDate);
+                    break;
+                case "Age_desc":
+                    students = students.OrderByDescending(s => s.BirthDate);
+                    break;
+                case "City_desc":
+                    students = students.OrderByDescending(s => s.City);
+                    break;
+                case "City":
+                    students = students.OrderBy(s => s.City);
+                    break;
+                case "JoinHubDate":
+                    students = students.OrderBy(s => s.JoinHubDate);
+                    break;
+                case "JoinHubDate_desc":
+                    students = students.OrderByDescending(s => s.JoinHubDate);
+                    break;
+                default:
+                    students = students.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(await students.AsNoTracking().ToListAsync());
         }
 
         // GET: Volunteers/Details/5

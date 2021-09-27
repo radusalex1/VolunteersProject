@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace VolunteersProject.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string City { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate { get; set; }
         public int Age
         {
@@ -27,6 +30,8 @@ namespace VolunteersProject.Models
                 return $"{this.Name} {this.Surname}";
             }
         }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime JoinHubDate { get; set; }
       
     }
