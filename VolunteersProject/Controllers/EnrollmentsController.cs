@@ -71,6 +71,8 @@ namespace VolunteersProject.Controllers
         public IActionResult Create()
         {
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID");
+            ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName");
+            ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name");
             return View();
         }
 
@@ -105,6 +107,10 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
+            ViewData["contributionId"] = new SelectList(_context.Contributions, "ID", "ID", enrollment.contributionId);
+            ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName",enrollment.volunteer);
+            ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name",enrollment.contribution);
+
             return View(enrollment);
         }
 
