@@ -20,9 +20,29 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await _context.Contributions.ToListAsync());
+            ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+            var contributions = from c in _context.Contributions
+                                select c;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    contributions = contributions.OrderByDescending(c => c.Name);
+                    break;
+                case "Credits":
+                    contributions = contributions.OrderBy(c => c.Credits);
+                    break;
+                case "Credits_desc":
+                    contributions = contributions.OrderByDescending(c => c.Credits);
+                    break;
+                default:
+                    contributions = contributions.OrderBy(c => c.Name);
+                    break;
+            }
+            return View(await contributions.AsNoTracking().ToListAsync());
+            //return View(await _context.Contributions.ToListAsync());
         }
 
         // GET: Contributions/Details/5

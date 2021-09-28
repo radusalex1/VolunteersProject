@@ -20,10 +20,31 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SortOrder)
         {
-            var volunteersContext = _context.Enrollments.Include(e =>e.volunteer);
-            return View(await volunteersContext.ToListAsync());
+            var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution);
+
+            //ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
+            //ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
+            //var enrolments = from e in volunteersContext
+            //                 select e;
+            //switch(SortOrder)
+            //{
+            //    case "name_desc":
+            //        enrolments = enrolments.OrderByDescending(e => e.volunteer.Name);
+            //        break;
+            //    case "contr_asc":
+            //        enrolments = enrolments.OrderBy(e => e.contribution.Name);
+            //        break;
+            //    case "contr_desc":
+            //        enrolments = enrolments.OrderByDescending(e => e.contribution.Name);
+            //        break;
+            //    default:
+            //        enrolments = enrolments.OrderBy(e => e.volunteer.Name);
+            //        break;
+            //}
+            ////return View(await enrolments.AsNoTracking().ToListAsync);
+            return View(await volunteersContext.AsNoTracking().ToListAsync());
         }
 
         // GET: Enrollments/Details/5
@@ -37,6 +58,7 @@ namespace VolunteersProject.Controllers
             var enrollment = await _context.Enrollments
                 .Include(v => v.volunteer)
                 .FirstOrDefaultAsync(m => m.EnrollmentID == id);
+
             if (enrollment == null)
             {
                 return NotFound();
@@ -57,7 +79,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EnrollmentID,EventID,VolunteerID")] Enrollment enrollment)
+        public async Task<IActionResult> Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +113,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,EventID,VolunteerID")] Enrollment enrollment)
+        public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentID)
             {

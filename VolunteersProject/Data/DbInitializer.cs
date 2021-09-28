@@ -52,17 +52,17 @@ namespace VolunteersProject.Data
 
             var enrollments = new Enrollment[]
                 {
-                    new Enrollment{EventID=1,VolunteerID=1},
-                    new Enrollment{VolunteerID=2,EventID=1},
-                    new Enrollment{VolunteerID=3,EventID=1},
-                    new Enrollment{VolunteerID=1,EventID=2},
-                    new Enrollment{VolunteerID=5,EventID=3},
-                    new Enrollment{VolunteerID=6,EventID=3},
-                    new Enrollment{VolunteerID=7,EventID=4},
-                    new Enrollment{VolunteerID=8,EventID=4},
-                    new Enrollment{VolunteerID=4,EventID=7},
-                    new Enrollment{VolunteerID=5,EventID=1},
-                    new Enrollment{VolunteerID=6,EventID=1},
+                    new Enrollment{VolunteerID=1,contributionId=1},
+                    new Enrollment{VolunteerID=2,contributionId=1},
+                    new Enrollment{VolunteerID=3,contributionId=1},
+                    new Enrollment{VolunteerID=1,contributionId=2},
+                    new Enrollment{VolunteerID=5,contributionId=3},
+                    new Enrollment{VolunteerID=6,contributionId=3},
+                    new Enrollment{VolunteerID=7,contributionId=4},
+                    new Enrollment{VolunteerID=8,contributionId=4},
+                    new Enrollment{VolunteerID=4,contributionId=7},
+                    new Enrollment{VolunteerID=5,contributionId=1},
+                    new Enrollment{VolunteerID=6,contributionId=1},
                 };
             foreach(Enrollment e in enrollments)
             {

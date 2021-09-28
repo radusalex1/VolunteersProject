@@ -13,22 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.contribution)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]"> @Html.DisplayNameFor(model => model.volunteer)</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.volunteer)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["contributionSortParam"]">@Html.DisplayNameFor(model => model.contribution)</a>
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.contribution.Name)
+                @Html.DisplayFor(modelItem => item.volunteer.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.volunteer.FullName)
+                @Html.DisplayFor(modelItem => item.contribution.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EnrollmentID">Edit</a> |

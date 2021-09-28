@@ -9,12 +9,17 @@ namespace VolunteersProject.Models
     public class Volunteer
     {
         public int ID { get; set; }
+        
         public string Name { get; set; }
+        
         public string Surname { get; set; }
+
         public string City { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate { get; set; }
+        
         public int Age
         {
             get
@@ -22,7 +27,9 @@ namespace VolunteersProject.Models
                 return DateTime.Today.Year - BirthDate.Year;
             }
         }
+        
         public ICollection<Enrollment> Enrollments{ get; set; }
+
         public string FullName
         {
             get
@@ -30,8 +37,10 @@ namespace VolunteersProject.Models
                 return $"{this.Name} {this.Surname}";
             }
         }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+
         public DateTime JoinHubDate { get; set; }
       
     }

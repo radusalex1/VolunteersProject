@@ -27,6 +27,7 @@ namespace VolunteersProject.Controllers
             ViewData["AgeSortParam"] = sortOrder == "Age" ? "Age_desc" : "Age";
             ViewData["CitySortParam"] = sortOrder == "City" ? "City_desc" : "City";
             ViewData["JoinHubDateParam"] = sortOrder == "JoinHubDate" ? "JoinHubDate_desc" : "JoinHubDate";
+
             var students = from s in _context.Volunteers
                            select s;
             switch (sortOrder)
