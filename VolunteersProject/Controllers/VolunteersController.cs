@@ -21,15 +21,22 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString,string CitySearchString)
         {
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["AgeSortParam"] = sortOrder == "Age" ? "Age_desc" : "Age";
             ViewData["CitySortParam"] = sortOrder == "City" ? "City_desc" : "City";
             ViewData["JoinHubDateParam"] = sortOrder == "JoinHubDate" ? "JoinHubDate_desc" : "JoinHubDate";
+            ViewData["NameFilter"] = searchString;
+            ViewData["CityFilter"] = CitySearchString;
 
             var students = from s in _context.Volunteers
                            select s;
+            if(!String.IsNullOrEmpty(searchString) || !String.IsNullOrEmpty(CitySearchString))
+            {
+                students = students.Where(s => s.Name.Contains(searchString) || s.Surname.Contains(searchString) || s.City.Contains(CitySearchString));
+            }
+
             switch (sortOrder)
             {
                 case "name_desc":
