@@ -23,7 +23,7 @@ namespace VolunteersProject.Controllers
         public async Task<IActionResult> Index(string sortOrder)
         {
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+            ViewData["contributionSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
             var contributions = from c in _context.Contributions
                                 select c;
             switch (sortOrder)
@@ -42,7 +42,7 @@ namespace VolunteersProject.Controllers
                     break;
             }
             return View(await contributions.AsNoTracking().ToListAsync());
-            //return View(await _context.Contributions.ToListAsync());
+           
         }
 
         // GET: Contributions/Details/5

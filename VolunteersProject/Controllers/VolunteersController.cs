@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 
@@ -21,20 +18,40 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers
-        public async Task<IActionResult> Index(string sortOrder, string searchString,string CitySearchString)
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string SearchString,
+            string currentFilter,
+            int? pageNumber)
         {
+
+            ViewData["CurrentSort"] = sortOrder;
+
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["AgeSortParam"] = sortOrder == "Age" ? "Age_desc" : "Age";
             ViewData["CitySortParam"] = sortOrder == "City" ? "City_desc" : "City";
             ViewData["JoinHubDateParam"] = sortOrder == "JoinHubDate" ? "JoinHubDate_desc" : "JoinHubDate";
-            ViewData["NameFilter"] = searchString;
-            ViewData["CityFilter"] = CitySearchString;
+
+            ViewData["NameFilter"] = SearchString;
+
+
+            if (SearchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                currentFilter = SearchString;
+            }
+
+            ViewData["CurrentFilter"] = SearchString;
 
             var students = from s in _context.Volunteers
                            select s;
-            if(!String.IsNullOrEmpty(searchString) || !String.IsNullOrEmpty(CitySearchString))
+
+            if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(searchString) || s.Surname.Contains(searchString) || s.City.Contains(CitySearchString));
+                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
             switch (sortOrder)
@@ -64,7 +81,8 @@ namespace VolunteersProject.Controllers
                     students = students.OrderBy(s => s.Name);
                     break;
             }
-            return View(await students.AsNoTracking().ToListAsync());
+            int pageSize = 5;
+            return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Volunteers/Details/5
