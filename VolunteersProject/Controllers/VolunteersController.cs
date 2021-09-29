@@ -16,7 +16,7 @@ namespace VolunteersProject.Controllers
         {
             _context = context;
         }
-
+        
         // GET: Volunteers
         public async Task<IActionResult> Index(
             string sortOrder,
@@ -24,7 +24,7 @@ namespace VolunteersProject.Controllers
             string currentFilter,
             int? pageNumber)
         {
-
+            
             ViewData["CurrentSort"] = sortOrder;
 
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -41,7 +41,7 @@ namespace VolunteersProject.Controllers
             }
             else
             {
-                currentFilter = SearchString;
+                 SearchString = currentFilter;
             }
 
             ViewData["CurrentFilter"] = SearchString;
