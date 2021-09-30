@@ -114,7 +114,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate")] Volunteer volunteer)
+        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
             {
@@ -146,7 +146,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate")] Volunteer volunteer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone")] Volunteer volunteer)
         {
             if (id != volunteer.ID)
             {
