@@ -23,9 +23,12 @@ namespace VolunteersProject.Controllers
         public async Task<IActionResult> Index(string sortOrder)
         {
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["contributionSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+            ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+            ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
+            ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
             var contributions = from c in _context.Contributions
                                 select c;
+
             switch (sortOrder)
             {
                 case "name_desc":
@@ -36,6 +39,18 @@ namespace VolunteersProject.Controllers
                     break;
                 case "Credits_desc":
                     contributions = contributions.OrderByDescending(c => c.Credits);
+                    break;
+                case "sd_asc":
+                    contributions = contributions.OrderBy(c => c.StartDate);
+                    break;
+                case "sd_desc":
+                    contributions = contributions.OrderByDescending(c => c.StartDate);
+                    break;
+                case "fd_asc":
+                    contributions = contributions.OrderBy(c => c.FinishDate);
+                    break;
+                case "fd_desc":
+                    contributions = contributions.OrderByDescending(c => c.FinishDate);
                     break;
                 default:
                     contributions = contributions.OrderBy(c => c.Name);
@@ -74,7 +89,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Credits")] Contribution contribution)
+        public async Task<IActionResult> Create([Bind("ID,Name,Credits,StartDate,FinishDate")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
@@ -106,7 +121,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits")] Contribution contribution)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate")] Contribution contribution)
         {
             if (id != contribution.ID)
             {

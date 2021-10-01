@@ -22,8 +22,7 @@ namespace VolunteersProject.Controllers
         // GET: Enrollments
         public async Task<IActionResult> Index(string SortOrder)
         {
-            var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution);
-
+            var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution).OrderBy(c => c.contribution.Name);
             //ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
             //ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
             //var enrolments = from e in volunteersContext
