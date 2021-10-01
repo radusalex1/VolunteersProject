@@ -18,6 +18,7 @@ namespace VolunteersProject.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime FinishDate { get; set; }
 
+        public string Description { get; set; }
         public ICollection<Enrollment> Enrollments { get; set; }
     }
 }
