@@ -19,8 +19,14 @@ namespace VolunteersProject.Controllers
         }
 
         public IActionResult Index()
+        {            
+            return View("Index");
+        }
+
+        public IActionResult Index2()
         {
-            return View();
+            //used to avoid swagger
+            return View("Index");
         }
 
         public IActionResult Privacy()
