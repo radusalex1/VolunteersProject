@@ -9,10 +9,8 @@ namespace VolunteersProject.Controllers
     [ApiController]
     public class VolunteersApiController : ControllerBase
     {
-        //private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
 
-        //public VolunteersApiController(VolunteersContext context)
         public VolunteersApiController(IVolunteerRepository repository)
         {
             this.repository = repository;
@@ -20,7 +18,6 @@ namespace VolunteersProject.Controllers
 
         // GET: api/VolunteersApi
         [HttpGet]
-        //public async Task<ActionResult<IEnumerable<Volunteer>>> GetVolunteers()
         public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
             //return await _context.Volunteers.ToListAsync();
@@ -32,7 +29,6 @@ namespace VolunteersProject.Controllers
 
         //GET: api/VolunteersApi/5
         [HttpGet("{id}")]
-        //public async Task<ActionResult<Volunteer>> GetVolunteer(int id)
         public ActionResult<Volunteer> GetVolunteer(int id)
         {
             //var volunteer = await _context.Volunteers.FindAsync(id);

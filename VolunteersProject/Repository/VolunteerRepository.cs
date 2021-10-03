@@ -3,7 +3,6 @@ using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 
-
 namespace VolunteersProject.Repository
 {
     public class VolunteerRepository : IVolunteerRepository
@@ -21,8 +20,7 @@ namespace VolunteersProject.Repository
         }
 
         public List<Volunteer> GetVolunteers()
-        {
-            //return _context.Volunteers.ToListAsync();
+        {            
             return _context.Volunteers.ToList();
         }
     }

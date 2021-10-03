@@ -19,7 +19,7 @@ namespace VolunteersProject.Controllers
             _context = context;
             this.repository = repository;
         }
-        
+
         // GET: Volunteers
         public async Task<IActionResult> Index(
             string sortOrder,
@@ -27,7 +27,7 @@ namespace VolunteersProject.Controllers
             string currentFilter,
             int? pageNumber)
         {
-            
+
             ViewData["CurrentSort"] = sortOrder;
 
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -44,7 +44,7 @@ namespace VolunteersProject.Controllers
             }
             else
             {
-                 SearchString = currentFilter;
+                SearchString = currentFilter;
             }
 
             ViewData["CurrentFilter"] = SearchString;
@@ -61,13 +61,13 @@ namespace VolunteersProject.Controllers
 
             students = GetSortedVolunteers(sortOrder, students);
 
-            
+
             int pageSize = 5;
             return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-        {            
+        {
             switch (sortOrder)
             {
                 case "name_desc":

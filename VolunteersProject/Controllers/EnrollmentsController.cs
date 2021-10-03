@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 
@@ -107,8 +105,8 @@ namespace VolunteersProject.Controllers
             }
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
             ViewData["contributionId"] = new SelectList(_context.Contributions, "ID", "ID", enrollment.contributionId);
-            ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName",enrollment.volunteer);
-            ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name",enrollment.contribution);
+            ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName", enrollment.volunteer);
+            ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name", enrollment.contribution);
 
             return View(enrollment);
         }
