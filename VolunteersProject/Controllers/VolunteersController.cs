@@ -5,18 +5,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     public class VolunteersController : Controller
     {
         private readonly VolunteersContext _context;
+        private IVolunteerRepository repository;
 
-        public VolunteersController(VolunteersContext context)
+        public VolunteersController(VolunteersContext context, IVolunteerRepository repository)
         {
             _context = context;
+            this.repository = repository;
         }
-        
+
         // GET: Volunteers
         public async Task<IActionResult> Index(
             string sortOrder,
@@ -24,7 +27,7 @@ namespace VolunteersProject.Controllers
             string currentFilter,
             int? pageNumber)
         {
-            
+
             ViewData["CurrentSort"] = sortOrder;
 
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -41,7 +44,7 @@ namespace VolunteersProject.Controllers
             }
             else
             {
-                 SearchString = currentFilter;
+                SearchString = currentFilter;
             }
 
             ViewData["CurrentFilter"] = SearchString;
@@ -49,11 +52,20 @@ namespace VolunteersProject.Controllers
             var students = from s in _context.Volunteers
                            select s;
 
+            var students1 = repository.GetVolunteers();
+
             if (!String.IsNullOrEmpty(SearchString))
             {
                 students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
+            students = GetSortedVolunteers(sortOrder, students);
+            int pageSize = 5;
+            return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
+        }
+
+        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        {
             switch (sortOrder)
             {
                 case "name_desc":
@@ -81,9 +93,13 @@ namespace VolunteersProject.Controllers
                     students = students.OrderBy(s => s.Name);
                     break;
             }
-            int pageSize = 5;
-            return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
-        }
+
+            return students;
+        }/// <summary>
+        /// Here sort Students
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         // GET: Volunteers/Details/5
         public async Task<IActionResult> Details(int? id)

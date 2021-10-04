@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using VolunteersProject.Models;
 
 namespace VolunteersProject.Controllers
@@ -20,7 +16,13 @@ namespace VolunteersProject.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("Index");
+        }
+
+        public IActionResult Index2()
+        {
+            //used to avoid swagger
+            return View("Index");
         }
 
         public IActionResult Privacy()
