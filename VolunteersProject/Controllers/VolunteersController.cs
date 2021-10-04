@@ -60,8 +60,6 @@ namespace VolunteersProject.Controllers
             }
 
             students = GetSortedVolunteers(sortOrder, students);
-
-
             int pageSize = 5;
             return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
@@ -97,7 +95,11 @@ namespace VolunteersProject.Controllers
             }
 
             return students;
-        }
+        }/// <summary>
+        /// Here sort Students
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         // GET: Volunteers/Details/5
         public async Task<IActionResult> Details(int? id)

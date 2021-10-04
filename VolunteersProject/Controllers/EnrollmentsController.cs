@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
@@ -21,27 +22,34 @@ namespace VolunteersProject.Controllers
         public async Task<IActionResult> Index(string SortOrder)
         {
             var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution).OrderBy(c => c.contribution.Name);
-            //ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
-            //ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
-            //var enrolments = from e in volunteersContext
-            //                 select e;
-            //switch(SortOrder)
-            //{
-            //    case "name_desc":
-            //        enrolments = enrolments.OrderByDescending(e => e.volunteer.Name);
-            //        break;
-            //    case "contr_asc":
-            //        enrolments = enrolments.OrderBy(e => e.contribution.Name);
-            //        break;
-            //    case "contr_desc":
-            //        enrolments = enrolments.OrderByDescending(e => e.contribution.Name);
-            //        break;
-            //    default:
-            //        enrolments = enrolments.OrderBy(e => e.volunteer.Name);
-            //        break;
-            //}
-            ////return View(await enrolments.AsNoTracking().ToListAsync);
-            return View(await volunteersContext.AsNoTracking().ToListAsync());
+            ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
+            ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
+
+            var enrolments = from e in volunteersContext
+                             select e;
+            enrolments = GetSortedEnrollments(SortOrder, enrolments);
+           
+            return View(enrolments);
+        }
+
+        private IQueryable<Enrollment> GetSortedEnrollments(string SortOrder, IQueryable<Enrollment> enrolments)
+        {
+            switch (SortOrder)
+            {
+                case "name_desc":
+                    enrolments = enrolments.OrderByDescending(e => e.volunteer.Name);
+                    break;
+                case "contr_asc":
+                    enrolments = enrolments.OrderBy(e => e.contribution.Name);
+                    break;
+                case "contr_desc":
+                    enrolments = enrolments.OrderByDescending(e => e.contribution.Name);
+                    break;
+                default:
+                    enrolments = enrolments.OrderBy(e => e.volunteer.Name);
+                    break;
+            }
+            return enrolments;
         }
 
         // GET: Enrollments/Details/5
