@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Events</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -37,10 +37,17 @@
                 @Html.DisplayFor(modelItem => item.Credits)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @if (item.StartDate != DateTime.MinValue)
+                {
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FinishDate)
+                @if (item.FinishDate != DateTime.MinValue)
+                {
+
+                    @Html.DisplayFor(modelItem => item.FinishDate)
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
