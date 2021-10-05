@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 
@@ -57,7 +55,7 @@ namespace VolunteersProject.Controllers
                     break;
             }
             return View(await contributions.AsNoTracking().ToListAsync());
-           
+
         }
 
         // GET: Contributions/Details/5
