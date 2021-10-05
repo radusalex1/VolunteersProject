@@ -54,6 +54,51 @@
         </dd>
     </dl>
 </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <p asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">Numele Evenimentului</p>
+            </th>
+            <th>
+                <p asp-action="Index" asp-route-sortOrder="@ViewData["CreditsSortParam"]">Credite</p>
+            </th>
+            <th>
+                <p asp-action="Index" asp-route-sortOrder="@ViewData["StartDateSortParam"]">Data Start</p>
+            </th>
+            <th>
+                <p asp-action="Index" asp-route-sortOrder="@ViewData["FinishDateSortParam"]">Data Finish</p>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Enrollments)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.contribution.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.contribution.Credits)
+            </td>
+            <td>
+                @if(item.contribution.StartDate != DateTime.MinValue)
+                {
+                    @Html.DisplayFor(modelItem => item.contribution.StartDate)
+                }
+            </td>
+            <td>
+                @if (item.contribution.FinishDate != DateTime.MinValue)
+                {
+
+                    @Html.DisplayFor(modelItem => item.contribution.FinishDate)
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
     <a asp-action="Index">Back to List</a>

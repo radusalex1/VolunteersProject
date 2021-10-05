@@ -50,7 +50,11 @@ namespace VolunteersProject.Controllers
                     break;
             }
             return enrolments;
-        }
+        }/// <summary>
+        /// get sorted elements;
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         // GET: Enrollments/Details/5
         public async Task<IActionResult> Details(int? id)

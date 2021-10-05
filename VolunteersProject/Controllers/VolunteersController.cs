@@ -52,7 +52,7 @@ namespace VolunteersProject.Controllers
             var students = from s in _context.Volunteers
                            select s;
 
-            var students1 = repository.GetVolunteers();
+            //var students1 = repository.GetVolunteers();s
 
             if (!String.IsNullOrEmpty(SearchString))
             {
@@ -60,7 +60,9 @@ namespace VolunteersProject.Controllers
             }
 
             students = GetSortedVolunteers(sortOrder, students);
+
             int pageSize = 5;
+
             return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
@@ -100,7 +102,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-
+       
         // GET: Volunteers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -110,7 +112,10 @@ namespace VolunteersProject.Controllers
             }
 
             var volunteer = await _context.Volunteers
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .Include(e => e.Enrollments)
+                .ThenInclude(c => c.contribution)
+                     .FirstOrDefaultAsync(m => m.ID == id);
+
             if (volunteer == null)
             {
                 return NotFound();
