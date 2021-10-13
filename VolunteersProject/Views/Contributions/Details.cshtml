@@ -26,13 +26,19 @@
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
+            @if (Model.StartDate != DateTime.MinValue)
+            {
+                @Html.DisplayNameFor(model => model.StartDate)
+            }
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FinishDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FinishDate)
+            @if (Model.FinishDate != DateTime.MinValue)
+            {
+                @Html.DisplayNameFor(model => model.FinishDate)
+            }
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
