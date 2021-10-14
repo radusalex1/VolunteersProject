@@ -24,9 +24,17 @@ namespace VolunteersProject.Controllers
             ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
             ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
             ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
+
+
             var contributions = from c in _context.Contributions
                                 select c;
+            contributions = SortContributions(sortOrder, contributions);
+            return View(await contributions.AsNoTracking().ToListAsync());
 
+        }
+
+        private static IQueryable<Contribution> SortContributions(string sortOrder, IQueryable<Contribution> contributions)
+        {
             switch (sortOrder)
             {
                 case "name_desc":
@@ -54,8 +62,8 @@ namespace VolunteersProject.Controllers
                     contributions = contributions.OrderBy(c => c.Name);
                     break;
             }
-            return View(await contributions.AsNoTracking().ToListAsync());
 
+            return contributions;
         }
 
         // GET: Contributions/Details/5
