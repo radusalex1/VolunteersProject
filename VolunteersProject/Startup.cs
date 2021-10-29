@@ -83,7 +83,7 @@ namespace VolunteersProject
                 c.RoutePrefix = string.Empty;
             });
 
-            app.UseRouting();
+            app.UseRouting();            
 
             app.UseAuthorization();
 
