@@ -50,7 +50,7 @@ namespace VolunteersProject.Models
         public string FaceBookProfile { get; set; }
         
         public string DescriptionContributionToHub { get; set; }
-
+      
 
     }
 }
