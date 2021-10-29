@@ -52,6 +52,19 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Phone)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.InstagramProfile)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.InstagramProfile)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FaceBookProfile)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FaceBookProfile)
+        </dd>
+        <textarea asp-for="DescriptionContributionToHub" readonly="true" rows="5" cols="40"> @Html.DisplayFor(model => model.DescriptionContributionToHub)</textarea>
     </dl>
 </div>
 <table class="table">

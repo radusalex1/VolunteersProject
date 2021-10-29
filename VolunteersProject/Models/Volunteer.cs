@@ -45,7 +45,12 @@ namespace VolunteersProject.Models
 
         public DateTime JoinHubDate { get; set; }
       
+        public string InstagramProfile { get; set; }
+
+        public string FaceBookProfile { get; set; }
         
+        public string DescriptionContributionToHub { get; set; }
+
 
     }
 }

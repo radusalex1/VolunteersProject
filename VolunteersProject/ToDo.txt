@@ -1,0 +1,13 @@
+﻿====================To Do=======================
+
+
+1. la voluntari.detalii: add instagram and facebook profile,
+	o mica descriere cu contributia in hub
+	+poza??????
+
+2. puncataj pentru like pg de facebook si foollow pagina de ig
+
+3. punctaj pentru a fii taguit in postari pe ig si fb
+
+4. puntaj pentru update CV anual sau de cate ori se produce o schimbare -
+	in care sa includa voluntariatul al HC? (adica)
