@@ -110,7 +110,7 @@ namespace VolunteersProject.Controllers
             {
                 return NotFound();
             }
-
+            
             var volunteer = await _context.Volunteers
                 .Include(e => e.Enrollments)
                 .ThenInclude(c => c.contribution)
@@ -154,7 +154,14 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
 
-            var volunteer = await _context.Volunteers.FindAsync(id);
+            //var volunteer = await _context.Volunteers.FindAsync(id);
+            //var volunteer = repository.GetVolunteers();
+
+            var volunteer = await _context.Volunteers
+                .Include(e => e.Enrollments)
+                .ThenInclude(c => c.contribution)
+                     .FirstOrDefaultAsync(m => m.ID == id);
+
             if (volunteer == null)
             {
                 return NotFound();
