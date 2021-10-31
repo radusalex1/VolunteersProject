@@ -13,6 +13,7 @@ namespace VolunteersProject.Controllers
     {
         private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
+
         public ContributionsController(VolunteersContext context,IVolunteerRepository repository)
         {
             _context = context;
@@ -78,6 +79,7 @@ namespace VolunteersProject.Controllers
 
             var contribution = await _context.Contributions
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (contribution == null)
             {
                 return NotFound();
@@ -193,9 +195,9 @@ namespace VolunteersProject.Controllers
             return _context.Contributions.Any(e => e.ID == id);
         }
 
-        public async Task<IActionResult> Assign(int contributonId)
+        public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = repository.GetUnselectedVolunteers(contributonId);
+            var volunteers = repository.GetAvailableVolunteers(id);
             return View(volunteers);
         }
     }

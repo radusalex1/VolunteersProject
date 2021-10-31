@@ -15,12 +15,25 @@ namespace VolunteersProject.Repository
             _context = context;
         }
 
-        public List<Volunteer> GetUnselectedVolunteers(int ContributionID)
+        public List<Volunteer> GetAvailableVolunteers(int ContributionID)
         {
-            return _context.Volunteers
+            if(ContributionID==null)
+            {
+                return new List<Volunteer>();
+            }
+            var volunteers =  _context.Volunteers
                 .Include(e => e.Enrollments)
                 .ThenInclude(c => c.contribution)
                 .ToList();
+
+            var enrl = new Enrollment
+            {
+                contributionId = ContributionID
+            };
+
+            var volunteersFiltred = volunteers.Where(c => c.Enrollments.Contains(enrl)).ToList();
+
+            return volunteersFiltred;
         }
 
         public Volunteer GetVolunteerById(int id)
