@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -14,6 +15,14 @@ namespace VolunteersProject.Repository
             _context = context;
         }
 
+        public List<Volunteer> GetUnselectedVolunteers(int ContributionID)
+        {
+            return _context.Volunteers
+                .Include(e => e.Enrollments)
+                .ThenInclude(c => c.contribution)
+                .ToList();
+        }
+
         public Volunteer GetVolunteerById(int id)
         {
             return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
@@ -23,5 +32,6 @@ namespace VolunteersProject.Repository
         {            
             return _context.Volunteers.ToList();
         }
+        
     }
 }

@@ -8,5 +8,7 @@ namespace VolunteersProject.Repository
         List<Volunteer> GetVolunteers();
 
         Volunteer GetVolunteerById(int id);
+
+        List<Volunteer> GetUnselectedVolunteers(int ContributionID);
     }
 }

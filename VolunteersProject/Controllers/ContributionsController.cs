@@ -5,16 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     public class ContributionsController : Controller
     {
         private readonly VolunteersContext _context;
-
-        public ContributionsController(VolunteersContext context)
+        private IVolunteerRepository repository;
+        public ContributionsController(VolunteersContext context,IVolunteerRepository repository)
         {
             _context = context;
+            this.repository = repository;
         }
 
         // GET: Contributions
@@ -189,6 +191,12 @@ namespace VolunteersProject.Controllers
         private bool ContributionExists(int id)
         {
             return _context.Contributions.Any(e => e.ID == id);
+        }
+
+        public async Task<IActionResult> Assign(int contributonId)
+        {
+            var volunteers = repository.GetUnselectedVolunteers(contributonId);
+            return View(volunteers);
         }
     }
 }

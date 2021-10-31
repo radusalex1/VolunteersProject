@@ -45,16 +45,16 @@
             <td>
                 @if (item.FinishDate != DateTime.MinValue)
                 {
-
                     @Html.DisplayFor(modelItem => item.FinishDate)
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a>|
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a>|
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>|
+                <a asp-action="Assign" asp-route-id="@item.ID">Assign Volunteers</a>
             </td>
         </tr>
-}
+  }
     </tbody>
 </table>
