@@ -21,17 +21,12 @@ namespace VolunteersProject.Repository
             {
                 return new List<Volunteer>();
             }
-            var volunteers =  _context.Volunteers
+            var volunteers = _context.Volunteers
                 .Include(e => e.Enrollments)
                 .ThenInclude(c => c.contribution)
                 .ToList();
 
-            var enrl = new Enrollment
-            {
-                contributionId = ContributionID
-            };
-
-            var volunteersFiltred = volunteers.Where(c => c.Enrollments.Contains(enrl)).ToList();
+            var volunteersFiltred = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID!= ContributionID)).ToList();
 
             return volunteersFiltred;
         }

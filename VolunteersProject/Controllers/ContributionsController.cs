@@ -200,5 +200,9 @@ namespace VolunteersProject.Controllers
             var volunteers = repository.GetAvailableVolunteers(id);
             return View(volunteers);
         }
+       public void SendEmail()
+        {
+            Console.WriteLine("am ajuns");
+        }
     }
 }
