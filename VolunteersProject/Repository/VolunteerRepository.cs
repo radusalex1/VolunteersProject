@@ -19,7 +19,7 @@ namespace VolunteersProject.Repository
         {
             return _context.Volunteers
                 .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contributionId)
+                .ThenInclude(c => c.contribution)
                 .ToList();
         }
 
