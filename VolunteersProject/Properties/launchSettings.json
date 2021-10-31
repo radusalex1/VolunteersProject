@@ -14,7 +14,8 @@
       "launchUrl": "home",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "ancmHostingModel": "OutOfProcess"
     },
     "VolunteersProject": {
       "commandName": "Project",
