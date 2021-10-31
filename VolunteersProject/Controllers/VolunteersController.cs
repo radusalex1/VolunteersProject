@@ -52,7 +52,7 @@ namespace VolunteersProject.Controllers
             var students = from s in _context.Volunteers
                            select s;
 
-            //var students1 = repository.GetVolunteers();s
+            //var students1 = repository.GetVolunteers();
 
             if (!String.IsNullOrEmpty(SearchString))
             {
