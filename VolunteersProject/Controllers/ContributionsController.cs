@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -197,15 +198,52 @@ namespace VolunteersProject.Controllers
 
         public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = repository.GetAvailableVolunteers(id);
-            return View(volunteers);
+            var volunteers = repository.GetAvailableVolunteers(id);            
+
+            var selectedVolunteers = new SelectedVolunters
+            {
+                ContributionId = id,
+                Volunteers = new List<Volunteer>()
+            };
+            selectedVolunteers.Volunteers.AddRange(volunteers);
+
+            return View(selectedVolunteers);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Assign([Bind("IsSelected")] List<Volunteer> volunteers)
+        public ActionResult Assign(IFormCollection form, int contributionId)
         {
-            //todo radu - dec continuat
-            return View(volunteers);
+            //todo cia - este urat ce am scris
+            var volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+
+            foreach(var volunteer in volunteers)
+            {
+                if (!string.IsNullOrEmpty(form["check" + volunteer.ID]))
+                {
+                    if (form["check" + volunteer.ID][0] == "true")
+                    {
+                        volunteer.IsSelected = true;
+                    }
+                    else
+                    {
+                        volunteer.IsSelected = false;
+                    }
+                }
+            }
+
+            //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare
+
+            //todo cia - salveaza in baza selectia de useri (la ei s-a trimis doar email) si call SendEmail(...)
+
+            var selectedVolunteers = new SelectedVolunters
+            {
+                ContributionId = contributionId,
+                Volunteers = new List<Volunteer>()
+            };
+            selectedVolunteers.Volunteers.AddRange(volunteers);
+
+            return View(selectedVolunteers);
         }
 
        public void SendEmail()

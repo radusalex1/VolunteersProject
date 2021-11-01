@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VolunteersProject.Models.Volunteer>
+﻿@model VolunteersProject.Models.SelectedVolunters
 
 @{
     ViewData["Title"] = "Assign";
@@ -6,32 +6,33 @@
 
 <h1>Assign </h1>
 <form asp-action="Assign" method="post">
+    @Html.HiddenFor(m => m.ContributionId)
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.FullName)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].FullName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.City)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].City)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Email)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Email)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Phone)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Phone)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Age)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Age)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.JoinHubDate)
+                    @Html.DisplayNameFor(model => model.Volunteers[0].JoinHubDate)
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Volunteers)
             {
                 <tr>
                     <td>
@@ -52,12 +53,18 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.JoinHubDate)
                     </td>
-                    <td>
-                       <input asp-for="IsSelected" type="checkbox" id=@Html.DisplayFor(modelItem => item.ID)>@Html.CheckBoxFor(modelItem => item.IsSelected)
-
+                    <td>                       
+                        @if (!item.IsSelected)
+                        {
+                            @Html.CheckBox("check" + item.ID, false, new { name = "assignChkBx" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("check" + item.ID, true, new { name = "assignChkBx" })
+                        }
                     </td>
                 </tr>
-             }
+            }
         </tbody>
     </table>
     <div class="form-group">
