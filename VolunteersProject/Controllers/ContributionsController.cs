@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
@@ -13,7 +14,6 @@ namespace VolunteersProject.Controllers
     {
         private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
-
         public ContributionsController(VolunteersContext context,IVolunteerRepository repository)
         {
             _context = context;
@@ -200,9 +200,28 @@ namespace VolunteersProject.Controllers
             var volunteers = repository.GetAvailableVolunteers(id);
             return View(volunteers);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Assign([Bind("IsSelected")] List<Volunteer> volunteers)
+        {
+            //todo radu - dec continuat
+            return View(volunteers);
+        }
+
        public void SendEmail()
         {
+            var volunteers = repository.GetVolunteers();
+            //return View(volunteers);
             Console.WriteLine("am ajuns");
         }
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public void SendEmail([Bind("IsSelected")] Volunteer volunteer)
+        {
+            if(ModelState.IsValid)
+            {
+                _context.Update(volunteer);
+            }
+        }*/
     }
 }

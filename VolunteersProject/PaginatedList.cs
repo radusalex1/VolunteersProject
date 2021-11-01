@@ -11,6 +11,10 @@ namespace VolunteersProject
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
 
+        public PaginatedList()
+        {
+
+        }
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;

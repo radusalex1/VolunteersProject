@@ -51,6 +51,6 @@ namespace VolunteersProject.Models
         
         public string DescriptionContributionToHub { get; set; }
       
-
+        public bool IsSelected { get; set; }
     }
 }

@@ -147,20 +147,14 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //var volunteer = await _context.Volunteers.FindAsync(id);
-            //var volunteer = repository.GetVolunteers();
-
-            var volunteer = await _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefaultAsync(m => m.ID == id);
+            var volunteer = repository.GetVolunteerById(id);
 
             if (volunteer == null)
             {
