@@ -219,9 +219,9 @@ namespace VolunteersProject.Controllers
 
             foreach(var volunteer in volunteers)
             {
-                if (!string.IsNullOrEmpty(form["check" + volunteer.ID]))
+                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
                 {
-                    if (form["check" + volunteer.ID][0] == "true")
+                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
                     {
                         volunteer.IsSelected = true;
                     }
@@ -231,6 +231,23 @@ namespace VolunteersProject.Controllers
                     }
                 }
             }
+
+            //todo cia - check directly assigned checkbox (directAssignmentChkBx) - if checked then: 1.save in DB and a new item should appears in Volunteers*Events; 2. the selection should dissapear from this list;
+
+            var directAssignmentVolunteerList = new List<Volunteer>();
+            foreach (var volunteer in volunteers)
+            {
+                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.ID]))
+                {
+                    if (form["chk_directAssignment_" + volunteer.ID][0] == "true")
+                    {
+                        directAssignmentVolunteerList.Add(volunteer);
+                    }
+                }
+            }
+
+            //Insert in Volunteers*Events tbl the directAssignmentVolunteerList
+
 
             //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare
 
