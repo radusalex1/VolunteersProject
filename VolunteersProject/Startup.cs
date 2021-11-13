@@ -5,8 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VolunteersProject.Data;
-using System;
-using Microsoft.OpenApi.Models;
+using VolunteersProject.Email;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject
@@ -58,7 +57,11 @@ namespace VolunteersProject
 
             services.AddTransient<IVolunteerRepository, VolunteerRepository>();
             services.AddTransient<IContributionRepository, ContributionRepository>();
+            
+            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
+            services.AddTransient<IEmailService, EmailService>();
         }
+    
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

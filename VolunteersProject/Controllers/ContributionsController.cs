@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
+using VolunteersProject.Email;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
@@ -15,10 +17,13 @@ namespace VolunteersProject.Controllers
     {
         private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
-        public ContributionsController(VolunteersContext context, IVolunteerRepository repository)
+        private IEmailService emailService;
+
+        public ContributionsController(VolunteersContext context, IVolunteerRepository repository, IEmailService emailService)
         {
             _context = context;
             this.repository = repository;
+            this.emailService = emailService;
         }
 
         // GET: Contributions
@@ -199,7 +204,7 @@ namespace VolunteersProject.Controllers
 
         public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = repository.GetAvailableVolunteers(id);            
+            var volunteers = repository.GetAvailableVolunteers(id);
 
             var selectedVolunteers = new SelectedVolunters
             {
@@ -218,20 +223,26 @@ namespace VolunteersProject.Controllers
             //todo cia - este urat ce am scris
             var volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
 
-            foreach(var volunteer in volunteers)
+            var sendInvitationEmailList = new List<Volunteer>();
+            foreach (var volunteer in volunteers)
             {
                 if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
                 {
                     if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
                     {
                         volunteer.IsSelected = true;
+                        sendInvitationEmailList.Add(volunteer);
                     }
-                    else
-                    {
-                        volunteer.IsSelected = false;
-                    }
+                    //else
+                    //{
+                    //    volunteer.IsSelected = false;
+                    //}
                 }
             }
+
+            SendEmail(sendInvitationEmailList);
+
+
 
             //todo cia - check directly assigned checkbox (directAssignmentChkBx) - if checked then: 1.save in DB and a new item should appears in Volunteers*Events; 2. the selection should dissapear from this list;
 
@@ -252,7 +263,8 @@ namespace VolunteersProject.Controllers
 
             //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare
 
-            //todo cia - salveaza in baza selectia de useri (la ei s-a trimis doar email) si call SendEmail(...)
+            //todo cia - salveaza in baza selectia de useri (la ei s-a trimis doar email) si call SendEmail(...)           
+
 
             var selectedVolunteers = new SelectedVolunters
             {
@@ -261,23 +273,38 @@ namespace VolunteersProject.Controllers
             };
             selectedVolunteers.Volunteers.AddRange(volunteers);
 
+
+
             return View(selectedVolunteers);
         }
 
-       public void SendEmail()
+        public void SendEmail(List<Volunteer> sendInvitationEmailList)
         {
             var volunteers = repository.GetVolunteers();
             //return View(volunteers);
             Console.WriteLine("am ajuns");
-        }
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public void SendEmail([Bind("IsSelected")] Volunteer volunteer)
-        {
-            if(ModelState.IsValid)
+
+            foreach (var volunteer in sendInvitationEmailList)
             {
-                _context.Update(volunteer);
-            }
-        }*/
+                var emailMessage = new EmailMessage();
+
+                emailMessage.Subject = $"this is an email test for {volunteer.FullName} having email {volunteer.Email}";
+
+                emailMessage.ToAddresses = new List<EmailAddress>
+                {
+                    new EmailAddress { Address = "ciprian_alexandru@hotmail.com" }
+                };
+
+                emailMessage.Content = "your where invited to happy camps";
+
+
+                emailMessage.FromAddresses = new List<EmailAddress>
+                {
+                    new EmailAddress { Address = "codruta_alexandru@hotmail.com" }
+                };
+
+                emailService.Send(emailMessage);
+            }            
+        }       
     }
 }
