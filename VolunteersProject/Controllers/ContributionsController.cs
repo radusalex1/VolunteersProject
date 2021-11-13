@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -280,9 +279,9 @@ namespace VolunteersProject.Controllers
 
         public void SendEmail(List<Volunteer> sendInvitationEmailList)
         {
-            var volunteers = repository.GetVolunteers();
-            //return View(volunteers);
-            Console.WriteLine("am ajuns");
+            //var volunteers = repository.GetVolunteers();
+            ////return View(volunteers);
+            //Console.WriteLine("am ajuns");
 
             foreach (var volunteer in sendInvitationEmailList)
             {
