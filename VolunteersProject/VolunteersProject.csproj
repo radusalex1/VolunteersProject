@@ -26,8 +26,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MailManager\MailServices.csproj" />
+  <ItemGroup>    
     <ProjectReference Include="..\MailServices\MailServices.csproj" />
   </ItemGroup>
 
