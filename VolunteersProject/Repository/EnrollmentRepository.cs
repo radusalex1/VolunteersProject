@@ -32,9 +32,15 @@ namespace VolunteersProject.Repository
         /// Get all volunteers.
         /// </summary>
         /// <returns>List of all volunteers.</returns>
-        public List<Enrollment> GetVolunteers()
+        public List<Enrollment> GetEnrollments()
         {
             return _context.Enrollments.ToList();
+        }
+
+        public void Save(Enrollment enrollment)
+        {
+            _context.Add(enrollment);
+            _context.SaveChanges();
         }
     }
 }

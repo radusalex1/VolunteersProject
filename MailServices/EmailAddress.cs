@@ -1,6 +1,6 @@
 ﻿
 
-namespace VolunteersProject.Email
+namespace MailServices
 {
 	public class EmailAddress
 	{

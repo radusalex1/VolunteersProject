@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MailServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
-using VolunteersProject.Email;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
@@ -258,6 +258,8 @@ namespace VolunteersProject.Controllers
             }
 
             //Insert in Volunteers*Events tbl the directAssignmentVolunteerList
+
+            
 
 
             //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare

@@ -1,3 +1,4 @@
+using MailServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VolunteersProject.Data;
-using VolunteersProject.Email;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject
@@ -57,7 +57,8 @@ namespace VolunteersProject
 
             services.AddTransient<IVolunteerRepository, VolunteerRepository>();
             services.AddTransient<IContributionRepository, ContributionRepository>();
-            
+            services.AddTransient<IEnrollmentRepository, EnrollmentRepository>();
+
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
         }

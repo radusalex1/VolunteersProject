@@ -4,8 +4,9 @@ using MimeKit.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 
-namespace VolunteersProject.Email
+namespace MailServices
 {
     public class EmailService : IEmailService
     {
@@ -43,7 +44,7 @@ namespace VolunteersProject.Email
 			};
 
 			//Be careful that the SmtpClient class is the one from Mailkit not the framework!
-			using (var emailClient = new SmtpClient())
+			using (var emailClient = new MailKit.Net.Smtp.SmtpClient())
 			{
 				//The last parameter here is to use SSL (Which you should!)
 				emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, true);

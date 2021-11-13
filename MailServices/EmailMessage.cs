@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VolunteersProject.Email
+namespace MailServices
 {
 	public class EmailMessage
 	{

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VolunteersProject.Email
-{
-    public interface IEmailConfiguration
+namespace MailServices
+{ 
+	public interface IEmailConfiguration
     {
 		string SmtpServer { get; }
 		int SmtpPort { get; }

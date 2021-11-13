@@ -6,22 +6,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     public class EnrollmentsController : Controller
     {
         private readonly VolunteersContext _context;
+        private IEnrollmentRepository enrollmentRepository;
 
-        public EnrollmentsController(VolunteersContext context)
+        public EnrollmentsController(VolunteersContext context, IEnrollmentRepository enrollmentRepository)
         {
             _context = context;
+            this.enrollmentRepository = enrollmentRepository;
         }
 
         // GET: Enrollments
         public async Task<IActionResult> Index(string SortOrder)
         {
             var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution).OrderBy(c => c.contribution.Name);
+
             ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
             ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
 
@@ -94,10 +98,14 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(enrollment);
-                await _context.SaveChangesAsync();
+                //_context.Add(enrollment);
+                //await _context.SaveChangesAsync();
+                enrollmentRepository.Save(enrollment);
+
                 return RedirectToAction(nameof(Index));
             }
+           
+
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
             return View(enrollment);
         }

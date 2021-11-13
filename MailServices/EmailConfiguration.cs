@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VolunteersProject.Email
+namespace MailServices
 {
 	public class EmailConfiguration : IEmailConfiguration
 	{
