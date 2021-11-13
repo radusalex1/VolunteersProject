@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     public class ContributionsController : Controller
     {
         private readonly VolunteersContext _context;
-
-        public ContributionsController(VolunteersContext context)
+        private IVolunteerRepository repository;
+        public ContributionsController(VolunteersContext context, IVolunteerRepository repository)
         {
             _context = context;
+            this.repository = repository;
         }
 
         // GET: Contributions
@@ -28,9 +32,10 @@ namespace VolunteersProject.Controllers
 
             var contributions = from c in _context.Contributions
                                 select c;
+            //var contributions = (IQueryable<Contribution>)this.repository.GetContributions();
+
             contributions = SortContributions(sortOrder, contributions);
             return View(await contributions.AsNoTracking().ToListAsync());
-
         }
 
         private static IQueryable<Contribution> SortContributions(string sortOrder, IQueryable<Contribution> contributions)
@@ -76,6 +81,7 @@ namespace VolunteersProject.Controllers
 
             var contribution = await _context.Contributions
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (contribution == null)
             {
                 return NotFound();
@@ -190,5 +196,88 @@ namespace VolunteersProject.Controllers
         {
             return _context.Contributions.Any(e => e.ID == id);
         }
+
+        public async Task<IActionResult> Assign(int id)
+        {
+            var volunteers = repository.GetAvailableVolunteers(id);            
+
+            var selectedVolunteers = new SelectedVolunters
+            {
+                ContributionId = id,
+                Volunteers = new List<Volunteer>()
+            };
+            selectedVolunteers.Volunteers.AddRange(volunteers);
+
+            return View(selectedVolunteers);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Assign(IFormCollection form, int contributionId)
+        {
+            //todo cia - este urat ce am scris
+            var volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+
+            foreach(var volunteer in volunteers)
+            {
+                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
+                {
+                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
+                    {
+                        volunteer.IsSelected = true;
+                    }
+                    else
+                    {
+                        volunteer.IsSelected = false;
+                    }
+                }
+            }
+
+            //todo cia - check directly assigned checkbox (directAssignmentChkBx) - if checked then: 1.save in DB and a new item should appears in Volunteers*Events; 2. the selection should dissapear from this list;
+
+            var directAssignmentVolunteerList = new List<Volunteer>();
+            foreach (var volunteer in volunteers)
+            {
+                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.ID]))
+                {
+                    if (form["chk_directAssignment_" + volunteer.ID][0] == "true")
+                    {
+                        directAssignmentVolunteerList.Add(volunteer);
+                    }
+                }
+            }
+
+            //Insert in Volunteers*Events tbl the directAssignmentVolunteerList
+
+
+            //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare
+
+            //todo cia - salveaza in baza selectia de useri (la ei s-a trimis doar email) si call SendEmail(...)
+
+            var selectedVolunteers = new SelectedVolunters
+            {
+                ContributionId = contributionId,
+                Volunteers = new List<Volunteer>()
+            };
+            selectedVolunteers.Volunteers.AddRange(volunteers);
+
+            return View(selectedVolunteers);
+        }
+
+       public void SendEmail()
+        {
+            var volunteers = repository.GetVolunteers();
+            //return View(volunteers);
+            Console.WriteLine("am ajuns");
+        }
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public void SendEmail([Bind("IsSelected")] Volunteer volunteer)
+        {
+            if(ModelState.IsValid)
+            {
+                _context.Update(volunteer);
+            }
+        }*/
     }
 }

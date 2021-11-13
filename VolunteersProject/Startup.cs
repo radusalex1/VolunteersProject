@@ -57,6 +57,7 @@ namespace VolunteersProject
             //});
 
             services.AddTransient<IVolunteerRepository, VolunteerRepository>();
+            services.AddTransient<IContributionRepository, ContributionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,81 @@
+﻿@model VolunteersProject.Models.SelectedVolunters
+
+@{
+    ViewData["Title"] = "Assign";
+}
+
+<h1>Assign </h1>
+<form asp-action="Assign" method="post">
+    @Html.HiddenFor(m => m.ContributionId)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].City)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].Age)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volunteers[0].JoinHubDate)
+                </th>
+                <th>
+                    Send invitation email
+                </th>
+                <th>
+                    Assign to event
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Volunteers)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JoinHubDate)
+                </td>
+                <td>
+                    @if (!item.IsSelected)
+                    {
+                        @Html.CheckBox("chk_emailInvitation_" + item.ID, false, new { name = "assignChkBx" })
+                    }
+                    else
+                    {
+                        @Html.CheckBox("chk_emailInvitation_" + item.ID, true, new { name = "assignChkBx" })
+                    }
+                </td>
+                <td>                   
+                    @Html.CheckBox("chk_directAssignment_" + item.ID, false, new { name = "directAssignmentChkBx" })
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <button type="submit" value="Send Email" class="btn btn-primary" />
+    </div>
+</form>
