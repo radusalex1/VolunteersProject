@@ -52,7 +52,8 @@ namespace VolunteersProject.Controllers
             var students = from s in _context.Volunteers
                            select s;
 
-            //var students1 = repository.GetVolunteers();
+            //var students = (IQueryable<Volunteer>)repository.GetVolunteers();
+
 
             if (!String.IsNullOrEmpty(SearchString))
             {

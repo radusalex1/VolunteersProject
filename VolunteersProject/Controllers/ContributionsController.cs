@@ -15,7 +15,7 @@ namespace VolunteersProject.Controllers
     {
         private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
-        public ContributionsController(VolunteersContext context,IVolunteerRepository repository)
+        public ContributionsController(VolunteersContext context, IVolunteerRepository repository)
         {
             _context = context;
             this.repository = repository;
@@ -32,9 +32,10 @@ namespace VolunteersProject.Controllers
 
             var contributions = from c in _context.Contributions
                                 select c;
+            //var contributions = (IQueryable<Contribution>)this.repository.GetContributions();
+
             contributions = SortContributions(sortOrder, contributions);
             return View(await contributions.AsNoTracking().ToListAsync());
-
         }
 
         private static IQueryable<Contribution> SortContributions(string sortOrder, IQueryable<Contribution> contributions)
