@@ -32,7 +32,7 @@ namespace VolunteersProject.Controllers
             var enrolments = from e in volunteersContext
                              select e;
             enrolments = GetSortedEnrollments(SortOrder, enrolments);
-           
+                       
             return View(enrolments);
         }
 
@@ -83,9 +83,11 @@ namespace VolunteersProject.Controllers
         // GET: Enrollments/Create
         public IActionResult Create()
         {
+            //todo cia - fill ViewData below only with not assigned data - first select a contribution and after that display only the not already assigned volunteers
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID");
             ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName");
             ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name");
+
             return View();
         }
 
