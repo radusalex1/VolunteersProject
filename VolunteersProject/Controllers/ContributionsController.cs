@@ -17,12 +17,16 @@ namespace VolunteersProject.Controllers
         private readonly VolunteersContext _context;
         private IVolunteerRepository repository;
         private IEmailService emailService;
+        private IEnrollmentRepository enrollmentRepository;
+        private IContributionRepository contributionRepositor;
 
-        public ContributionsController(VolunteersContext context, IVolunteerRepository repository, IEmailService emailService)
+        public ContributionsController(VolunteersContext context, IVolunteerRepository repository, IEmailService emailService, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor)
         {
             _context = context;
             this.repository = repository;
             this.emailService = emailService;
+            this.enrollmentRepository = enrollmentRepository;
+            this.contributionRepositor = contributionRepositor;
         }
 
         // GET: Contributions
@@ -231,15 +235,11 @@ namespace VolunteersProject.Controllers
                     {
                         volunteer.IsSelected = true;
                         sendInvitationEmailList.Add(volunteer);
-                    }
-                    //else
-                    //{
-                    //    volunteer.IsSelected = false;
-                    //}
+                    }                   
                 }
             }
 
-            SendEmail(sendInvitationEmailList);
+            SendEmail(contributionId, sendInvitationEmailList);
 
 
 
@@ -257,16 +257,13 @@ namespace VolunteersProject.Controllers
                 }
             }
 
-            //Insert in Volunteers*Events tbl the directAssignmentVolunteerList
-
-            
+            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
 
 
-            //todo cia - ce urmeaza este doar provizoriu ca sa nu dea eroare
 
-            //todo cia - salveaza in baza selectia de useri (la ei s-a trimis doar email) si call SendEmail(...)           
-
-
+                
+            //reload evailable list
+            volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
             var selectedVolunteers = new SelectedVolunters
             {
                 ContributionId = contributionId,
@@ -274,30 +271,30 @@ namespace VolunteersProject.Controllers
             };
             selectedVolunteers.Volunteers.AddRange(volunteers);
 
-
-
             return View(selectedVolunteers);
         }
 
-        public void SendEmail(List<Volunteer> sendInvitationEmailList)
+        /// <summary>
+        /// Send email to selected volunteers
+        /// </summary>
+        /// <param name="sendInvitationEmailList">Selected volunteer list.</param>
+        public void SendEmail(int contributionId, List<Volunteer> sendInvitationEmailList)
         {
-            //var volunteers = repository.GetVolunteers();
-            ////return View(volunteers);
-            //Console.WriteLine("am ajuns");
-
             foreach (var volunteer in sendInvitationEmailList)
             {
                 var emailMessage = new EmailMessage();
 
-                emailMessage.Subject = $"this is an email test for {volunteer.FullName} having email {volunteer.Email}";
+                emailMessage.Subject = $"This is an email test for {volunteer.FullName} having email {volunteer.Email}";
 
                 emailMessage.ToAddresses = new List<EmailAddress>
                 {
                     new EmailAddress { Address = "ciprian_alexandru@hotmail.com" }
                 };
 
-                emailMessage.Content = "your where invited to happy camps";
+                var contribution = contributionRepositor.GetContributionById(contributionId);
 
+                //todo cia - convert below message to html format, add links to "yes" and "no"
+                emailMessage.Content = $"You where invited to \"{contribution.Name}\", a HappyCamps activitity, that will take place between {contribution.StartDate.ToString("yyyy-MM-dd")} and {contribution.FinishDate.ToString("yyyy-MM-dd")}. Click on yes until {contribution.StartDate.ToString("yyyy-MM-dd")} if you accept or on no if you refuse.";
 
                 emailMessage.FromAddresses = new List<EmailAddress>
                 {
@@ -305,7 +302,25 @@ namespace VolunteersProject.Controllers
                 };
 
                 emailService.Send(emailMessage);
-            }            
-        }       
+            }
+        }
+
+        /// <summary>
+        /// Save assignment of volunteers to a specific contribution.
+        /// </summary>
+        /// <param name="contributionId">Contribution id.</param>
+        /// <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
+        public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<Volunteer> directAssignmentVolunteerList)
+        {
+            foreach (var selectedVolunteer in directAssignmentVolunteerList)
+            {
+                var enrollment = new Enrollment();
+
+                enrollment.contributionId = contributionId;
+                enrollment.VolunteerID = selectedVolunteer.ID;
+
+                enrollmentRepository.Save(enrollment);
+            }
+        }
     }
 }
