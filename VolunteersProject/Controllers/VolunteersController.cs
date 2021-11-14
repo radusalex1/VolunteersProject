@@ -137,7 +137,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
-        {
+        {            
             if (ModelState.IsValid)
             {
                 _context.Add(volunteer);
