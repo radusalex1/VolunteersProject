@@ -1,7 +1,7 @@
 ﻿@model VolunteersProject.Models.SelectedVolunters
 
 @{
-    ViewData["Title"] = "Assign";
+    ViewData["Title"] = "Assign volunteer to contribution";
 }
 
 <h1>Assign </h1>
@@ -39,43 +39,48 @@
         <tbody>
             @foreach (var item in Model.Volunteers)
             {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.City)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Phone)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Age)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JoinHubDate)
-                </td>
-                <td>
-                    @if (!item.IsSelected)
-                    {
-                        @Html.CheckBox("chk_emailInvitation_" + item.ID, false, new { name = "assignChkBx" })
-                    }
-                    else
-                    {
-                        @Html.CheckBox("chk_emailInvitation_" + item.ID, true, new { name = "assignChkBx" })
-                    }
-                </td>
-                <td>                   
-                    @Html.CheckBox("chk_directAssignment_" + item.ID, false, new { name = "directAssignmentChkBx" })
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Age)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JoinHubDate)
+                    </td>
+                    <td>
+                        @if (!item.IsSelected)
+                        {
+                            @Html.CheckBox("chk_emailInvitation_" + item.ID, false, new { name = "assignChkBx" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("chk_emailInvitation_" + item.ID, true, new { name = "assignChkBx" })
+                        }
+                    </td>
+                    <td>
+                        @Html.CheckBox("chk_directAssignment_" + item.ID, false, new { name = "directAssignmentChkBx" })
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
     <div class="form-group">
         <input type="submit" name="Save" value="Send Email" class="btn btn-primary" />
     </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
 </form>

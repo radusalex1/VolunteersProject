@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,11 +15,15 @@ namespace VolunteersProject.Controllers
     {
         private readonly VolunteersContext _context;
         private IEnrollmentRepository enrollmentRepository;
+        private IVolunteerRepository volunteerRepository;
+        private IContributionRepository contributionRepositor;
 
-        public EnrollmentsController(VolunteersContext context, IEnrollmentRepository enrollmentRepository)
+        public EnrollmentsController(VolunteersContext context, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IVolunteerRepository volunteerRepository)
         {
             _context = context;
             this.enrollmentRepository = enrollmentRepository;
+            this.volunteerRepository = volunteerRepository;
+            this.contributionRepositor = contributionRepositor;
         }
 
         // GET: Enrollments
@@ -32,7 +37,7 @@ namespace VolunteersProject.Controllers
             var enrolments = from e in volunteersContext
                              select e;
             enrolments = GetSortedEnrollments(SortOrder, enrolments);
-                       
+
             return View(enrolments);
         }
 
@@ -55,10 +60,10 @@ namespace VolunteersProject.Controllers
             }
             return enrolments;
         }/// <summary>
-        /// get sorted elements;
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+         /// get sorted elements;
+         /// </summary>
+         /// <param name="id"></param>
+         /// <returns></returns>
 
         // GET: Enrollments/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -106,7 +111,7 @@ namespace VolunteersProject.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-           
+
 
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
             return View(enrollment);
@@ -197,6 +202,65 @@ namespace VolunteersProject.Controllers
             _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        //public ActionResult Test(int param1)
+        //{
+        //    return View();
+        //}
+
+        // GET: Enrollments/VolunteerEmailAnswer/5/1
+        public ActionResult VolunteerEmailAnswer(int contributionId = 5, int volunteerId = 1)
+        {          
+            var contribution = contributionRepositor.GetContributionById(contributionId);
+
+            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
+
+            if (contribution == null || volunteer == null)
+            {
+                return NotFound();
+            }
+
+            var volunteerEmailAnswer = new VolunteerEmailAnswerModel
+            {
+                ContributionId = contribution.ID,
+                ContributionName = contribution.Name,
+                StartDate = contribution.StartDate.ToString("yyyy-MM-dd"),
+                FinishDate = contribution.FinishDate.ToString("yyyy-MM-dd"),
+                VolunteerId = volunteer.ID,
+            };
+
+            return View(volunteerEmailAnswer);
+        }
+        
+        [HttpPost]
+        public ActionResult SaveVolunteerEmailAnswer(IFormCollection form, int contributionId, int volunteerId)
+        {
+            var volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Pending;            
+
+            if (!string.IsNullOrEmpty(form["Accept"]))
+            {
+                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Accepted;
+            }
+            else if (!string.IsNullOrEmpty(form["Decline"]))
+            {
+                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Declined;
+
+                return View("Close");
+            }
+
+            //todo Radu - implement volunteerEnrollmentStatus column in Enrollment tbl (column type = integer)
+
+            var enrollment = new Enrollment
+            {
+                contributionId = contributionId,
+                VolunteerID = volunteerId,
+                //volunteerEnrollmentStatus = volunteerEnrollmentStatus
+            };
+
+            enrollmentRepository.Save(enrollment);
+
+            return View("Close");
         }
 
         private bool EnrollmentExists(int id)

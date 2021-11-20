@@ -9,24 +9,27 @@ using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
+using Microsoft.Extensions.Configuration;
 
 namespace VolunteersProject.Controllers
 {
     public class ContributionsController : Controller
     {
         private readonly VolunteersContext _context;
-        private IVolunteerRepository repository;
+        private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
         private IContributionRepository contributionRepositor;
+        private IConfiguration configuration;
 
-        public ContributionsController(VolunteersContext context, IVolunteerRepository repository, IEmailService emailService, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor)
+        public ContributionsController(VolunteersContext context, IVolunteerRepository volunteerRepository, IEmailService emailService, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IConfiguration configuration)
         {
             _context = context;
-            this.repository = repository;
+            this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
             this.contributionRepositor = contributionRepositor;
+            this.configuration = configuration;
         }
 
         // GET: Contributions
@@ -87,8 +90,7 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
 
-            var contribution = await _context.Contributions
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var contribution = await _context.Contributions.FirstOrDefaultAsync(m => m.ID == id);
 
             if (contribution == null)
             {
@@ -207,7 +209,7 @@ namespace VolunteersProject.Controllers
 
         public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = repository.GetAvailableVolunteers(id);
+            var volunteers = volunteerRepository.GetAvailableVolunteers(id);
 
             var selectedVolunteers = new SelectedVolunters
             {
@@ -223,30 +225,32 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Assign(IFormCollection form, int contributionId)
         {
-            //todo cia - este urat ce am scris
-            var volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+            var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
 
-            var sendInvitationEmailList = new List<Volunteer>();
-            foreach (var volunteer in volunteers)
-            {
-                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
-                {
-                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
-                    {
-                        volunteer.IsSelected = true;
-                        sendInvitationEmailList.Add(volunteer);
-                    }                   
-                }
-            }
-
+            var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
             SendEmail(contributionId, sendInvitationEmailList);
+           
+            var directAssignmentVolunteerList = GetGetSelectedVolunteersForDirectAssignment(form, availableVolunteers);
+            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
 
 
+            //reload evailable list
+            availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+            var selectedVolunteers = new SelectedVolunters
+            {
+                ContributionId = contributionId,
+                Volunteers = new List<Volunteer>()
+            };
+            selectedVolunteers.Volunteers.AddRange(availableVolunteers);
 
-            //todo cia - check directly assigned checkbox (directAssignmentChkBx) - if checked then: 1.save in DB and a new item should appears in Volunteers*Events; 2. the selection should dissapear from this list;
+            return View(selectedVolunteers);
+        }
 
+        private List<Volunteer> GetGetSelectedVolunteersForDirectAssignment(IFormCollection form, List<Volunteer> availableVolunteers)
+        {            
             var directAssignmentVolunteerList = new List<Volunteer>();
-            foreach (var volunteer in volunteers)
+
+            foreach (var volunteer in availableVolunteers)
             {
                 if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.ID]))
                 {
@@ -257,21 +261,26 @@ namespace VolunteersProject.Controllers
                 }
             }
 
-            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
+            return directAssignmentVolunteerList;
+        }
 
+        private List<Volunteer> GetSelectedVolunteersForSendEmail(IFormCollection form, List<Volunteer> availableVolunteers)
+        {            
+            var sendInvitationEmailList = new List<Volunteer>();
 
-
-                
-            //reload evailable list
-            volunteers = repository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
-            var selectedVolunteers = new SelectedVolunters
+            foreach (var volunteer in availableVolunteers)
             {
-                ContributionId = contributionId,
-                Volunteers = new List<Volunteer>()
-            };
-            selectedVolunteers.Volunteers.AddRange(volunteers);
+                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
+                {
+                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
+                    {
+                        volunteer.IsSelected = true;
+                        sendInvitationEmailList.Add(volunteer);
+                    }
+                }
+            }
 
-            return View(selectedVolunteers);
+            return sendInvitationEmailList;
         }
 
         /// <summary>
@@ -284,25 +293,37 @@ namespace VolunteersProject.Controllers
             {
                 var emailMessage = new EmailMessage();
 
-                emailMessage.Subject = $"This is an email test for {volunteer.FullName} having email {volunteer.Email}";
+                emailMessage.Subject = $"This is an email for {volunteer.FullName} having email {volunteer.Email}";
 
                 emailMessage.ToAddresses = new List<EmailAddress>
                 {
-                    new EmailAddress { Address = "ciprian_alexandru@hotmail.com" }
+                    new EmailAddress { Address = volunteer.Email }
                 };
 
                 var contribution = contributionRepositor.GetContributionById(contributionId);
 
-                //todo cia - convert below message to html format, add links to "yes" and "no"
-                emailMessage.Content = $"You where invited to \"{contribution.Name}\", a HappyCamps activitity, that will take place between {contribution.StartDate.ToString("yyyy-MM-dd")} and {contribution.FinishDate.ToString("yyyy-MM-dd")}. Click on yes until {contribution.StartDate.ToString("yyyy-MM-dd")} if you accept or on no if you refuse.";
+                var link = GetLink(contributionId, volunteer.ID);
 
+                emailMessage.Content = $"You where invited to \"{contribution.Name}\", a HappyCamps activitity, that will take place between {contribution.StartDate.ToString("yyyy-MM-dd")} and {contribution.FinishDate.ToString("yyyy-MM-dd")}. " +
+               $"Click on {link} for more details.";
+
+                var emailSender = configuration.GetSection("AppSettings").GetSection("EmailSender").Value;
                 emailMessage.FromAddresses = new List<EmailAddress>
                 {
-                    new EmailAddress { Address = "codruta_alexandru@hotmail.com" }
+                    new EmailAddress { Address = emailSender }
                 };
 
                 emailService.Send(emailMessage);
             }
+        }
+
+        private string GetLink(int contributionId, int volunteerId)
+        {
+            var server = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+            var action = $"/Enrollments/VolunteerEmailAnswer?contributionId={contributionId}&volunteerId={volunteerId}";
+
+            return $"<a href=\"{ server}{ action}\">link</a>";
         }
 
         /// <summary>

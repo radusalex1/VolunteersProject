@@ -1,0 +1,28 @@
+﻿    @model VolunteersProject.Models.VolunteerEmailAnswerModel
+
+    <h4> Accept or decline decision for a volunteer </h4>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="SaveVolunteerEmailAnswer" method="post">
+                @Html.HiddenFor(m => m.ContributionId)
+                @Html.HiddenFor(m => m.VolunteerId)
+                You were selected to join @Html.DisplayFor(model => model.ContributionName), a Happycamp activity which starts
+                on @Html.DisplayFor(model => model.StartDate) and ends on @Html.DisplayFor(model => model.FinishDate). Click on 'Accept' if you want to join or on 'Decline' if not.
+                </BR>
+                <div class="form-group">
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="submit" name="Accept" value="Accept" class="btn btn-primary" />
+                            </td>
+                            <td>
+                                <input type="submit" name="Decline" value="Decline" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
