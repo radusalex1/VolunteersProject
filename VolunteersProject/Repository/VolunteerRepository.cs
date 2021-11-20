@@ -61,5 +61,7 @@ namespace VolunteersProject.Repository
         {
             return _context.Volunteers.ToList();
         }
+
+        //todo Radu and Cip - add save, edit, delete and maybe details
     }
 }

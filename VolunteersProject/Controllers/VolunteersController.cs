@@ -194,6 +194,7 @@ namespace VolunteersProject.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
@@ -209,6 +210,7 @@ namespace VolunteersProject.Controllers
 
             var volunteer = await _context.Volunteers
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (volunteer == null)
             {
                 return NotFound();
@@ -223,8 +225,10 @@ namespace VolunteersProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var volunteer = await _context.Volunteers.FindAsync(id);
+
             _context.Volunteers.Remove(volunteer);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
