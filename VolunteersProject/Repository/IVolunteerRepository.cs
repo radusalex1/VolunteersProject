@@ -7,8 +7,20 @@ namespace VolunteersProject.Repository
     {
         List<Volunteer> GetVolunteers();
 
-        Volunteer GetVolunteerById(int id);
+        Volunteer GetVolunteerById(int? id);
 
-        List<Volunteer> GetAvailableVolunteers(int ContributionID);
+        Volunteer GetVolunteerWithEnrollmentsById(int? id);
+
+        List<Volunteer> GetAvailableVolunteers(int? ContributionID);
+
+        void AddVolunteer(Volunteer volunteer);
+
+        void UpdateVolunteer(Volunteer volunteer);
+
+        bool VolunteerExists(int id);
+
+        void DeleteVolunteer(Volunteer volunteer);
+
+        //void UpdateVolunteer(Volunteer volunteer);
     }
 }

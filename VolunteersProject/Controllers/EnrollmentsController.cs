@@ -204,11 +204,6 @@ namespace VolunteersProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //public ActionResult Test(int param1)
-        //{
-        //    return View();
-        //}
-
         // GET: Enrollments/VolunteerEmailAnswer/5/1
         public ActionResult VolunteerEmailAnswer(int contributionId = 5, int volunteerId = 1)
         {          
