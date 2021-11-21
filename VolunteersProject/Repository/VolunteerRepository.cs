@@ -92,12 +92,16 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer"></param>
         public void AddVolunteer(Volunteer volunteer)
         {
+            //todo Radu - check if this volunteer already exist (not by id)
+
             _context.Add(volunteer);
             _context.SaveChanges();
         }
 
         public void UpdateVolunteer(Volunteer volunteer)
         {
+            //todo Radu - check if this volunteer already exist (not by id)
+
             _context.Update(volunteer);
             _context.SaveChanges();
         }
@@ -107,6 +111,10 @@ namespace VolunteersProject.Repository
             return _context.Volunteers.Any(e => e.ID == id);
         }
 
+        /// <summary>
+        /// Delete volunteer.
+        /// </summary>
+        /// <param name="volunteer">Volunteer.</param>
         public void DeleteVolunteer(Volunteer volunteer)
         {
             _context.Volunteers.Remove(volunteer);
