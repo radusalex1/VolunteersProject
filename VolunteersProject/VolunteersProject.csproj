@@ -5,6 +5,10 @@
     <!--<UserSecretsId>2658facc-05b3-4740-bb02-b3fc4f7e6625</UserSecretsId>-->
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Projects\VolunteersProject\VolunteersProject\VolunteersProject.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Views\Contributions\AssignVolunteersPage.cshtml.cs" />
   </ItemGroup>

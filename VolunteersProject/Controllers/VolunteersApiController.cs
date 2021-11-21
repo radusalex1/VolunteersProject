@@ -6,9 +6,9 @@ using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")]   
     [ApiController]
-    //[ApiExplorerSettings(GroupName = "Volunteer")]
+    [ApiExplorerSettings(GroupName = "Volunteer")]
     public class VolunteersApiController : ControllerBase
     {
         private IVolunteerRepository volunteerRepository;
