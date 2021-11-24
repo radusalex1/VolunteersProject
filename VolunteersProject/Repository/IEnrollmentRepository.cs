@@ -8,5 +8,6 @@ namespace VolunteersProject.Repository
         Enrollment GetEnrollmentById(int id);
         List<Enrollment> GetEnrollments();
         void Save(Enrollment enrollment);
+        void Update(Enrollment enrollment);
     }
 }

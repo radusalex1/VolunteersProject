@@ -42,5 +42,14 @@ namespace VolunteersProject.Repository
             _context.Add(enrollment);
             _context.SaveChanges();
         }
+
+        public void Update(Enrollment enrollment)
+        {
+            //e1 => e1.contributionId == enrollment.contributionId
+            var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&  e.contributionId == enrollment.contributionId);
+            
+            result.VolunteerStatus = 3;
+            _context.SaveChanges();
+        }
     }
 }

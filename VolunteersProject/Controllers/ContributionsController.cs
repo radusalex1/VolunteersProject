@@ -227,6 +227,19 @@ namespace VolunteersProject.Controllers
             return View(selectedVolunteers);
         }
 
+        private void UpdateToPending(int contributionId, List<Volunteer> sendInvitationEmailList)
+        {
+            foreach (var selectedVolunteer in sendInvitationEmailList)
+            {
+                var enrollment = new Enrollment();
+
+                enrollment.contributionId = contributionId;
+                enrollment.VolunteerID = selectedVolunteer.ID;
+                enrollment.VolunteerStatus = 1;
+                enrollmentRepository.Save(enrollment);
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Assign(IFormCollection form, int contributionId)
@@ -234,6 +247,9 @@ namespace VolunteersProject.Controllers
             var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
 
             var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
+
+
+            UpdateToPending(contributionId, sendInvitationEmailList);
             SendEmail(contributionId, sendInvitationEmailList);
            
             var directAssignmentVolunteerList = GetGetSelectedVolunteersForDirectAssignment(form, availableVolunteers);
@@ -345,7 +361,7 @@ namespace VolunteersProject.Controllers
 
                 enrollment.contributionId = contributionId;
                 enrollment.VolunteerID = selectedVolunteer.ID;
-
+                enrollment.VolunteerStatus = 2;
                 enrollmentRepository.Save(enrollment);
             }
         }

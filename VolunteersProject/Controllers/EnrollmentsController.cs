@@ -205,7 +205,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/VolunteerEmailAnswer/5/1
-        public ActionResult VolunteerEmailAnswer(int contributionId = 5, int volunteerId = 1)
+        public ActionResult VolunteerEmailAnswer(int contributionId , int volunteerId)
         {          
             var contribution = contributionRepositor.GetContributionById(contributionId);
 
@@ -231,17 +231,15 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public ActionResult SaveVolunteerEmailAnswer(IFormCollection form, int contributionId, int volunteerId)
         {
-            var volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Pending;            
+            var volunteerEnrollmentStatus=-1;
 
             if (!string.IsNullOrEmpty(form["Accept"]))
             {
-                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Accepted;
+                volunteerEnrollmentStatus = 2;
             }
             else if (!string.IsNullOrEmpty(form["Decline"]))
             {
-                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Declined;
-
-                return View("Close");
+                volunteerEnrollmentStatus = 3;
             }
 
             //todo Radu - implement volunteerEnrollmentStatus column in Enrollment tbl (column type = integer)
@@ -250,10 +248,10 @@ namespace VolunteersProject.Controllers
             {
                 contributionId = contributionId,
                 VolunteerID = volunteerId,
-                //volunteerEnrollmentStatus = volunteerEnrollmentStatus
+                VolunteerStatus = (int)volunteerEnrollmentStatus
             };
 
-            enrollmentRepository.Save(enrollment);
+            enrollmentRepository.Update(enrollment);
 
             return View("Close");
         }
