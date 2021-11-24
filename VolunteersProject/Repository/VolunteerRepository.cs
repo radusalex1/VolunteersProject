@@ -32,7 +32,7 @@ namespace VolunteersProject.Repository
             var volunteers = _context.Volunteers
              .Include(e => e.Enrollments)
              .ThenInclude(c => c.contribution)
-             .ToList();            
+             .ToList();
 
             var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID == contributionId));
 
@@ -43,14 +43,38 @@ namespace VolunteersProject.Repository
             return volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
         }
 
+        public List<Volunteer> GetAvailableVolunteers(int? ContributionID)
+        {
+            //todo cia - complete this
+            throw new System.NotImplementedException();
+        }
+
         /// <summary>
         /// Get volunteer by id.
         /// </summary>
         /// <param name="id">Volunteer id.</param>
-        /// <returns></returns>
-        public Volunteer GetVolunteerById(int id)
+        /// <returns>Return volunteer.</returns>
+        public Volunteer GetVolunteerById(int? id)
         {
+            if (id == null)
+            {
+                return null;
+            }
+
             return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
+        }
+
+        public Volunteer GetVolunteerWithEnrollmentsById(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+
+            return _context.Volunteers
+                .Include(e => e.Enrollments)
+                .ThenInclude(c => c.contribution)
+                     .FirstOrDefault(m => m.ID == id);
         }
 
         /// <summary>
@@ -61,5 +85,49 @@ namespace VolunteersProject.Repository
         {
             return _context.Volunteers.ToList();
         }
+
+        /// <summary>
+        /// Add volunteer.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        public void AddVolunteer(Volunteer volunteer)
+        {
+            //todo Radu - check if this volunteer already exist (not by id)
+
+            _context.Add(volunteer);
+            _context.SaveChanges();
+        }
+
+        public void UpdateVolunteer(Volunteer volunteer)
+        {
+            //todo Radu - check if this volunteer already exist (not by id)
+
+            _context.Update(volunteer);
+            _context.SaveChanges();
+        }
+
+        public bool VolunteerExists(int id)
+        {
+            return _context.Volunteers.Any(e => e.ID == id);
+        }
+
+        /// <summary>
+        /// Delete volunteer.
+        /// </summary>
+        /// <param name="volunteer">Volunteer.</param>
+        public void DeleteVolunteer(Volunteer volunteer)
+        {
+            _context.Volunteers.Remove(volunteer);
+            _context.SaveChanges();
+        }
+
+
+        //public void UpdateVolunteer(Volunteer volunteer)
+        //{
+        //    //_context.Entry(volunteer).State = EntityState.Modified;
+        //    _context.SaveChangesAsync();
+        //}
+
+        //todo Radu and Cip - add save, edit, delete and maybe details
     }
 }

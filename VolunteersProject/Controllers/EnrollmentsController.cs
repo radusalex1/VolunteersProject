@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,29 +7,37 @@ using System.Linq;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     public class EnrollmentsController : Controller
     {
         private readonly VolunteersContext _context;
+        private IEnrollmentRepository enrollmentRepository;
+        private IVolunteerRepository volunteerRepository;
+        private IContributionRepository contributionRepositor;
 
-        public EnrollmentsController(VolunteersContext context)
+        public EnrollmentsController(VolunteersContext context, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IVolunteerRepository volunteerRepository)
         {
             _context = context;
+            this.enrollmentRepository = enrollmentRepository;
+            this.volunteerRepository = volunteerRepository;
+            this.contributionRepositor = contributionRepositor;
         }
 
         // GET: Enrollments
         public async Task<IActionResult> Index(string SortOrder)
         {
             var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution).OrderBy(c => c.contribution.Name);
+
             ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
             ViewData["contributionSortParam"] = SortOrder == "contr_asc" ? "contr_desc" : "contr_asc";
 
             var enrolments = from e in volunteersContext
                              select e;
             enrolments = GetSortedEnrollments(SortOrder, enrolments);
-           
+
             return View(enrolments);
         }
 
@@ -51,10 +60,10 @@ namespace VolunteersProject.Controllers
             }
             return enrolments;
         }/// <summary>
-        /// get sorted elements;
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+         /// get sorted elements;
+         /// </summary>
+         /// <param name="id"></param>
+         /// <returns></returns>
 
         // GET: Enrollments/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -79,9 +88,11 @@ namespace VolunteersProject.Controllers
         // GET: Enrollments/Create
         public IActionResult Create()
         {
+            //todo cia - fill ViewData below only with not assigned data - first select a contribution and after that display only the not already assigned volunteers
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID");
             ViewData["VolunteerFullName"] = new SelectList(_context.Volunteers, "ID", "FullName");
             ViewData["ContributionName"] = new SelectList(_context.Contributions, "ID", "Name");
+
             return View();
         }
 
@@ -94,10 +105,14 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(enrollment);
-                await _context.SaveChangesAsync();
+                //_context.Add(enrollment);
+                //await _context.SaveChangesAsync();
+                enrollmentRepository.Save(enrollment);
+
                 return RedirectToAction(nameof(Index));
             }
+
+
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
             return View(enrollment);
         }
@@ -187,6 +202,60 @@ namespace VolunteersProject.Controllers
             _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Enrollments/VolunteerEmailAnswer/5/1
+        public ActionResult VolunteerEmailAnswer(int contributionId = 5, int volunteerId = 1)
+        {          
+            var contribution = contributionRepositor.GetContributionById(contributionId);
+
+            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
+
+            if (contribution == null || volunteer == null)
+            {
+                return NotFound();
+            }
+
+            var volunteerEmailAnswer = new VolunteerEmailAnswerModel
+            {
+                ContributionId = contribution.ID,
+                ContributionName = contribution.Name,
+                StartDate = contribution.StartDate.ToString("yyyy-MM-dd"),
+                FinishDate = contribution.FinishDate.ToString("yyyy-MM-dd"),
+                VolunteerId = volunteer.ID,
+            };
+
+            return View(volunteerEmailAnswer);
+        }
+        
+        [HttpPost]
+        public ActionResult SaveVolunteerEmailAnswer(IFormCollection form, int contributionId, int volunteerId)
+        {
+            var volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Pending;            
+
+            if (!string.IsNullOrEmpty(form["Accept"]))
+            {
+                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Accepted;
+            }
+            else if (!string.IsNullOrEmpty(form["Decline"]))
+            {
+                volunteerEnrollmentStatus = VolunteerEnrollmentStatusEnum.Declined;
+
+                return View("Close");
+            }
+
+            //todo Radu - implement volunteerEnrollmentStatus column in Enrollment tbl (column type = integer)
+
+            var enrollment = new Enrollment
+            {
+                contributionId = contributionId,
+                VolunteerID = volunteerId,
+                //volunteerEnrollmentStatus = volunteerEnrollmentStatus
+            };
+
+            enrollmentRepository.Save(enrollment);
+
+            return View("Close");
         }
 
         private bool EnrollmentExists(int id)

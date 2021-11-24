@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <!--<UserSecretsId>2658facc-05b3-4740-bb02-b3fc4f7e6625</UserSecretsId>-->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Projects\VolunteersProject\VolunteersProject\VolunteersProject.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +28,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>    
+    <ProjectReference Include="..\MailServices\MailServices.csproj" />
   </ItemGroup>
 
 </Project>
