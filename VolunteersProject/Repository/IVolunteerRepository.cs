@@ -11,7 +11,7 @@ namespace VolunteersProject.Repository
 
         Volunteer GetVolunteerWithEnrollmentsById(int? id);
 
-        List<Volunteer> GetAvailableVolunteers(int? ContributionID);
+        List<Volunteer> GetAvailableVolunteers(int ContributionID);
 
         void AddVolunteer(Volunteer volunteer);
 

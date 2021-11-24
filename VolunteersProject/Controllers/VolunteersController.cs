@@ -50,14 +50,12 @@ namespace VolunteersProject.Controllers
 
             ViewData["CurrentFilter"] = SearchString;
 
-            //var students = from s in _context.Volunteers
-            //               select s;
+          
             var students = volunteerRepository.GetVolunteers();
 
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                //students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
                 students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString)).ToList();
             }
 
@@ -65,7 +63,6 @@ namespace VolunteersProject.Controllers
 
             int pageSize = 5;
 
-            //return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
         }
 

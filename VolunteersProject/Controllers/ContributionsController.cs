@@ -22,7 +22,15 @@ namespace VolunteersProject.Controllers
         private IContributionRepository contributionRepositor;
         private IConfiguration configuration;
 
-        public ContributionsController(VolunteersContext context, IVolunteerRepository volunteerRepository, IEmailService emailService, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IConfiguration configuration)
+        public ContributionsController
+            (
+                VolunteersContext context, 
+                IVolunteerRepository volunteerRepository, 
+                IEmailService emailService, 
+                IEnrollmentRepository enrollmentRepository, 
+                IContributionRepository contributionRepositor,
+                IConfiguration configuration
+            )
         {
             _context = context;
             this.volunteerRepository = volunteerRepository;
@@ -40,42 +48,40 @@ namespace VolunteersProject.Controllers
             ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
             ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
 
-
-            var contributions = from c in _context.Contributions
-                                select c;
-            //var contributions = (IQueryable<Contribution>)this.repository.GetContributions();
+            var contributions = contributionRepositor.GetContributions();
 
             contributions = SortContributions(sortOrder, contributions);
-            return View(await contributions.AsNoTracking().ToListAsync());
+           
+            return View(contributions);
         }
 
-        private static IQueryable<Contribution> SortContributions(string sortOrder, IQueryable<Contribution> contributions)
+        private static List<Contribution> SortContributions(string sortOrder, List<Contribution>contributions)
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    contributions = contributions.OrderByDescending(c => c.Name);
+                    contributions = contributions.OrderByDescending(c => c.Name).ToList();
                     break;
                 case "Credits":
-                    contributions = contributions.OrderBy(c => c.Credits);
+                    contributions = contributions.OrderBy(c => c.Credits).ToList();
                     break;
                 case "Credits_desc":
-                    contributions = contributions.OrderByDescending(c => c.Credits);
+                    contributions = contributions.OrderByDescending(c => c.Credits).ToList();
                     break;
                 case "sd_asc":
-                    contributions = contributions.OrderBy(c => c.StartDate);
+                    contributions = contributions.OrderBy(c => c.StartDate).ToList();
                     break;
                 case "sd_desc":
-                    contributions = contributions.OrderByDescending(c => c.StartDate);
+                    contributions = contributions.OrderByDescending(c => c.StartDate).ToList();
                     break;
                 case "fd_asc":
-                    contributions = contributions.OrderBy(c => c.FinishDate);
+                    contributions = contributions.OrderBy(c => c.FinishDate).ToList();
                     break;
                 case "fd_desc":
-                    contributions = contributions.OrderByDescending(c => c.FinishDate);
+                    contributions = contributions.OrderByDescending(c => c.FinishDate).ToList();
                     break;
                 default:
-                    contributions = contributions.OrderBy(c => c.Name);
+                    contributions = contributions.OrderBy(c => c.Name).ToList();
                     break;
             }
 
@@ -111,7 +117,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Credits,StartDate,FinishDate,Description")] Contribution contribution)
+        public async Task<IActionResult> Create([Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
@@ -143,7 +149,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate,Description")] Contribution contribution)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (id != contribution.ID)
             {

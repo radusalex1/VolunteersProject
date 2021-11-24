@@ -20,5 +20,10 @@ namespace VolunteersProject.Models
 
         public string Description { get; set; }
         public ICollection<Enrollment> Enrollments { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime VolunteerDeadlineConfirmation { get; set; }
+
     }
 }

@@ -43,12 +43,6 @@ namespace VolunteersProject.Repository
             return volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
         }
 
-        public List<Volunteer> GetAvailableVolunteers(int? ContributionID)
-        {
-            //todo cia - complete this
-            throw new System.NotImplementedException();
-        }
-
         /// <summary>
         /// Get volunteer by id.
         /// </summary>
