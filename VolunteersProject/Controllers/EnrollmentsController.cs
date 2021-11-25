@@ -105,15 +105,13 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                //_context.Add(enrollment);
-                //await _context.SaveChangesAsync();
                 enrollmentRepository.Save(enrollment);
-
+                
                 return RedirectToAction(nameof(Index));
             }
 
-
             ViewData["VolunteerID"] = new SelectList(_context.Volunteers, "ID", "ID", enrollment.VolunteerID);
+
             return View(enrollment);
         }
 

@@ -9,5 +9,6 @@ namespace VolunteersProject.Repository
         List<Enrollment> GetEnrollments();
         void Save(Enrollment enrollment);
         void Update(Enrollment enrollment);
+        bool IfExist(Enrollment enrollment);
     }
 }

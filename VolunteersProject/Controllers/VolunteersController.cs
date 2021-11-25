@@ -118,15 +118,7 @@ namespace VolunteersProject.Controllers
         //public async Task<IActionResult> Details(int? id)
         public IActionResult Details(int? id)
         {           
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var volunteer = await _context.Volunteers
-            //    .Include(e => e.Enrollments)
-            //    .ThenInclude(c => c.contribution)
-            //         .FirstOrDefaultAsync(m => m.ID == id);
+            
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
 
             if (volunteer == null)
@@ -152,10 +144,16 @@ namespace VolunteersProject.Controllers
         {            
             if (ModelState.IsValid)
             {
-                //_context.Add(volunteer);
-                //await _context.SaveChangesAsync();
-                volunteerRepository.AddVolunteer(volunteer);
+                if(volunteerRepository.VolunteerExists(volunteer))
+                {
+                    ///voluntar existent
+                    ///pop up sau return
 
+                    ViewBag.Alert = "Existing Volunteer";
+                    return View(volunteer);
+                }
+                volunteerRepository.AddVolunteer(volunteer);
+                ViewBag.Alert = "Volunteer added successfully";
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
@@ -195,8 +193,6 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-                    //_context.Update(volunteer);
-                    //await _context.SaveChangesAsync();
                     volunteerRepository.UpdateVolunteer(volunteer);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -219,13 +215,7 @@ namespace VolunteersProject.Controllers
         // GET: Volunteers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var volunteer = await _context.Volunteers
-            //    .FirstOrDefaultAsync(m => m.ID == id);
+           
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -241,11 +231,9 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var volunteer = await _context.Volunteers.FindAsync(id);
+            
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
-            //_context.Volunteers.Remove(volunteer);
-            //await _context.SaveChangesAsync();
             volunteerRepository.DeleteVolunteer(volunteer);
 
             return RedirectToAction(nameof(Index));

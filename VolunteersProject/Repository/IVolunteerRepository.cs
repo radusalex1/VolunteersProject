@@ -18,9 +18,11 @@ namespace VolunteersProject.Repository
         void UpdateVolunteer(Volunteer volunteer);
 
         bool VolunteerExists(int id);
+        bool VolunteerExists(Volunteer volunteer);
 
         void DeleteVolunteer(Volunteer volunteer);
 
         //void UpdateVolunteer(Volunteer volunteer);
+
     }
 }

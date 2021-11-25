@@ -51,5 +51,19 @@ namespace VolunteersProject.Repository
             result.VolunteerStatus = 3;
             _context.SaveChanges();
         }
+
+        public bool IfExist(Enrollment enrollment)
+        {
+            var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&
+                                                                e.contributionId==enrollment.contributionId);
+            if(result==null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
