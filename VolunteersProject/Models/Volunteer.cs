@@ -26,7 +26,11 @@ namespace VolunteersProject.Models
         {
             get
             {
-                return DateTime.Today.Year - BirthDate.Year;
+                DateTime now = DateTime.Today;
+                int age = now.Year - BirthDate.Year;
+                if (now < BirthDate.AddYears(age))
+                    age--;
+                return age;
             }
         }
         

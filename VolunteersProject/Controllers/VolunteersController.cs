@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -60,7 +62,7 @@ namespace VolunteersProject.Controllers
             }
 
             students = GetSortedVolunteers(sortOrder, students);
-
+            ///todo:read from appconfig
             int pageSize = 5;
 
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
@@ -141,22 +143,82 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
-        {            
+        {
             if (ModelState.IsValid)
             {
-                if(volunteerRepository.VolunteerExists(volunteer))
+                if(PhoneNumberIsValit(volunteer.Phone)==false)
                 {
-                    ///voluntar existent
-                    ///pop up sau return
+                    ViewBag.Alert = "Incorrect phone number";
+                    return View(volunteer);
+                }
 
+                if(InstagramIsValid(volunteer.InstagramProfile)==false)
+                {
+                    ViewBag.Alert = "Incorrect Instragram Profile";
+                    return View(volunteer);
+                }
+
+                if(EmailIsValid(volunteer.Email)==false)
+                {
+                    ViewBag.Alert= "Incorrect Email Adress";
+                    return View(volunteer);
+                }
+                if(volunteerRepository.VolunteerExists(volunteer))
+                { 
                     ViewBag.Alert = "Existing Volunteer";
                     return View(volunteer);
                 }
+
                 volunteerRepository.AddVolunteer(volunteer);
                 ViewBag.Alert = "Volunteer added successfully";
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
+        }
+
+        private bool PhoneNumberIsValit(string phoneNumber)
+        {
+            string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
+            Match m = Regex.Match(phoneNumber, pattern);
+            if(m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+         
+        }
+        private bool InstagramIsValid(string instagramProfile)
+        {
+            string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
+            Match m = Regex.Match(instagramProfile, pattern);
+
+            if (m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool EmailIsValid(string email)
+        {
+            if (email.Trim().EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         // GET: Volunteers/Edit/5

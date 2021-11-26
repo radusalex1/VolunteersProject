@@ -118,7 +118,7 @@ namespace VolunteersProject.Repository
        public bool VolunteerExists(Volunteer volunteer)
         {
             var result = _context.Volunteers.FirstOrDefault(v => v.Phone == volunteer.Phone
-                                                           /* && v.Email == volunteer.Email*/);
+                                                           && v.Email == volunteer.Email);
             if(result==null)
             {
                 return false;
