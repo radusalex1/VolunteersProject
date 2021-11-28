@@ -106,5 +106,11 @@
             </summary>
             <param name="volunteer"></param>
         </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Delete volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
+        </member>
     </members>
 </doc>
