@@ -10,8 +10,8 @@ using VolunteersProject.Data;
 namespace VolunteersProject.Migrations
 {
     [DbContext(typeof(VolunteersContext))]
-    [Migration("20211124101113_VolunteerDeadlineConfirmation")]
-    partial class VolunteerDeadlineConfirmation
+    [Migration("20211127100034_Add_VolunteerDeadlineConfirmation_to_Contribution")]
+    partial class Add_VolunteerDeadlineConfirmation_to_Contribution
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,6 +59,9 @@ namespace VolunteersProject.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("VolunteerID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VolunteerStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("contributionId")

@@ -10,8 +10,8 @@ using VolunteersProject.Data;
 namespace VolunteersProject.Migrations
 {
     [DbContext(typeof(VolunteersContext))]
-    [Migration("20210930102434_phone number added to volunteers")]
-    partial class phonenumberaddedtovolunteers
+    [Migration("20210930102434_phone_number_added_to_volunteers")]
+    partial class phone_number_added_to_volunteers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
