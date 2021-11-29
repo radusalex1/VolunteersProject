@@ -1,4 +1,4 @@
-﻿namespace VolunteersProject
+﻿namespace VolunteersProject.Common
 {
     public enum VolunteerEnrollmentStatusEnum
     {

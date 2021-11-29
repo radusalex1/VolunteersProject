@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VolunteersProject.Common;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
 
@@ -43,15 +44,17 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
+        //todo Radu - rename this method to something that can be understand
         public void Update(Enrollment enrollment)
         {
             //e1 => e1.contributionId == enrollment.contributionId
             var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&  e.contributionId == enrollment.contributionId);
             
-            result.VolunteerStatus = 3;
+            result.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Declined;
             _context.SaveChanges();
         }
 
+        //todo Radu - rename this method to something that can be understand
         public bool IfExist(Enrollment enrollment)
         {
             var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&

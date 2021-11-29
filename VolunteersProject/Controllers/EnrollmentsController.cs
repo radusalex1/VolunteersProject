@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
+    [Authorize]
     public class EnrollmentsController : Controller
     {
         private readonly VolunteersContext _context;

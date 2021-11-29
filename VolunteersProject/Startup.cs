@@ -1,17 +1,24 @@
 using MailServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using VolunteersProject.Data;
 using VolunteersProject.Repository;
+using VolunteersProject.Services;
 
 namespace VolunteersProject
 {
@@ -32,7 +39,41 @@ namespace VolunteersProject
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            services.AddSession();
+
             services.AddControllersWithViews();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ITokenService, TokenService>();
+
+            services.AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
+
+            //https://stackoverflow.com/questions/54461127/how-to-return-403-instead-of-redirect-to-access-denied-when-authorizefilter-fail/54461389
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.Events.OnRedirectToAccessDenied = context =>
+                        {
+                            context.Response.StatusCode = 403;
+                            return Task.CompletedTask;
+                        };
+                    });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             //services.AddSwaggerGen();           
@@ -90,7 +131,7 @@ namespace VolunteersProject
             services.AddTransient<IEnrollmentRepository, EnrollmentRepository>();
 
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailService, EmailService>();            
         }
     
 
@@ -105,7 +146,18 @@ namespace VolunteersProject
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseStaticFiles();
+
+            app.UseSession();
+
+            app.Use(async (context, next) =>
+            {
+                var token = context.Session.GetString("Token");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Request.Headers.Add("Authorization", "Bearer " + token);
+                }
+                await next();
+            });
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -118,15 +170,20 @@ namespace VolunteersProject
                 c.RoutePrefix = string.Empty;
             });
 
+            app.UseStaticFiles();
             app.UseRouting();            
-
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            //todo cia - check if this is need
+            // custom jwt auth middleware
+            //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "default",                    
+                    pattern: "{controller=account}/{action=Login}/{id?}");
             });
         }
     }

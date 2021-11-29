@@ -57,7 +57,12 @@ namespace VolunteersProject.Repository
 
             return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
         }
-
+ 
+        /// <summary>
+        /// Get volunteer with related enrollments.
+        /// </summary>
+        /// <param name="id">Volunteer id.</param>
+        /// <returns>Return colunteer with related enrollments.</returns>
         public Volunteer GetVolunteerWithEnrollmentsById(int? id)
         {
             if (id == null)
@@ -128,13 +133,5 @@ namespace VolunteersProject.Repository
                 return true;
             }
         }
-
-        //public void UpdateVolunteer(Volunteer volunteer)
-        //{
-        //    //_context.Entry(volunteer).State = EntityState.Modified;
-        //    _context.SaveChangesAsync();
-        //}
-
-        //todo Radu and Cip - add save, edit, delete and maybe details
     }
 }

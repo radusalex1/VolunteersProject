@@ -4,6 +4,12 @@
         <name>VolunteersProject</name>
     </assembly>
     <members>
+        <member name="M:VolunteersProject.Controllers.AccountController.Logout">
+            <summary>
+            Logout.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
             <summary>
             Send email to selected volunteers
@@ -69,6 +75,13 @@
             </summary>
             <returns>List of all volunteers.</returns>
         </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
+        </member>
         <member name="T:VolunteersProject.Repository.VolunteerRepository">
             <summary>
             Repository for volunteers.
@@ -93,6 +106,13 @@
             </summary>
             <param name="id">Volunteer id.</param>
             <returns>Return volunteer.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
         </member>
         <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteers">
             <summary>
