@@ -10,6 +10,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.Error(System.String)">
+            <summary>
+            Display the error view
+            </summary>
+            <param name="errorMessage"></param>
+            <returns></returns>
+        </member>
         <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
             <summary>
             Send email to selected volunteers

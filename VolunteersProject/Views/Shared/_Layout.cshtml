@@ -30,12 +30,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contributions" asp-action="Index">Events</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ReloadLogin">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
-                        </li>
+                        @*@if (string.IsNullOrEmpty(ViewBag.LoggedUser))
+                        {*@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ReloadLogin">Login</a>
+                            </li>
+                        @*}
+                        else
+                        {*@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
+                        @*}*@
+                    @*<li class="nav-item">
+                        logged user: @HttpContext.Session.GetString("LoggedUser");
+                    </li>*@
                     </ul>
                 </div>
             </div>

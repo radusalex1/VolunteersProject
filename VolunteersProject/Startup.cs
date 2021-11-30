@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -16,6 +17,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using VolunteersProject.Common;
 using VolunteersProject.Data;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
@@ -24,12 +26,12 @@ namespace VolunteersProject
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }             
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;           
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -42,6 +44,17 @@ namespace VolunteersProject
             services.AddSession();
 
             services.AddControllersWithViews();
+
+            https://social.msdn.microsoft.com/Forums/en-US/bd08bf73-4687-4d8c-8e88-8de9f7980e6b/how-to-make-global-variables-on-aspnet-core-2-on-level-of-all-project-web-api-?forum=aspdotnetcore
+            //Action<MDUOptions> mduOptions = (opt =>
+            //{
+            //    opt.CompanyCode = "aaaa";
+            //});
+
+            //services.Configure(mduOptions);
+            //services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<MDUOptions>>().Value);
+            ////todo cia - check tis
+            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ITokenService, TokenService>();
@@ -65,15 +78,15 @@ namespace VolunteersProject
             });
 
             //https://stackoverflow.com/questions/54461127/how-to-return-403-instead-of-redirect-to-access-denied-when-authorizefilter-fail/54461389
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options =>
-                    {
-                        options.Events.OnRedirectToAccessDenied = context =>
-                        {
-                            context.Response.StatusCode = 403;
-                            return Task.CompletedTask;
-                        };
-                    });
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //        .AddCookie(options =>
+            //        {
+            //            options.Events.OnRedirectToAccessDenied = context =>
+            //            {
+            //                context.Response.StatusCode = 403;
+            //                return Task.CompletedTask;
+            //            };
+            //        });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             //services.AddSwaggerGen();           
@@ -151,7 +164,9 @@ namespace VolunteersProject
 
             app.Use(async (context, next) =>
             {
-                var token = context.Session.GetString("Token");
+                //var token = context.Session.GetString("Token");
+                var token = ApplicationValues.JwtToken;
+
                 if (!string.IsNullOrEmpty(token))
                 {
                     context.Request.Headers.Add("Authorization", "Bearer " + token);

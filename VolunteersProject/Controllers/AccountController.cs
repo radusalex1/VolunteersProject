@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using VolunteersProject.Common;
 using VolunteersProject.DTO;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
@@ -18,18 +19,25 @@ namespace VolunteersProject.Controllers
         private readonly ITokenService _tokenService;
         private string generatedToken = null;
 
-        public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository)
+        private string loggedUser;
+
+        //private static string _mduDb;
+
+
+        public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository)//, MDUOptions options)
         {
             _config = config;
             _tokenService = tokenService;
             _userRepository = userRepository;
+
+            //options.CompanyCode = "bbb";
         }
 
         [AllowAnonymous]
         //[Route("Login")]
         [HttpGet]
         public IActionResult Login()
-        {            
+        {
             return View("Login");
         }
 
@@ -37,7 +45,7 @@ namespace VolunteersProject.Controllers
         [Route("Login")]
         [HttpGet]
         public IActionResult ReloadLogin()
-        {            
+        {
             return View("Login");
         }
 
@@ -56,22 +64,23 @@ namespace VolunteersProject.Controllers
 
             if (validUser != null)
             {
-                generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(),
-                validUser);
+                generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), validUser);
 
                 if (generatedToken != null)
                 {
-                    HttpContext.Session.SetString("Token", generatedToken);
+                    //HttpContext.Session.SetString("Token", generatedToken);                   
+                    ApplicationValues.JwtToken = generatedToken;
+
                     return RedirectToAction("MainWindow");
                 }
                 else
                 {
-                    return (RedirectToAction("Error"));
+                    return RedirectToAction("Error", new { errorMessage = "Jwt tokem is null." });
                 }
             }
             else
             {
-                return (RedirectToAction("Error"));
+                return RedirectToAction("Error", new { errorMessage = "Wrong user name or password." });
             }
         }
 
@@ -80,7 +89,8 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult MainWindow()
         {
-            string token = HttpContext.Session.GetString("Token");
+            //string token = HttpContext.Session.GetString("Token");
+            string token = ApplicationValues.JwtToken;
 
             if (token == null)
             {
@@ -94,7 +104,7 @@ namespace VolunteersProject.Controllers
             }
 
             ViewBag.Message = BuildMessage(token, 50);
-            
+
             return RedirectToAction("HomeIndex", "Home");
         }
 
@@ -103,16 +113,27 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <returns></returns>
         public IActionResult Logout()
-        {            
-            HttpContext.Session.Remove("Token");           
+        {
+            //HttpContext.Session.Remove("Token");
+            ApplicationValues.JwtToken = string.Empty;
 
             return View("Login");
         }
 
-        public IActionResult Error()
-        {
-            ViewBag.Message = "An error occured...";
-            return View();
+        /// <summary>
+        /// Display the error view
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        /// <returns></returns>
+        public IActionResult Error(string errorMessage)
+        {           
+            var errorViewModel = new ErrorViewModel
+            {
+                RequestId = "1",                
+                ErrorMessage = errorMessage
+            };
+
+            return View("Error", errorViewModel);
         }
 
         private string BuildMessage(string stringToSplit, int chunkSize)
