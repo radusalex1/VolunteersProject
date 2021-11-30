@@ -19,12 +19,12 @@ namespace VolunteersProject.Controllers
         public IActionResult HomeIndex()
         {            
             return View("HomeView");
-        }        
+        }
 
+        //todo cia - check if this is needed
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            //todo cia - check if this is needed
+        {            
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
