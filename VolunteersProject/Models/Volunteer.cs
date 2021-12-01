@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VolunteersProject.Models
 {
+    /// <summary>
+    /// Volunteer model.
+    /// </summary>
     public class Volunteer
     {
         public int ID { get; set; }
@@ -26,7 +29,11 @@ namespace VolunteersProject.Models
         {
             get
             {
-                return DateTime.Today.Year - BirthDate.Year;
+                DateTime now = DateTime.Today;
+                int age = now.Year - BirthDate.Year;
+                if (now < BirthDate.AddYears(age))
+                    age--;
+                return age;
             }
         }
         
@@ -51,6 +58,6 @@ namespace VolunteersProject.Models
         
         public string DescriptionContributionToHub { get; set; }
       
-
+        public bool IsSelected { get; set; }
     }
 }

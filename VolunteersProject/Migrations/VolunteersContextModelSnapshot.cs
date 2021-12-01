@@ -16,7 +16,7 @@ namespace VolunteersProject.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("VolunteersProject.Models.Contribution", b =>
@@ -41,6 +41,9 @@ namespace VolunteersProject.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("VolunteerDeadlineConfirmation")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.ToTable("Contributions");
@@ -56,6 +59,9 @@ namespace VolunteersProject.Migrations
                     b.Property<int>("VolunteerID")
                         .HasColumnType("int");
 
+                    b.Property<int>("VolunteerStatus")
+                        .HasColumnType("int");
+
                     b.Property<int>("contributionId")
                         .HasColumnType("int");
 
@@ -66,7 +72,7 @@ namespace VolunteersProject.Migrations
                     b.HasIndex("contributionId");
 
                     b.ToTable("Enrollments");
-                });
+                });           
 
             modelBuilder.Entity("VolunteersProject.Models.Volunteer", b =>
                 {
@@ -92,6 +98,9 @@ namespace VolunteersProject.Migrations
 
                     b.Property<string>("InstagramProfile")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("JoinHubDate")
                         .HasColumnType("datetime2");

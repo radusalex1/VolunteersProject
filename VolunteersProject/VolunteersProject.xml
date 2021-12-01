@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VolunteersProject</name>
+    </assembly>
+    <members>
+        <member name="M:VolunteersProject.Controllers.AccountController.#ctor(Microsoft.Extensions.Configuration.IConfiguration,VolunteersProject.Services.ITokenService,VolunteersProject.Repository.IUserRepository)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="config">Inject config service.</param>
+            <param name="tokenService">Inject jwt token service.</param>
+            <param name="userRepository">Inject user repository service.</param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.Login">
+            <summary>
+            Login
+            </summary>
+            <returns>Load Login view.</returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.ReloadLogin">
+            <summary>
+            Reload login.
+            </summary>
+            <returns>Load Login view.</returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.Logout">
+            <summary>
+            Logout.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.Error(System.String)">
+            <summary>
+            Display the error view
+            </summary>
+            <param name="errorMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+            <summary>
+            Send email to selected volunteers
+            </summary>
+            <param name="sendInvitationEmailList">Selected volunteer list.</param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SaveDirectAssignedVoluteersToContribution(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+            <summary>
+            Save assignment of volunteers to a specific contribution.
+            </summary>
+            <param name="contributionId">Contribution id.</param>
+            <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.EnrollmentsController.Details(System.Nullable{System.Int32})">
+            <summary>
+            get sorted elements;
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:VolunteersProject.Controllers.HomeController">
+            <summary>
+            Contructor
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Controllers.VolunteersController">
+            <summary>
+            Volunteer controller.
+            </summary>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(VolunteersProject.Repository.IVolunteerRepository)">
+            <summary>
+            Contructor
+            </summary>       
+            <param name="volunteerRepository"></param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.Details(System.Nullable{System.Int32})">
+            <summary>
+            Here sort Students
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:VolunteersProject.Models.AuthenticateRequest">
+            <summary>
+            Authentication model.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.AuthenticateRequest.Username">
+            <summary>
+            User name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.AuthenticateRequest.Password">
+            <summary>
+            Password.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.Contribution">
+            <summary>
+            Contribution model.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.ErrorViewModel">
+            <summary>
+            Error model.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.Volunteer">
+            <summary>
+            Volunteer model.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Repository.ContributionRepository">
+            <summary>
+            Contribution repository.
+            </summary>
+        </member>
+        <member name="M:VolunteersProject.Repository.ContributionRepository.#ctor(VolunteersProject.Data.VolunteersContext)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.ContributionRepository.GetContributionById(System.Int32)">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.ContributionRepository.GetContributions">
+            <summary>
+            Get all volunteers.
+            </summary>
+            <returns>List of all volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.EnrollmentRepository.#ctor(VolunteersProject.Data.VolunteersContext)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.EnrollmentRepository.GetEnrollmentById(System.Int32)">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.EnrollmentRepository.GetEnrollments">
+            <summary>
+            Get all volunteers.
+            </summary>
+            <returns>List of all volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
+        </member>
+        <member name="T:VolunteersProject.Repository.VolunteerRepository">
+            <summary>
+            Repository for volunteers.
+            </summary>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.#ctor(VolunteersProject.Data.VolunteersContext)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetAvailableVolunteers(System.Int32)">
+            <summary>
+            Get all not assigned volunteers to the current contribution id.
+            </summary>
+            <param name="contributionId">Contribution id.</param>
+            <returns>List of not assigned volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteerById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return volunteer.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteers">
+            <summary>
+            Get all volunteers.
+            </summary>
+            <returns>List of all volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.AddVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Add volunteer.
+            </summary>
+            <param name="volunteer"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Delete volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
+        </member>
+    </members>
+</doc>

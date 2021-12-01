@@ -1,23 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VolunteersProject.Data;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
+    /// <summary>
+    /// Volunteer controller.
+    /// </summary>
+    [Authorize]
     public class VolunteersController : Controller
     {
-        private readonly VolunteersContext _context;
-        private IVolunteerRepository repository;
+        //private readonly VolunteersContext _context;
+        private IVolunteerRepository volunteerRepository;
 
-        public VolunteersController(VolunteersContext context, IVolunteerRepository repository)
-        {
-            _context = context;
-            this.repository = repository;
+        /// <summary>
+        /// Contructor
+        /// </summary>       
+        /// <param name="volunteerRepository"></param>
+        public VolunteersController(IVolunteerRepository volunteerRepository)
+        {           
+            this.volunteerRepository = volunteerRepository;
         }
 
         // GET: Volunteers
@@ -49,72 +58,75 @@ namespace VolunteersProject.Controllers
 
             ViewData["CurrentFilter"] = SearchString;
 
-            var students = from s in _context.Volunteers
-                           select s;
+          
+            var students = volunteerRepository.GetVolunteers();
 
-            //var students1 = repository.GetVolunteers();s
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
+                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString)).ToList();
             }
 
             students = GetSortedVolunteers(sortOrder, students);
 
+            ///todo Radu - read from appconfig
             int pageSize = 5;
 
-            return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
         }
 
-        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        //private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        private List<Volunteer> GetSortedVolunteers(string sortOrder, List<Volunteer> students)
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    students = students.OrderByDescending(s => s.Name);
+                    //students = students.OrderByDescending(s => s.Name);
+                    students = students.OrderByDescending(s => s.Name).ToList();
                     break;
                 case "Age":
-                    students = students.OrderBy(s => s.BirthDate);
+                    //students = students.OrderBy(s => s.BirthDate);
+                    students = students.OrderBy(s => s.BirthDate).ToList();
                     break;
                 case "Age_desc":
-                    students = students.OrderByDescending(s => s.BirthDate);
+                    //students = students.OrderByDescending(s => s.BirthDate);
+                    students = students.OrderByDescending(s => s.BirthDate).ToList();
                     break;
                 case "City_desc":
-                    students = students.OrderByDescending(s => s.City);
+                    //students = students.OrderByDescending(s => s.City);
+                    students = students.OrderByDescending(s => s.City).ToList();
                     break;
                 case "City":
-                    students = students.OrderBy(s => s.City);
+                    //students = students.OrderBy(s => s.City);
+                    students = students.OrderBy(s => s.City).ToList();
                     break;
                 case "JoinHubDate":
-                    students = students.OrderBy(s => s.JoinHubDate);
+                    //students = students.OrderBy(s => s.JoinHubDate);
+                    students = students.OrderBy(s => s.JoinHubDate).ToList();
                     break;
                 case "JoinHubDate_desc":
-                    students = students.OrderByDescending(s => s.JoinHubDate);
+                    //students = students.OrderByDescending(s => s.JoinHubDate);
+                    students = students.OrderByDescending(s => s.JoinHubDate).ToList();
                     break;
                 default:
-                    students = students.OrderBy(s => s.Name);
+                    //students = students.OrderBy(s => s.Name);
+                    students = students.OrderBy(s => s.Name).ToList();
                     break;
             }
 
             return students;
-        }/// <summary>
+        }
+
+        /// <summary>
         /// Here sort Students
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-       
-        // GET: Volunteers/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            
-            var volunteer = await _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefaultAsync(m => m.ID == id);
+
+        // GET: Volunteers/Details/5        
+        public IActionResult Details(int? id)
+        {                       
+            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
 
             if (volunteer == null)
             {
@@ -139,33 +151,106 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(volunteer);
-                await _context.SaveChangesAsync();
+                if(PhoneNumberIsValit(volunteer.Phone)==false)
+                {
+                    ViewBag.Alert = "Incorrect phone number";
+                    return View(volunteer);
+                }
+
+                if(InstagramIsValid(volunteer.InstagramProfile)==false)
+                {
+                    ViewBag.Alert = "Incorrect Instragram Profile";
+                    return View(volunteer);
+                }
+
+                if(EmailIsValid(volunteer.Email)==false)
+                {
+                    ViewBag.Alert= "Incorrect Email Adress";
+                    return View(volunteer);
+                }
+                if(volunteerRepository.VolunteerExists(volunteer))
+                { 
+                    ViewBag.Alert = "Existing Volunteer";
+                    return View(volunteer);
+                }
+                volunteer.City = validateCity(volunteer.City);
+                volunteer.Name = validateName(volunteer.Name);
+                volunteerRepository.AddVolunteer(volunteer);
+                ViewBag.Alert = "Volunteer added successfully";
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
         }
 
+        private string validateCity(string city)
+        {
+           return char.ToUpper(city[0])+ city.Substring(1);
+        }
+        private string validateName(string name)
+        {
+            name = name.ToUpper();
+            return name;
+        }
+        private bool PhoneNumberIsValit(string phoneNumber)
+        {
+            string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
+            Match m = Regex.Match(phoneNumber, pattern);
+            if(m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+         
+        }
+        private bool InstagramIsValid(string instagramProfile)
+        {
+            string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
+            Match m = Regex.Match(instagramProfile, pattern);
+
+            if (m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool EmailIsValid(string email)
+        {
+            if (email.Trim().EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         // GET: Volunteers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //var volunteer = await _context.Volunteers.FindAsync(id);
-            //var volunteer = repository.GetVolunteers();
-
-            var volunteer = await _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefaultAsync(m => m.ID == id);
+            var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
             {
                 return NotFound();
             }
+
             return View(volunteer);
         }
 
@@ -185,12 +270,35 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-                    _context.Update(volunteer);
-                    await _context.SaveChangesAsync();
+                    if (PhoneNumberIsValit(volunteer.Phone) == false)
+                    {
+                        ViewBag.Alert = "Incorrect phone number";
+                        return View(volunteer);
+                    }
+
+                    if (InstagramIsValid(volunteer.InstagramProfile) == false)
+                    {
+                        ViewBag.Alert = "Incorrect Instragram Profile";
+                        return View(volunteer);
+                    }
+
+                    if (EmailIsValid(volunteer.Email) == false)
+                    {
+                        ViewBag.Alert = "Incorrect Email Adress";
+                        return View(volunteer);
+                    }
+                    if (volunteerRepository.VolunteerExists(volunteer))
+                    {
+                        ViewBag.Alert = "Existing Volunteer";
+                        return View(volunteer);
+                    }
+                    volunteer.City = validateCity(volunteer.City);
+                    volunteer.Name = validateName(volunteer.Name);
+                    volunteerRepository.UpdateVolunteer(volunteer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VolunteerExists(volunteer.ID))
+                    if (!volunteerRepository.VolunteerExists(volunteer.ID))
                     {
                         return NotFound();
                     }
@@ -199,6 +307,7 @@ namespace VolunteersProject.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
@@ -207,13 +316,9 @@ namespace VolunteersProject.Controllers
         // GET: Volunteers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+           
+            var volunteer = volunteerRepository.GetVolunteerById(id);
 
-            var volunteer = await _context.Volunteers
-                .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
             {
                 return NotFound();
@@ -227,15 +332,12 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var volunteer = await _context.Volunteers.FindAsync(id);
-            _context.Volunteers.Remove(volunteer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            
+            var volunteer = volunteerRepository.GetVolunteerById(id);
 
-        private bool VolunteerExists(int id)
-        {
-            return _context.Volunteers.Any(e => e.ID == id);
-        }
+            volunteerRepository.DeleteVolunteer(volunteer);
+
+            return RedirectToAction(nameof(Index));
+        }        
     }
 }

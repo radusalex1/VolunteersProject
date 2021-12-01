@@ -68,7 +68,17 @@
         </form>
     </div>
 </div>
-
+@if (!string.IsNullOrEmpty(ViewBag.Alert))
+{
+    <div class="alert alert-danger alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <div class="col-md-12">
+            <div class="text-danger">
+                @Html.Raw(@ViewBag.Alert)
+            </div>
+        </div>
+    </div>
+}
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

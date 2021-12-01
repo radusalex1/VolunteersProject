@@ -2,7 +2,7 @@
 
 namespace VolunteersProject.Migrations
 {
-    public partial class phonenumberaddedtovolunteers : Migration
+    public partial class phone_number_added_to_volunteers : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

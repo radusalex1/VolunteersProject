@@ -6,9 +6,9 @@
 
 <h1>View Volunteer per Event</h1>
 
-<p>
+@*<p>
     <a asp-action="Create">Create New</a>
-</p>
+</p>*@
 <table class="table">
     <thead>
         <tr>
@@ -32,8 +32,8 @@
                 @Html.DisplayFor(modelItem => item.contribution.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.EnrollmentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EnrollmentID">Details</a> |
+                @*<a asp-action="Edit" asp-route-id="@item.EnrollmentID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.EnrollmentID">Details</a> |*@
                 <a asp-action="Delete" asp-route-id="@item.EnrollmentID">Delete</a>
             </td>
         </tr>

@@ -4,9 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Contribution</h4>
+<h1>Create Event</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -31,6 +29,11 @@
                 <label asp-for="FinishDate" class="control-label"></label>
                 <input asp-for="FinishDate" class="form-control" />
                 <span asp-validation-for="FinishDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VolunteerDeadlineConfirmation" class="control-label"></label>
+                <input asp-for="VolunteerDeadlineConfirmation" class="form-control" />
+                <span asp-validation-for="VolunteerDeadlineConfirmation" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
