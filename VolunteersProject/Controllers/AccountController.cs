@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using VolunteersProject.Common;
 using VolunteersProject.DTO;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
+using Controller = Microsoft.AspNetCore.Mvc.Controller;
 
 namespace VolunteersProject.Controllers
 {
@@ -18,29 +20,36 @@ namespace VolunteersProject.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private string generatedToken = null;
+        //private string loggedUser;       
 
-        private string loggedUser;
-
-        //private static string _mduDb;
-
-
+        /// <summary>
+        /// Contructor
+        /// </summary>
+        /// <param name="config">Inject config service.</param>
+        /// <param name="tokenService">Inject jwt token service.</param>
+        /// <param name="userRepository">Inject user repository service.</param>
         public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository)//, MDUOptions options)
         {
             _config = config;
             _tokenService = tokenService;
             _userRepository = userRepository;
-
-            //options.CompanyCode = "bbb";
         }
 
+        /// <summary>
+        /// Login
+        /// </summary>
+        /// <returns>Load Login view.</returns>
         [AllowAnonymous]
-        //[Route("Login")]
         [HttpGet]
         public IActionResult Login()
         {
             return View("Login");
         }
 
+        /// <summary>
+        /// Reload login.
+        /// </summary>
+        /// <returns>Load Login view.</returns>
         [AllowAnonymous]
         [Route("Login")]
         [HttpGet]
@@ -68,8 +77,8 @@ namespace VolunteersProject.Controllers
 
                 if (generatedToken != null)
                 {
-                    //HttpContext.Session.SetString("Token", generatedToken);                   
                     ApplicationValues.JwtToken = generatedToken;
+                    HttpContext.Session.SetString("LoggedUser", validUser.UserName);
 
                     return RedirectToAction("MainWindow");
                 }
@@ -89,7 +98,6 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult MainWindow()
         {
-            //string token = HttpContext.Session.GetString("Token");
             string token = ApplicationValues.JwtToken;
 
             if (token == null)
@@ -114,8 +122,9 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         public IActionResult Logout()
         {
-            //HttpContext.Session.Remove("Token");
             ApplicationValues.JwtToken = string.Empty;
+            HttpContext.Session.SetString("userIsLogged", "false");
+            HttpContext.Session.SetString("LoggedUser", string.Empty);
 
             return View("Login");
         }
@@ -126,15 +135,34 @@ namespace VolunteersProject.Controllers
         /// <param name="errorMessage"></param>
         /// <returns></returns>
         public IActionResult Error(string errorMessage)
-        {           
+        {
             var errorViewModel = new ErrorViewModel
             {
-                RequestId = "1",                
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 ErrorMessage = errorMessage
             };
 
             return View("Error", errorViewModel);
         }
+
+        
+        public IActionResult SetLoggingAction()
+        {
+            var action = string.Empty;
+
+            //return !string.IsNullOrEmpty(generatedToken);
+            if (!string.IsNullOrEmpty(generatedToken))
+            {
+                action = "ReloadLogin";
+            }
+            else
+            {
+                action = "Logout";
+            }
+
+            return Content($"<a class=\"nav-link text-dark\" asp-area=\"\" asp-controller=\"Account\" asp-action=\"{ action}\">Login</a>");
+        }
+
 
         private string BuildMessage(string stringToSplit, int chunkSize)
         {
