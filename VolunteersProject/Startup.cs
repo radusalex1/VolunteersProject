@@ -78,15 +78,15 @@ namespace VolunteersProject
             });
 
             //https://stackoverflow.com/questions/54461127/how-to-return-403-instead-of-redirect-to-access-denied-when-authorizefilter-fail/54461389
-            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //        .AddCookie(options =>
-            //        {
-            //            options.Events.OnRedirectToAccessDenied = context =>
-            //            {
-            //                context.Response.StatusCode = 403;
-            //                return Task.CompletedTask;
-            //            };
-            //        });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.Events.OnRedirectToAccessDenied = context =>
+                        {
+                            context.Response.StatusCode = 403;
+                            return Task.CompletedTask;
+                        };
+                    });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             //services.AddSwaggerGen();           
