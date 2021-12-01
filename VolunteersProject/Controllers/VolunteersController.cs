@@ -6,22 +6,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VolunteersProject.Data;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
+    /// <summary>
+    /// Volunteer controller.
+    /// </summary>
     [Authorize]
     public class VolunteersController : Controller
     {
         //private readonly VolunteersContext _context;
         private IVolunteerRepository volunteerRepository;
 
-        public VolunteersController(VolunteersContext context, IVolunteerRepository volunteerRepositoryV)
-        {
-            //_context = context;
-            this.volunteerRepository = volunteerRepositoryV;
+        /// <summary>
+        /// Contructor
+        /// </summary>       
+        /// <param name="volunteerRepository"></param>
+        public VolunteersController(IVolunteerRepository volunteerRepository)
+        {           
+            this.volunteerRepository = volunteerRepository;
         }
 
         // GET: Volunteers
@@ -63,7 +68,8 @@ namespace VolunteersProject.Controllers
             }
 
             students = GetSortedVolunteers(sortOrder, students);
-            ///todo:read from appconfig
+
+            ///todo Radu - read from appconfig
             int pageSize = 5;
 
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
@@ -117,11 +123,9 @@ namespace VolunteersProject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
 
-        // GET: Volunteers/Details/5
-        //public async Task<IActionResult> Details(int? id)
+        // GET: Volunteers/Details/5        
         public IActionResult Details(int? id)
-        {           
-            
+        {                       
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
 
             if (volunteer == null)

@@ -5,6 +5,9 @@ using VolunteersProject.Models;
 
 namespace VolunteersProject.Repository
 {
+    /// <summary>
+    /// Contribution repository.
+    /// </summary>
     public class ContributionRepository : IContributionRepository
     {
         private readonly VolunteersContext _context;

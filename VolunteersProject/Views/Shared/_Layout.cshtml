@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,6 +18,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
@@ -30,23 +33,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contributions" asp-action="Index">Events</a>
                         </li>
-                        @*@if (string.IsNullOrEmpty(ViewBag.LoggedUser))
-                        {*@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ReloadLogin">Login</a>
-                            </li>
-                        @*}
-                        else
-                        {*@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
-                            </li>
-                        @*}*@
-                    @*<li class="nav-item">
-                        logged user: @HttpContext.Session.GetString("LoggedUser");
-                    </li>*@
+                        @{
+                            if (Context.Session.GetString("userIsLogged") != "true")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ReloadLogin">Login</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                </li>
+                            }
+                        }
                     </ul>
+                    @{
+                        if (Context.Session.GetString("userIsLogged") == "true")
+                        {
+                            <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
+                        }
+                    }
                 </div>
+
             </div>
         </nav>
     </header>

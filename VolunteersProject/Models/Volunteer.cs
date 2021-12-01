@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VolunteersProject.Models
 {
+    /// <summary>
+    /// Volunteer model.
+    /// </summary>
     public class Volunteer
     {
         public int ID { get; set; }

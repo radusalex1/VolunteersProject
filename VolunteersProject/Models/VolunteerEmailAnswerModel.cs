@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace VolunteersProject.Models
+﻿namespace VolunteersProject.Models
 {
     public class VolunteerEmailAnswerModel
     {
