@@ -4,6 +4,19 @@
         <name>VolunteersProject</name>
     </assembly>
     <members>
+        <member name="M:VolunteersProject.Controllers.AccountController.Logout">
+            <summary>
+            Logout.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.AccountController.Error(System.String)">
+            <summary>
+            Display the error view
+            </summary>
+            <param name="errorMessage"></param>
+            <returns></returns>
+        </member>
         <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
             <summary>
             Send email to selected volunteers
@@ -69,6 +82,13 @@
             </summary>
             <returns>List of all volunteers.</returns>
         </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
+        </member>
         <member name="T:VolunteersProject.Repository.VolunteerRepository">
             <summary>
             Repository for volunteers.
@@ -94,6 +114,13 @@
             <param name="id">Volunteer id.</param>
             <returns>Return volunteer.</returns>
         </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer with related enrollments.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Return colunteer with related enrollments.</returns>
+        </member>
         <member name="M:VolunteersProject.Repository.VolunteerRepository.GetVolunteers">
             <summary>
             Get all volunteers.
@@ -105,6 +132,12 @@
             Add volunteer.
             </summary>
             <param name="volunteer"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Delete volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
         </member>
     </members>
 </doc>

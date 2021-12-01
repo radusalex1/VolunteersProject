@@ -14,3 +14,17 @@ https://stackoverflow.com/questions/1333002/how-do-you-set-the-startup-page-for-
 http://www.mattruma.com/adventures-in-apis-grouping-controllers-in-swagger/
 
 Logging
+
+//auth jwt
+https://jasonwatmore.com/post/2019/10/14/aspnet-core-3-simple-api-for-authentication-registration-and-user-management#projectstructure
+
+//not finalized
+https://jasonwatmore.com/post/2019/10/11/aspnet-core-3-jwt-authentication-tutorial-with-example-api
+
+https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5
+
+
+
+//EF migrations
+https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-first.aspx
+

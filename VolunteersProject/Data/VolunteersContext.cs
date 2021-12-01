@@ -22,6 +22,8 @@ namespace VolunteersProject.Data
             modelBuilder.Entity<Contribution>().ToTable("Contributions");
             modelBuilder.Entity<Enrollment>().ToTable("Enrollments");
             modelBuilder.Entity<Volunteer>().ToTable("Volunteers");
+
+            modelBuilder.Entity<User>().ToTable("Users");
         }
     }
 }

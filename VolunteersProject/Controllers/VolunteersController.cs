@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VolunteersProject.Data;
@@ -12,6 +12,7 @@ using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
+    [Authorize]
     public class VolunteersController : Controller
     {
         //private readonly VolunteersContext _context;

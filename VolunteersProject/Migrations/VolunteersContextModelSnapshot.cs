@@ -72,7 +72,7 @@ namespace VolunteersProject.Migrations
                     b.HasIndex("contributionId");
 
                     b.ToTable("Enrollments");
-                });
+                });           
 
             modelBuilder.Entity("VolunteersProject.Models.Volunteer", b =>
                 {

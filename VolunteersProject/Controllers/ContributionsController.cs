@@ -10,9 +10,12 @@ using VolunteersProject.Data;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using VolunteersProject.Common;
 
 namespace VolunteersProject.Controllers
 {
+    [Authorize]
     public class ContributionsController : Controller
     {
         private readonly VolunteersContext _context;
@@ -235,7 +238,7 @@ namespace VolunteersProject.Controllers
 
                 enrollment.contributionId = contributionId;
                 enrollment.VolunteerID = selectedVolunteer.ID;
-                enrollment.VolunteerStatus = 1;
+                enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Pending;
                 enrollmentRepository.Save(enrollment);
             }
         }
@@ -361,7 +364,7 @@ namespace VolunteersProject.Controllers
 
                 enrollment.contributionId = contributionId;
                 enrollment.VolunteerID = selectedVolunteer.ID;
-                enrollment.VolunteerStatus = 2;
+                enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Accepted;
                 enrollmentRepository.Save(enrollment);
             }
         }
