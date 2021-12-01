@@ -151,13 +151,11 @@ namespace VolunteersProject.Controllers
                     ViewBag.Alert = "Incorrect phone number";
                     return View(volunteer);
                 }
-
                 if(InstagramIsValid(volunteer.InstagramProfile)==false)
                 {
                     ViewBag.Alert = "Incorrect Instragram Profile";
                     return View(volunteer);
                 }
-
                 if(EmailIsValid(volunteer.Email)==false)
                 {
                     ViewBag.Alert= "Incorrect Email Adress";
@@ -168,8 +166,10 @@ namespace VolunteersProject.Controllers
                     ViewBag.Alert = "Existing Volunteer";
                     return View(volunteer);
                 }
+
                 volunteer.City = validateCity(volunteer.City);
                 volunteer.Name = validateName(volunteer.Name);
+
                 volunteerRepository.AddVolunteer(volunteer);
                 ViewBag.Alert = "Volunteer added successfully";
                 return RedirectToAction(nameof(Index));
@@ -270,13 +270,11 @@ namespace VolunteersProject.Controllers
                         ViewBag.Alert = "Incorrect phone number";
                         return View(volunteer);
                     }
-
                     if (InstagramIsValid(volunteer.InstagramProfile) == false)
                     {
                         ViewBag.Alert = "Incorrect Instragram Profile";
                         return View(volunteer);
                     }
-
                     if (EmailIsValid(volunteer.Email) == false)
                     {
                         ViewBag.Alert = "Incorrect Email Adress";
@@ -287,8 +285,10 @@ namespace VolunteersProject.Controllers
                         ViewBag.Alert = "Existing Volunteer";
                         return View(volunteer);
                     }
+
                     volunteer.City = validateCity(volunteer.City);
                     volunteer.Name = validateName(volunteer.Name);
+
                     volunteerRepository.UpdateVolunteer(volunteer);
                 }
                 catch (DbUpdateConcurrencyException)
