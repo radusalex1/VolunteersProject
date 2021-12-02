@@ -1,0 +1,4 @@
+﻿insert into [Users]
+  (FirstName, LastName, UserName, [Password], [Role])
+  values
+  ('ciprian', 'alexandru', 't','t','admin');
