@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VolunteersProject.Data;
 using VolunteersProject.DTO;
 using VolunteersProject.Models;
 
 namespace VolunteersProject.Repository
 {
+    /// <summary>
+    /// Repository for Users
+    /// </summary>
     public class UserRepository : IUserRepository
     {
-        private readonly List<UserDTO> users = new List<UserDTO>();
+        private readonly VolunteersContext _context;
 
-        public UserRepository()
+        public UserRepository(VolunteersContext context)
         {
-            users.Add(new UserDTO { UserName = "joydipkanjilal", Password = "joydip123", Role = "manager" });
-            users.Add(new UserDTO { UserName = "michaelsanders", Password = "michael321", Role = "developer" });
-            users.Add(new UserDTO { UserName = "stephensmith", Password = "stephen123", Role = "tester" });
-            users.Add(new UserDTO { UserName = "rodpaddock", Password = "rod123", Role = "admin" });
-            users.Add(new UserDTO { UserName = "rexwills", Password = "rex321", Role = "admin" });
-            users.Add(new UserDTO { UserName = "test", Password = "test", Role = "admin" });
+            _context = context;
         }
+      
+        
 
-        public UserDTO GetUser(UserModel userModel)
+        public User GetUser(UserModel userModel)
         {
-            return users.Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
+            return _context.Users.Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
                 && x.Password == userModel.Password).FirstOrDefault();
         }
     }

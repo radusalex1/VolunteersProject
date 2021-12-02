@@ -5,6 +5,6 @@ namespace VolunteersProject.Repository
 {
     public interface IUserRepository
     {
-        UserDTO GetUser(UserModel userMode);
+        User GetUser(UserModel userMode);
     }
 }
