@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace VolunteersProject.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private string generatedToken = null;
-        //private string loggedUser;       
+        private string loggedUser;
+        private readonly ILogger<AccountController> _logger;
 
         /// <summary>
         /// Contructor
@@ -28,8 +30,9 @@ namespace VolunteersProject.Controllers
         /// <param name="config">Inject config service.</param>
         /// <param name="tokenService">Inject jwt token service.</param>
         /// <param name="userRepository">Inject user repository service.</param>
-        public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository)//, MDUOptions options)
+        public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository, ILogger<AccountController> logger)//, MDUOptions options)
         {
+            _logger = logger;
             _config = config;
             _tokenService = tokenService;
             _userRepository = userRepository;
@@ -43,6 +46,8 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            _logger.LogInformation("HttpGet Login()");
+
             return View("Login");
         }
 
@@ -55,6 +60,8 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult ReloadLogin()
         {
+            _logger.LogInformation("HttpGet ReloadLogin()");
+
             return View("Login");
         }
 
@@ -63,6 +70,8 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public IActionResult Login(UserModel userModel)
         {
+            _logger.LogInformation("httpPost Login()");
+
             if (string.IsNullOrEmpty(userModel.UserName) || string.IsNullOrEmpty(userModel.Password))
             {
                 return (RedirectToAction("Error"));

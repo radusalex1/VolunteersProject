@@ -4,7 +4,7 @@
         <name>VolunteersProject</name>
     </assembly>
     <members>
-        <member name="M:VolunteersProject.Controllers.AccountController.#ctor(Microsoft.Extensions.Configuration.IConfiguration,VolunteersProject.Services.ITokenService,VolunteersProject.Repository.IUserRepository)">
+        <member name="M:VolunteersProject.Controllers.AccountController.#ctor(Microsoft.Extensions.Configuration.IConfiguration,VolunteersProject.Services.ITokenService,VolunteersProject.Repository.IUserRepository,Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.AccountController})">
             <summary>
             Contructor
             </summary>
