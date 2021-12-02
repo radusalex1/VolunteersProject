@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using VolunteersProject.DTO;
+using VolunteersProject.Models;
 
 namespace VolunteersProject.Services
 {
@@ -11,7 +12,7 @@ namespace VolunteersProject.Services
     {
         private const double EXPIRY_DURATION_MINUTES = 30;
 
-        public string BuildToken(string key, string issuer, UserDTO user)
+        public string BuildToken(string key, string issuer, User user)
         {
             var claims = new[] {
             new Claim(ClaimTypes.Name, user.UserName),

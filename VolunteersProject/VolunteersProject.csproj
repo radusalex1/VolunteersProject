@@ -9,6 +9,10 @@
     <DocumentationFile>C:\Projects\VolunteersProject\VolunteersProject\VolunteersProject.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\Radu\Source\Repos\VolunteersProject\VolunteersProject\VolunteersProject.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Views\Contributions\AssignVolunteersPage.cshtml.cs" />
   </ItemGroup>
