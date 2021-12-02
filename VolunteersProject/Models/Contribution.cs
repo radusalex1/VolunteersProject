@@ -12,7 +12,7 @@ namespace VolunteersProject.Models
         public int ID { get; set; }
         
         public string Name { get; set; }
-
+       [Display(Name="Happy Points")]
         public int Credits { get; set; }
 
         [DataType(DataType.Date)]

@@ -151,17 +151,17 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(PhoneNumberIsValit(volunteer.Phone)==false)
+                if(!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone)==false)
                 {
                     ViewBag.Alert = "Incorrect phone number";
                     return View(volunteer);
                 }
-                if(InstagramIsValid(volunteer.InstagramProfile)==false)
+                if(!string.IsNullOrEmpty(volunteer.InstagramProfile)&&InstagramIsValid(volunteer.InstagramProfile)==false)
                 {
                     ViewBag.Alert = "Incorrect Instragram Profile";
                     return View(volunteer);
                 }
-                if(EmailIsValid(volunteer.Email)==false)
+                if(!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email)==false)
                 {
                     ViewBag.Alert= "Incorrect Email Adress";
                     return View(volunteer);
@@ -184,14 +184,14 @@ namespace VolunteersProject.Controllers
 
         private string validateCity(string city)
         {
-           return char.ToUpper(city[0])+ city.Substring(1);
+           return char.ToUpper(city[0]) + city.Substring(1);
         }
         private string validateName(string name)
         {
             name = name.ToUpper();
             return name;
         }
-        private bool PhoneNumberIsValit(string phoneNumber)
+        private bool PhoneNumberIsValid(string phoneNumber)
         {
             string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
             Match m = Regex.Match(phoneNumber, pattern);
@@ -203,7 +203,6 @@ namespace VolunteersProject.Controllers
             {
                 return false;
             }
-         
         }
         private bool InstagramIsValid(string instagramProfile)
         {
@@ -270,17 +269,17 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-                    if (PhoneNumberIsValit(volunteer.Phone) == false)
+                    if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
                     {
                         ViewBag.Alert = "Incorrect phone number";
                         return View(volunteer);
                     }
-                    if (InstagramIsValid(volunteer.InstagramProfile) == false)
+                    if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
                     {
                         ViewBag.Alert = "Incorrect Instragram Profile";
                         return View(volunteer);
                     }
-                    if (EmailIsValid(volunteer.Email) == false)
+                    if (!string.IsNullOrEmpty(volunteer.Email)&&EmailIsValid(volunteer.Email) == false)
                     {
                         ViewBag.Alert = "Incorrect Email Adress";
                         return View(volunteer);
