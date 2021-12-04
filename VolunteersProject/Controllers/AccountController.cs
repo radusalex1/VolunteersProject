@@ -22,7 +22,7 @@ namespace VolunteersProject.Controllers
         private readonly ITokenService _tokenService;
         private string generatedToken = null;
         private string loggedUser;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger<AccountController> logger;
 
         /// <summary>
         /// Contructor
@@ -32,7 +32,7 @@ namespace VolunteersProject.Controllers
         /// <param name="userRepository">Inject user repository service.</param>
         public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository, ILogger<AccountController> logger)//, MDUOptions options)
         {
-            _logger = logger;
+            this.logger = logger;
             _config = config;
             _tokenService = tokenService;
             _userRepository = userRepository;
@@ -46,7 +46,7 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            _logger.LogInformation("HttpGet Login()");
+            this.logger.LogInformation("HttpGet Login()");
 
             return View("Login");
         }
@@ -60,7 +60,7 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult ReloadLogin()
         {
-            _logger.LogInformation("HttpGet ReloadLogin()");
+            this.logger.LogInformation("HttpGet ReloadLogin()");
 
             return View("Login");
         }
@@ -70,7 +70,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public IActionResult Login(UserModel userModel)
         {
-            _logger.LogInformation("httpPost Login()");
+            this.logger.LogInformation("httpPost Login()");
 
             if (string.IsNullOrEmpty(userModel.UserName) || string.IsNullOrEmpty(userModel.Password))
             {
@@ -88,16 +88,16 @@ namespace VolunteersProject.Controllers
                 {
                     ApplicationValues.JwtToken = generatedToken;
                     HttpContext.Session.SetString("LoggedUser", validUser.UserName);
-
+                    
                     return RedirectToAction("MainWindow");
                 }
                 else
-                {
+                {                    
                     return RedirectToAction("Error", new { errorMessage = "Jwt tokem is null." });
                 }
             }
             else
-            {
+            {                
                 return RedirectToAction("Error", new { errorMessage = "Wrong user name or password." });
             }
         }
@@ -131,6 +131,8 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         public IActionResult Logout()
         {
+            this.logger.LogInformation("HttpGet Logout()");
+
             ApplicationValues.JwtToken = string.Empty;
             HttpContext.Session.SetString("userIsLogged", "false");
             HttpContext.Session.SetString("LoggedUser", string.Empty);
@@ -158,8 +160,7 @@ namespace VolunteersProject.Controllers
         public IActionResult SetLoggingAction()
         {
             var action = string.Empty;
-
-            //return !string.IsNullOrEmpty(generatedToken);
+            
             if (!string.IsNullOrEmpty(generatedToken))
             {
                 action = "ReloadLogin";

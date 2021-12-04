@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,18 @@ namespace VolunteersProject.Controllers
     public class VolunteersController : Controller
     {
         //private readonly VolunteersContext _context;
+        private readonly ILogger<VolunteersController> logger;
         private IVolunteerRepository volunteerRepository;
+
 
         /// <summary>
         /// Contructor
-        /// </summary>       
-        /// <param name="volunteerRepository"></param>
-        public VolunteersController(IVolunteerRepository volunteerRepository)
-        {           
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="volunteerRepository">Volunteer repository.</param>
+        public VolunteersController(ILogger<VolunteersController> logger, IVolunteerRepository volunteerRepository)
+        {
+            this.logger = logger;
             this.volunteerRepository = volunteerRepository;
         }
 
@@ -36,6 +41,7 @@ namespace VolunteersProject.Controllers
             string currentFilter,
             int? pageNumber)
         {
+            this.logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
 

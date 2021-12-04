@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -11,14 +13,17 @@ namespace VolunteersProject.Repository
     public class ContributionRepository : IContributionRepository
     {
         private readonly VolunteersContext _context;
+        private readonly ILogger<ContributionRepository> logger;
 
         /// <summary>
         /// Contructor
         /// </summary>
-        /// <param name="context"></param>
-        public ContributionRepository(VolunteersContext context)
+        /// <param name="logger">Logger.</param>
+        /// <param name="context">context.</param>
+        public ContributionRepository(ILogger<ContributionRepository> logger, VolunteersContext context)
         {
             _context = context;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -37,6 +42,28 @@ namespace VolunteersProject.Repository
         /// <returns>List of all volunteers.</returns>
         public List<Contribution> GetContributions()
         {
+            this.logger.LogInformation("GetContributions().");
+
+            try
+            {
+                if (_context == null)
+                {
+                    this.logger.LogInformation("_context is null");
+
+                    return null;
+                }
+
+                if (_context.Contributions == null)
+                {
+                    this.logger.LogInformation("_context.Contributions");
+                    return null;
+                }
+            }
+            catch(Exception ex)
+            {
+                this.logger.LogInformation(ex.Message);
+            }
+
             return _context.Contributions.ToList();
         }
     }

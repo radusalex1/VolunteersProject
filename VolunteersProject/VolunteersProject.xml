@@ -67,11 +67,12 @@
             Volunteer controller.
             </summary>
         </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(VolunteersProject.Repository.IVolunteerRepository)">
+        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},VolunteersProject.Repository.IVolunteerRepository)">
             <summary>
             Contructor
-            </summary>       
-            <param name="volunteerRepository"></param>
+            </summary>
+            <param name="logger">Logger.</param>
+            <param name="volunteerRepository">Volunteer repository.</param>
         </member>
         <member name="M:VolunteersProject.Controllers.VolunteersController.Details(System.Nullable{System.Int32})">
             <summary>
@@ -115,7 +116,7 @@
             Contribution repository.
             </summary>
         </member>
-        <member name="M:VolunteersProject.Repository.ContributionRepository.#ctor(VolunteersProject.Data.VolunteersContext)">
+        <member name="M:VolunteersProject.Repository.ContributionRepository.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Repository.ContributionRepository},VolunteersProject.Data.VolunteersContext)">
             <summary>
             Contructor
             </summary>
