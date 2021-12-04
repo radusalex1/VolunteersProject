@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,13 +17,16 @@ namespace VolunteersProject.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly VolunteersContext _context;
+
+        private readonly ILogger<EnrollmentsController> logger;
         private IEnrollmentRepository enrollmentRepository;
         private IVolunteerRepository volunteerRepository;
         private IContributionRepository contributionRepositor;
 
-        public EnrollmentsController(VolunteersContext context, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IVolunteerRepository volunteerRepository)
+        public EnrollmentsController(VolunteersContext context, ILogger<EnrollmentsController> logger, IEnrollmentRepository enrollmentRepository, IContributionRepository contributionRepositor, IVolunteerRepository volunteerRepository)
         {
             _context = context;
+            this.logger = logger;
             this.enrollmentRepository = enrollmentRepository;
             this.volunteerRepository = volunteerRepository;
             this.contributionRepositor = contributionRepositor;
@@ -31,6 +35,8 @@ namespace VolunteersProject.Controllers
         // GET: Enrollments
         public async Task<IActionResult> Index(string SortOrder)
         {
+            this.logger.LogInformation("HttpGet EnrollmentsController Index()");
+
             var volunteersContext = _context.Enrollments.Include(e => e.volunteer).Include(e => e.contribution).OrderBy(c => c.contribution.Name);
 
             ViewData["NameSortParam"] = String.IsNullOrEmpty(SortOrder) ? "name_desc" : "";
@@ -38,6 +44,7 @@ namespace VolunteersProject.Controllers
 
             var enrolments = from e in volunteersContext
                              select e;
+
             enrolments = GetSortedEnrollments(SortOrder, enrolments);
 
             return View(enrolments);

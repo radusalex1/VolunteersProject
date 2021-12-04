@@ -19,7 +19,9 @@ namespace VolunteersProject.Controllers
 
         [Authorize]
         public IActionResult HomeIndex()
-        {            
+        {
+            _logger.LogInformation("HttpGet HomeIndex()");
+
             return View("HomeView");
         }
 
