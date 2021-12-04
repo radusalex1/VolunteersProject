@@ -12,6 +12,7 @@ using VolunteersProject.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using VolunteersProject.Common;
+using Microsoft.Extensions.Logging;
 
 namespace VolunteersProject.Controllers
 {
@@ -19,6 +20,7 @@ namespace VolunteersProject.Controllers
     public class ContributionsController : Controller
     {
         private readonly VolunteersContext _context;
+        private readonly ILogger<ContributionsController> logger;
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
@@ -27,15 +29,17 @@ namespace VolunteersProject.Controllers
 
         public ContributionsController
             (
-                VolunteersContext context, 
-                IVolunteerRepository volunteerRepository, 
-                IEmailService emailService, 
-                IEnrollmentRepository enrollmentRepository, 
+                ILogger<ContributionsController> logger,
+                VolunteersContext context,
+                IVolunteerRepository volunteerRepository,
+                IEmailService emailService,
+                IEnrollmentRepository enrollmentRepository,
                 IContributionRepository contributionRepositor,
                 IConfiguration configuration
             )
         {
             _context = context;
+            this.logger = logger;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
@@ -46,19 +50,41 @@ namespace VolunteersProject.Controllers
         // GET: Contributions
         public async Task<IActionResult> Index(string sortOrder)
         {
-            ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
-            ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
-            ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
+            this.logger.LogInformation("HttpGet ContributionsController Index()");
 
-            var contributions = contributionRepositor.GetContributions();
+            var contributions = new List<Contribution>();
 
-            contributions = SortContributions(sortOrder, contributions);
-           
+            try
+            {
+                ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+                ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+                ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
+                ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
+
+                contributions = contributionRepositor.GetContributions();
+
+                if (contributions == null)
+                {
+                   
+                    return RedirectToAction("Error", "Account", new { errorMessage = "Contribution is null." });
+                }                
+
+                contributions = SortContributions(sortOrder, contributions);
+
+                if (contributions == null)
+                {
+                    return RedirectToAction("Error", "Account", new { errorMessage = "SortContributions returns null." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Account", new { errorMessage = ex.Message });
+            }
+
             return View(contributions);
         }
 
-        private static List<Contribution> SortContributions(string sortOrder, List<Contribution>contributions)
+        private static List<Contribution> SortContributions(string sortOrder, List<Contribution> contributions)
         {
             switch (sortOrder)
             {
@@ -254,7 +280,7 @@ namespace VolunteersProject.Controllers
 
             UpdateToPending(contributionId, sendInvitationEmailList);
             SendEmail(contributionId, sendInvitationEmailList);
-           
+
             var directAssignmentVolunteerList = GetGetSelectedVolunteersForDirectAssignment(form, availableVolunteers);
             SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
 
@@ -272,7 +298,7 @@ namespace VolunteersProject.Controllers
         }
 
         private List<Volunteer> GetGetSelectedVolunteersForDirectAssignment(IFormCollection form, List<Volunteer> availableVolunteers)
-        {            
+        {
             var directAssignmentVolunteerList = new List<Volunteer>();
 
             foreach (var volunteer in availableVolunteers)
@@ -290,7 +316,7 @@ namespace VolunteersProject.Controllers
         }
 
         private List<Volunteer> GetSelectedVolunteersForSendEmail(IFormCollection form, List<Volunteer> availableVolunteers)
-        {            
+        {
             var sendInvitationEmailList = new List<Volunteer>();
 
             foreach (var volunteer in availableVolunteers)

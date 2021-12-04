@@ -13,9 +13,10 @@ https://stackoverflow.com/questions/1333002/how-do-you-set-the-startup-page-for-
 //group actions in swagger
 http://www.mattruma.com/adventures-in-apis-grouping-controllers-in-swagger/
 
-Logging
+//Logging
+https://www.tutorialsteacher.com/core/aspnet-core-logging
 
-	//auth jwt
+//auth jwt
 	https://jasonwatmore.com/post/2019/10/14/aspnet-core-3-simple-api-for-authentication-registration-and-user-management#projectstructure
 	
 	//not finalized
