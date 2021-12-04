@@ -189,7 +189,7 @@ namespace VolunteersProject.Controllers
             return result;
         }
 
-        private UserDTO GetUser(UserModel userModel)
+        private User GetUser(UserModel userModel)
         {
             //todo Radu - move this to repository
 

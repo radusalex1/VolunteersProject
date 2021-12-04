@@ -161,6 +161,11 @@
             <param name="id">Volunteer id.</param>
             <returns>Return colunteer with related enrollments.</returns>
         </member>
+        <member name="T:VolunteersProject.Repository.UserRepository">
+            <summary>
+            Repository for Users
+            </summary>
+        </member>
         <member name="T:VolunteersProject.Repository.VolunteerRepository">
             <summary>
             Repository for volunteers.
