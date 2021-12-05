@@ -359,6 +359,7 @@ namespace VolunteersProject.Controllers
                $"Click on {link} for more details.";
 
                 var emailSender = configuration.GetSection("AppSettings").GetSection("EmailSender").Value;
+                
                 emailMessage.FromAddresses = new List<EmailAddress>
                 {
                     new EmailAddress { Address = emailSender }
@@ -372,9 +373,11 @@ namespace VolunteersProject.Controllers
         {
             var server = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
-            var action = $"/Enrollments/VolunteerEmailAnswer?contributionId={contributionId}&volunteerId={volunteerId}";
+            var applicationSiteName = configuration.GetSection("AppSettings").GetSection("ApplicationSiteName").Value;
 
-            return $"<a href=\"{ server}{ action}\">link</a>";
+            var action = $"{applicationSiteName}/Enrollments/VolunteerEmailAnswer?contributionId={contributionId}&volunteerId={volunteerId}";
+
+            return $"<a href=\"{server}{action}\">link</a>";
         }
 
         /// <summary>
