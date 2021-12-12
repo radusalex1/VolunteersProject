@@ -63,6 +63,7 @@ namespace VolunteersProject.Models
         
         public string DescriptionContributionToHub { get; set; }
       
+        //todo Radu - remove this property from here and create a new DTO with it - this has nothing to do with the DB
         public bool IsSelected { get; set; }
     }
 }
