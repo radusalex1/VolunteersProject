@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using VolunteersProject.Common;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
@@ -34,7 +35,9 @@ namespace VolunteersProject.Controllers
             this.volunteerRepository = volunteerRepository;
         }
 
+
         // GET: Volunteers
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Index(
             string sortOrder,
             string SearchString,
@@ -143,6 +146,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Create
+        [Authorize(Roles = Role.Admin)]
         public IActionResult Create()
         {
             return View();
@@ -153,6 +157,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
@@ -192,11 +197,13 @@ namespace VolunteersProject.Controllers
         {
            return char.ToUpper(city[0]) + city.Substring(1);
         }
+
         private string validateName(string name)
         {
             name = name.ToUpper();
             return name;
         }
+
         private bool PhoneNumberIsValid(string phoneNumber)
         {
             string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
@@ -262,6 +269,7 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = Role.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
@@ -319,6 +327,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Delete/5
+        [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
            
@@ -333,6 +342,7 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: Volunteers/Delete/5
+        [Authorize(Roles = Role.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
