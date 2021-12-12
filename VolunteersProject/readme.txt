@@ -28,7 +28,8 @@ https://www.tutorialsteacher.com/core/aspnet-core-logging
 
 	//implement roles
 	https://jasonwatmore.com/post/2019/10/16/aspnet-core-3-role-based-authorization-tutorial-with-example-api#projectstructure
-
+	-set multiple roles
+	https://stackoverflow.com/questions/700166/allow-multiple-roles-to-access-controller-action
 
 
 //EF migrations
@@ -39,6 +40,5 @@ https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-
 	https://stackoverflow.com/questions/35379309/how-to-upload-files-in-asp-net-core
 	-security considerations for upload
 	https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
-	-set multiple roles
-	https://stackoverflow.com/questions/700166/allow-multiple-roles-to-access-controller-action
+	
 
