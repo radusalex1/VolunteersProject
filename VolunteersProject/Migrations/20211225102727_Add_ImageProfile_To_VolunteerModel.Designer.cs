@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VolunteersProject.Data;
 
 namespace VolunteersProject.Migrations
 {
     [DbContext(typeof(VolunteersContext))]
-    partial class VolunteersContextModelSnapshot : ModelSnapshot
+    [Migration("20211225102727_Add_ImageProfile_To_VolunteerModel")]
+    partial class Add_ImageProfile_To_VolunteerModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -38,6 +38,13 @@ https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-
 
 //UPLOAD files
 	https://stackoverflow.com/questions/35379309/how-to-upload-files-in-asp-net-core
+
+	//display image
+	http://aspsolution.net/Code/5/5171/Upload-and-Display-Image-from-Database-in-ASPNET-Core-20/
+
+	//another way to display and upload image
+	https://www.c-sharpcorner.com/article/upload-and-display-image-in-asp-net-core-3-1/
+
 	-security considerations for upload
 	https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
 	

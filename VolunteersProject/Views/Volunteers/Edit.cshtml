@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
@@ -58,6 +58,13 @@
                 <input asp-for="FaceBookProfile" class="form-control" />
                 <span asp-validation-for="FaceBookProfile" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="ImageProfile" class="control-label"></label>
+                <img src="@ViewBag.Image" width="60px" height="90px" alt="Alternate Text" style="border:dashed" />
+                <input asp-for="ImageProfile" />
+            </div>
+
             <div class="form-group">
                 <label asp-for="DescriptionContributionToHub" class="control-label"></label>
                 <textarea asp-for="DescriptionContributionToHub" rows="5" cols="40">@Html.DisplayFor(model => model.DescriptionContributionToHub)</textarea>

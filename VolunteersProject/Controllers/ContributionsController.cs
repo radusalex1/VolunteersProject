@@ -387,6 +387,7 @@ namespace VolunteersProject.Controllers
 
         private AvailableVolunters GetAvailableVolunteersDTO(int id)
         {
+            //todo cia - this and the next method should be refactor
             var volunteersDTO = GetVolunteersDTO(id);
 
             var selectedVolunteers = new AvailableVolunters

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -67,7 +69,7 @@ namespace VolunteersProject.Controllers
 
             ViewData["CurrentFilter"] = SearchString;
 
-          
+
             var students = volunteerRepository.GetVolunteers();
 
 
@@ -134,8 +136,13 @@ namespace VolunteersProject.Controllers
 
         // GET: Volunteers/Details/5        
         public IActionResult Details(int? id)
-        {                       
+        {
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
+
+            if (volunteer.ImageProfileByteArray != null)
+            {
+                ViewBag.Image = ViewImage(volunteer.ImageProfileByteArray);
+            }
 
             if (volunteer == null)
             {
@@ -158,27 +165,27 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Role.Admin)]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
+        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
             {
-                if(!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone)==false)
+                if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
                 {
                     ViewBag.Alert = "Incorrect phone number";
                     return View(volunteer);
                 }
-                if(!string.IsNullOrEmpty(volunteer.InstagramProfile)&&InstagramIsValid(volunteer.InstagramProfile)==false)
+                if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
                 {
                     ViewBag.Alert = "Incorrect Instragram Profile";
                     return View(volunteer);
                 }
-                if(!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email)==false)
+                if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
                 {
-                    ViewBag.Alert= "Incorrect Email Adress";
+                    ViewBag.Alert = "Incorrect Email Adress";
                     return View(volunteer);
                 }
-                if(volunteerRepository.VolunteerExists(volunteer))
-                { 
+                if (volunteerRepository.VolunteerExists(volunteer))
+                {
                     ViewBag.Alert = "Existing Volunteer";
                     return View(volunteer);
                 }
@@ -186,66 +193,25 @@ namespace VolunteersProject.Controllers
                 volunteer.City = validateCity(volunteer.City);
                 volunteer.Name = validateName(volunteer.Name);
 
+
+                if (volunteer.ImageProfile != null)
+                {
+                    //var img = volunteer.ImageProfile;
+
+                    //var fileName = Path.GetFileName(volunteer.ImageProfile.FileName);
+                    //var contentType = volunteer.ImageProfile.ContentType;
+
+                    volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+                }
+
+
                 volunteerRepository.AddVolunteer(volunteer);
+
                 ViewBag.Alert = "Volunteer added successfully";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
-        }
-
-        private string validateCity(string city)
-        {
-           return char.ToUpper(city[0]) + city.Substring(1);
-        }
-
-        private string validateName(string name)
-        {
-            name = name.ToUpper();
-            return name;
-        }
-
-        private bool PhoneNumberIsValid(string phoneNumber)
-        {
-            string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
-            Match m = Regex.Match(phoneNumber, pattern);
-            if(m.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool InstagramIsValid(string instagramProfile)
-        {
-            string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
-            Match m = Regex.Match(instagramProfile, pattern);
-
-            if (m.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool EmailIsValid(string email)
-        {
-            if (email.Trim().EndsWith("."))
-            {
-                return false; // suggested by @TK-421
-            }
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         // GET: Volunteers/Edit/5
@@ -257,6 +223,11 @@ namespace VolunteersProject.Controllers
             }
 
             var volunteer = volunteerRepository.GetVolunteerById(id);
+
+            if (volunteer.ImageProfileByteArray != null)
+            {
+                ViewBag.Image = ViewImage(volunteer.ImageProfileByteArray);
+            }
 
             if (volunteer == null)
             {
@@ -272,7 +243,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (id != volunteer.ID)
             {
@@ -293,7 +264,7 @@ namespace VolunteersProject.Controllers
                         ViewBag.Alert = "Incorrect Instragram Profile";
                         return View(volunteer);
                     }
-                    if (!string.IsNullOrEmpty(volunteer.Email)&&EmailIsValid(volunteer.Email) == false)
+                    if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
                     {
                         ViewBag.Alert = "Incorrect Email Adress";
                         return View(volunteer);
@@ -306,6 +277,12 @@ namespace VolunteersProject.Controllers
 
                     volunteer.City = validateCity(volunteer.City);
                     volunteer.Name = validateName(volunteer.Name);
+
+
+                    if (volunteer.ImageProfile != null)
+                    {
+                        volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+                    }
 
                     volunteerRepository.UpdateVolunteer(volunteer);
                 }
@@ -330,7 +307,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
-           
+
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -347,12 +324,86 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            
+
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             volunteerRepository.DeleteVolunteer(volunteer);
 
             return RedirectToAction(nameof(Index));
-        }        
+        }
+
+        private byte[] GetByteArrayFromImage(IFormFile file)
+        {
+            using (var target = new MemoryStream())
+            {
+                file.CopyTo(target);
+                return target.ToArray();
+            }
+        }
+
+        private string validateCity(string city)
+        {
+            return char.ToUpper(city[0]) + city.Substring(1);
+        }
+
+        private string validateName(string name)
+        {
+            name = name.ToUpper();
+            return name;
+        }
+
+        private bool PhoneNumberIsValid(string phoneNumber)
+        {
+            string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
+            Match m = Regex.Match(phoneNumber, pattern);
+            if (m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool InstagramIsValid(string instagramProfile)
+        {
+            string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
+            Match m = Regex.Match(instagramProfile, pattern);
+
+            if (m.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool EmailIsValid(string email)
+        {
+            if (email.Trim().EndsWith("."))
+            {
+                return false; // suggested by @TK-421
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        [NonAction]
+        private string ViewImage(byte[] arrayImage)
+        {
+            string base64String = Convert.ToBase64String(arrayImage, 0, arrayImage.Length);
+
+            return "data:image/png;base64," + base64String;
+        }
     }
 }
