@@ -9,6 +9,9 @@ namespace VolunteersProject.Models
     /// </summary>
     public class Volunteer
     {
+        /// <summary>
+        /// Gets or sets the volunteer id.
+        /// </summary>
         public int ID { get; set; }
 
         [Display(Name="Nume",Prompt ="Family Name/Last Name")]
@@ -61,9 +64,6 @@ namespace VolunteersProject.Models
         [Display(Name="Facebook profile link",Prompt ="Facebook profile link")]
         public string FaceBookProfile { get; set; }
         
-        public string DescriptionContributionToHub { get; set; }
-      
-        //todo Radu - remove this property from here and create a new DTO with it - this has nothing to do with the DB
-        public bool IsSelected { get; set; }
+        public string DescriptionContributionToHub { get; set; }            
     }
 }

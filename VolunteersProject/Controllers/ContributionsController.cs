@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using VolunteersProject.Common;
 using Microsoft.Extensions.Logging;
+using VolunteersProject.DTO;
 
 namespace VolunteersProject.Controllers
 {
@@ -65,9 +66,9 @@ namespace VolunteersProject.Controllers
 
                 if (contributions == null)
                 {
-                   
+
                     return RedirectToAction("Error", "Account", new { errorMessage = "Contribution is null." });
-                }                
+                }
 
                 contributions = SortContributions(sortOrder, contributions);
 
@@ -244,19 +245,36 @@ namespace VolunteersProject.Controllers
 
         public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = volunteerRepository.GetAvailableVolunteers(id);
-
-            var selectedVolunteers = new SelectedVolunters
-            {
-                ContributionId = id,
-                Volunteers = new List<Volunteer>()
-            };
-            selectedVolunteers.Volunteers.AddRange(volunteers);
+            var selectedVolunteers = GetAvailableVolunteersDTO(id);
 
             return View(selectedVolunteers);
         }
 
-        private void UpdateToPending(int contributionId, List<Volunteer> sendInvitationEmailList)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Assign(IFormCollection form, int contributionId)
+        {
+            //var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+            var selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
+
+            //var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
+            var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, selectedVolunteers.VolunteersDTO);
+
+
+            UpdateToPending(contributionId, sendInvitationEmailList);
+            SendEmail(contributionId, sendInvitationEmailList);
+
+            var directAssignmentVolunteerList = GetSelectedVolunteersForDirectAssignment(form, selectedVolunteers.VolunteersDTO);
+            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
+
+
+            //reload evailable list
+            selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
+
+            return View(selectedVolunteers);
+        }
+
+        private void UpdateToPending(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
         {
             foreach (var selectedVolunteer in sendInvitationEmailList)
             {
@@ -269,37 +287,9 @@ namespace VolunteersProject.Controllers
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Assign(IFormCollection form, int contributionId)
+        private List<VolunteerDTO> GetSelectedVolunteersForDirectAssignment(IFormCollection form, List<VolunteerDTO> availableVolunteers)
         {
-            var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
-
-            var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
-
-
-            UpdateToPending(contributionId, sendInvitationEmailList);
-            SendEmail(contributionId, sendInvitationEmailList);
-
-            var directAssignmentVolunteerList = GetGetSelectedVolunteersForDirectAssignment(form, availableVolunteers);
-            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
-
-
-            //reload evailable list
-            availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
-            var selectedVolunteers = new SelectedVolunters
-            {
-                ContributionId = contributionId,
-                Volunteers = new List<Volunteer>()
-            };
-            selectedVolunteers.Volunteers.AddRange(availableVolunteers);
-
-            return View(selectedVolunteers);
-        }
-
-        private List<Volunteer> GetGetSelectedVolunteersForDirectAssignment(IFormCollection form, List<Volunteer> availableVolunteers)
-        {
-            var directAssignmentVolunteerList = new List<Volunteer>();
+            var directAssignmentVolunteerList = new List<VolunteerDTO>();
 
             foreach (var volunteer in availableVolunteers)
             {
@@ -315,9 +305,9 @@ namespace VolunteersProject.Controllers
             return directAssignmentVolunteerList;
         }
 
-        private List<Volunteer> GetSelectedVolunteersForSendEmail(IFormCollection form, List<Volunteer> availableVolunteers)
+        private List<VolunteerDTO> GetSelectedVolunteersForSendEmail(IFormCollection form, List<VolunteerDTO> availableVolunteers)
         {
-            var sendInvitationEmailList = new List<Volunteer>();
+            var sendInvitationEmailList = new List<VolunteerDTO>();
 
             foreach (var volunteer in availableVolunteers)
             {
@@ -338,7 +328,7 @@ namespace VolunteersProject.Controllers
         /// Send email to selected volunteers
         /// </summary>
         /// <param name="sendInvitationEmailList">Selected volunteer list.</param>
-        public void SendEmail(int contributionId, List<Volunteer> sendInvitationEmailList)
+        public void SendEmail(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
         {
             foreach (var volunteer in sendInvitationEmailList)
             {
@@ -382,7 +372,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="contributionId">Contribution id.</param>
         /// <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
-        public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<Volunteer> directAssignmentVolunteerList)
+        public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<VolunteerDTO> directAssignmentVolunteerList)
         {
             foreach (var selectedVolunteer in directAssignmentVolunteerList)
             {
@@ -393,6 +383,44 @@ namespace VolunteersProject.Controllers
                 enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Accepted;
                 enrollmentRepository.Save(enrollment);
             }
+        }
+
+        private AvailableVolunters GetAvailableVolunteersDTO(int id)
+        {
+            var volunteersDTO = GetVolunteersDTO(id);
+
+            var selectedVolunteers = new AvailableVolunters
+            {
+                ContributionId = id,
+                VolunteersDTO = new List<VolunteerDTO>()
+            };
+
+            selectedVolunteers.VolunteersDTO.AddRange(volunteersDTO);
+
+            return selectedVolunteers;
+        }
+
+        private List<VolunteerDTO> GetVolunteersDTO(int id)
+        {
+            var volunteers = volunteerRepository.GetAvailableVolunteers(id);
+
+            var volunteersDTO = new List<VolunteerDTO>();
+
+            foreach (var volunteerItem in volunteers)
+            {
+                var volunteerDTO = new VolunteerDTO
+                {
+                    ID = volunteerItem.ID,
+                    Phone = volunteerItem.Phone,
+                    Email = volunteerItem.Email,
+                    FullName = volunteerItem.FullName,
+                    JoinHubDate = volunteerItem.JoinHubDate
+                };
+
+                volunteersDTO.Add(volunteerDTO);
+            }
+
+            return volunteersDTO;
         }
     }
 }

@@ -120,7 +120,8 @@
             <summary>
             Contructor
             </summary>
-            <param name="context"></param>
+            <param name="logger">Logger.</param>
+            <param name="context">context.</param>
         </member>
         <member name="M:VolunteersProject.Repository.ContributionRepository.GetContributionById(System.Int32)">
             <summary>
