@@ -24,7 +24,12 @@ namespace VolunteersProject.Repository
 
         bool VolunteerExists(int id);
 
-        bool VolunteerExists(Volunteer volunteer);
+        /// <summary>
+        /// Search by phone, email if volunteer exist.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns>True if exist, otherwise false.</returns>
+        bool CheckVolunteerExistByPhoneOrEmail(Volunteer volunteer);
 
         void DeleteVolunteer(Volunteer volunteer);
     }

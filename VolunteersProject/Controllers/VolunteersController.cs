@@ -179,7 +179,7 @@ namespace VolunteersProject.Controllers
                     ViewBag.Alert = "Incorrect Email Adress";
                     return View(volunteer);
                 }
-                if (volunteerRepository.VolunteerExists(volunteer))
+                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
                 {
                     ViewBag.Alert = "Existing Volunteer";
                     return View(volunteer);
@@ -191,6 +191,13 @@ namespace VolunteersProject.Controllers
                 if (volunteer.ImageProfile != null)
                 {
                     volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+
+                    //using (var ms = new MemoryStream(volunteer.ImageProfileByteArray))
+                    //{
+                    //    var image = Image.FromStream(ms);
+                    //}
+
+
                 }
 
                 volunteerRepository.AddVolunteer(volunteer);
@@ -252,7 +259,7 @@ namespace VolunteersProject.Controllers
                         ViewBag.Alert = "Incorrect Email Adress";
                         return View(volunteer);
                     }
-                    if (volunteerRepository.VolunteerExists(volunteer))
+                    if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
                     {
                         ViewBag.Alert = "Existing Volunteer";
                         return View(volunteer);

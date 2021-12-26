@@ -57,7 +57,7 @@ namespace VolunteersProject.Repository
 
             return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
         }
- 
+
         /// <summary>
         /// Get volunteer with related enrollments.
         /// </summary>
@@ -105,6 +105,11 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Check if exist volunteer by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool VolunteerExists(int id)
         {
             return _context.Volunteers.Any(e => e.ID == id);
@@ -120,11 +125,17 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
-       public bool VolunteerExists(Volunteer volunteer)
+        /// <summary>
+        /// Search by phone, email if volunteer exist.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns>True if exist, otherwise false.</returns>
+        public bool CheckVolunteerExistByPhoneOrEmail(Volunteer volunteer)
         {
-            var result = _context.Volunteers.FirstOrDefault(v => v.Phone == volunteer.Phone
-                                                           && v.Email == volunteer.Email);
-            if(result==null)
+            var result = _context.Volunteers.AsNoTracking().FirstOrDefault(v => v.Phone == volunteer.Phone
+                                                           || v.Email == volunteer.Email);
+
+            if (result == null || result.ID == volunteer.ID)
             {
                 return false;
             }

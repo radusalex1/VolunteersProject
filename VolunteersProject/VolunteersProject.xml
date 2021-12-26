@@ -254,6 +254,13 @@
             <param name="id">Volunteer id.</param>
             <returns>Return colunteer with related enrollments.</returns>
         </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.CheckVolunteerExistByPhoneOrEmail(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Search by phone, email if volunteer exist.
+            </summary>
+            <param name="volunteer"></param>
+            <returns>True if exist, otherwise false.</returns>
+        </member>
         <member name="T:VolunteersProject.Repository.UserRepository">
             <summary>
             Repository for Users
@@ -303,11 +310,25 @@
             </summary>
             <param name="volunteer"></param>
         </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.VolunteerExists(System.Int32)">
+            <summary>
+            Check if exist volunteer by id.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:VolunteersProject.Repository.VolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
             <summary>
             Delete volunteer.
             </summary>
             <param name="volunteer">Volunteer.</param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.CheckVolunteerExistByPhoneOrEmail(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Search by phone, email if volunteer exist.
+            </summary>
+            <param name="volunteer"></param>
+            <returns>True if exist, otherwise false.</returns>
         </member>
     </members>
 </doc>

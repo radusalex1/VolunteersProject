@@ -238,6 +238,7 @@ namespace VolunteersProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //todo Radu - move to repository
         private bool ContributionExists(int id)
         {
             return _context.Contributions.Any(e => e.ID == id);
@@ -253,20 +254,16 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Assign(IFormCollection form, int contributionId)
-        {
-            //var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
+        {            
             var selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
-
-            //var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
+            
             var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, selectedVolunteers.VolunteersDTO);
-
 
             UpdateToPending(contributionId, sendInvitationEmailList);
             SendEmail(contributionId, sendInvitationEmailList);
 
             var directAssignmentVolunteerList = GetSelectedVolunteersForDirectAssignment(form, selectedVolunteers.VolunteersDTO);
             SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
-
 
             //reload evailable list
             selectedVolunteers = GetAvailableVolunteersDTO(contributionId);

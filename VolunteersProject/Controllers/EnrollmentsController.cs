@@ -161,8 +161,9 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-                    _context.Update(enrollment);
-                    await _context.SaveChangesAsync();
+                    //_context.Update(enrollment);
+                    //await _context.SaveChangesAsync();
+                    enrollmentRepository.Update(enrollment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
