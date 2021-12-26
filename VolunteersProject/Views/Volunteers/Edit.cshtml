@@ -61,8 +61,8 @@
 
             <div class="form-group">
                 <label asp-for="ImageProfile" class="control-label"></label>                
-                <img src='@Url.Action("GetVolunteerImageProfile", "Volunteers", new { id = Model.ID })' />
-                <input asp-for="ImageProfile" />
+                <img src='@Url.Action("SetVolunteerImageProfile", "Volunteers", new { volunteerId = Model.ID })' class="rounded-circle" height="40" width="40" />
+                <input asp-for="ImageProfile"  />
             </div>
 
             <div class="form-group">

@@ -137,7 +137,7 @@ namespace VolunteersProject.Controllers
         // GET: Volunteers/Details/5        
         public IActionResult Details(int? id)
         {
-            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);           
+            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
 
             if (volunteer == null)
             {
@@ -188,17 +188,10 @@ namespace VolunteersProject.Controllers
                 volunteer.City = validateCity(volunteer.City);
                 volunteer.Name = validateName(volunteer.Name);
 
-
                 if (volunteer.ImageProfile != null)
                 {
-                    //var img = volunteer.ImageProfile;
-
-                    //var fileName = Path.GetFileName(volunteer.ImageProfile.FileName);
-                    //var contentType = volunteer.ImageProfile.ContentType;
-
                     volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
                 }
-
 
                 volunteerRepository.AddVolunteer(volunteer);
 
@@ -322,6 +315,24 @@ namespace VolunteersProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Set the volunteer image profile.
+        /// </summary>
+        /// <param name="volunteerId"></param>
+        /// <returns>Volunteer image profile as a file.</returns>
+        [HttpGet]
+        public async Task<IActionResult> SetVolunteerImageProfile(int volunteerId)
+        {
+            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
+
+            if (volunteer != null && volunteer.ImageProfileByteArray != null)
+            {
+                return File(volunteer.ImageProfileByteArray, "image/png");
+            }
+
+            return null;
+        }
+
         private byte[] GetByteArrayFromImage(IFormFile file)
         {
             using (var target = new MemoryStream())
@@ -375,7 +386,7 @@ namespace VolunteersProject.Controllers
         {
             if (email.Trim().EndsWith("."))
             {
-                return false; // suggested by @TK-421
+                return false;
             }
             try
             {
@@ -386,20 +397,8 @@ namespace VolunteersProject.Controllers
             {
                 return false;
             }
-        }       
-
-        public FileResult GetFileFromBytes(byte[] bytesIn)
-        {
-            return File(bytesIn, "image/png");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetVolunteerImageProfile(int volunteerId)
-        {
-            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
-
-            FileResult imageUserFile = GetFileFromBytes(volunteer.ImageProfileByteArray);
-            return imageUserFile;
-        }
+       
     }
 }

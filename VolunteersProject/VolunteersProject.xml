@@ -81,6 +81,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.SetVolunteerImageProfile(System.Int32)">
+            <summary>
+            Set the volunteer image profile.
+            </summary>
+            <param name="volunteerId"></param>
+            <returns>Volunteer image profile as a file.</returns>
+        </member>
         <member name="T:VolunteersProject.DTO.AvailableVolunters">
             <summary>
             DTO that contains available volunteers for a contribution id.
