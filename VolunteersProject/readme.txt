@@ -41,6 +41,8 @@ https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-
 
 	//display image
 	http://aspsolution.net/Code/5/5171/Upload-and-Display-Image-from-Database-in-ASPNET-Core-20/
+	//better for display the file then the previous
+	https://stackoverflow.com/questions/49865677/display-image-from-byte-array-in-asp-net-mvc-core
 
 	//another way to display and upload image
 	https://www.c-sharpcorner.com/article/upload-and-display-image-in-asp-net-core-3-1/

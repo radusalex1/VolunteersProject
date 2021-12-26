@@ -137,12 +137,7 @@ namespace VolunteersProject.Controllers
         // GET: Volunteers/Details/5        
         public IActionResult Details(int? id)
         {
-            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
-
-            if (volunteer.ImageProfileByteArray != null)
-            {
-                ViewBag.Image = ViewImage(volunteer.ImageProfileByteArray);
-            }
+            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);           
 
             if (volunteer == null)
             {
@@ -223,12 +218,7 @@ namespace VolunteersProject.Controllers
             }
 
             var volunteer = volunteerRepository.GetVolunteerById(id);
-
-            if (volunteer.ImageProfileByteArray != null)
-            {
-                ViewBag.Image = ViewImage(volunteer.ImageProfileByteArray);
-            }
-
+           
             if (volunteer == null)
             {
                 return NotFound();
@@ -396,14 +386,20 @@ namespace VolunteersProject.Controllers
             {
                 return false;
             }
+        }       
+
+        public FileResult GetFileFromBytes(byte[] bytesIn)
+        {
+            return File(bytesIn, "image/png");
         }
 
-        [NonAction]
-        private string ViewImage(byte[] arrayImage)
+        [HttpGet]
+        public async Task<IActionResult> GetVolunteerImageProfile(int volunteerId)
         {
-            string base64String = Convert.ToBase64String(arrayImage, 0, arrayImage.Length);
+            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
 
-            return "data:image/png;base64," + base64String;
+            FileResult imageUserFile = GetFileFromBytes(volunteer.ImageProfileByteArray);
+            return imageUserFile;
         }
     }
 }

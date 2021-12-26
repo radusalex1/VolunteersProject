@@ -37,13 +37,13 @@
             <param name="errorMessage"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.DTO.VolunteerDTO})">
             <summary>
             Send email to selected volunteers
             </summary>
             <param name="sendInvitationEmailList">Selected volunteer list.</param>
         </member>
-        <member name="M:VolunteersProject.Controllers.ContributionsController.SaveDirectAssignedVoluteersToContribution(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SaveDirectAssignedVoluteersToContribution(System.Int32,System.Collections.Generic.List{VolunteersProject.DTO.VolunteerDTO})">
             <summary>
             Save assignment of volunteers to a specific contribution.
             </summary>
@@ -81,6 +81,31 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="T:VolunteersProject.DTO.AvailableVolunters">
+            <summary>
+            DTO that contains available volunteers for a contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.ContributionId">
+            <summary>
+            Gets or sets the contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.VolunteersDTO">
+            <summary>
+            Gets or sets the volunteersDTO list.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.DTO.VolunteerDTO">
+            <summary>
+            DTO for volunteer.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.VolunteerDTO.ID">
+            <summary>
+            Gets or sets the volunteer id.
+            </summary>
+        </member>
         <member name="T:VolunteersProject.Models.AuthenticateRequest">
             <summary>
             Authentication model.
@@ -109,6 +134,66 @@
         <member name="T:VolunteersProject.Models.Volunteer">
             <summary>
             Volunteer model.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.ID">
+            <summary>
+            Gets or sets the volunteer id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Surname">
+            <summary>
+            Gets or sets the first/sur name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Phone">
+            <summary>
+            Get or sets the phone.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Age">
+            <summary>
+            Gets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.FullName">
+            <summary>
+            Gets or sets the full name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.JoinHubDate">
+            <summary>
+            Get or sets the join date to the hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.InstagramProfile">
+            <summary>
+            Gets or sets the instagram profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.FaceBookProfile">
+            <summary>
+            Gets or sets the Facebook profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.DescriptionContributionToHub">
+            <summary>
+            Gets or set the description contribution to hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.ImageProfile">
+            <summary>
+            Gets or sets the image profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.ImageProfileByteArray">
+            <summary>
+            Gets or sets the image profile byte array.
             </summary>
         </member>
         <member name="T:VolunteersProject.Repository.ContributionRepository">
