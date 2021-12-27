@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -27,20 +26,20 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="contributionId">Contribution id.</param>
         /// <returns>List of not assigned volunteers.</returns>
-        public List<Volunteer> GetAvailableVolunteers(int contributionId)
+        public IQueryable<Volunteer> GetAvailableVolunteers(int contributionId)
         {
             var volunteers = _context.Volunteers
              .Include(e => e.Enrollments)
-             .ThenInclude(c => c.contribution)
-             .ToList();
+             .ThenInclude(c => c.contribution);
+            
 
             var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID == contributionId));
 
-            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID != contributionId) && !volunteersAssigned.Contains(v)).ToList();
+            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID != contributionId) && !volunteersAssigned.Contains(v));
 
-            var volunteersWithNoAnyAssignments = _context.Volunteers.Where(v => v.Enrollments.Count == 0).ToList();
+            var volunteersWithNoAnyAssignments = _context.Volunteers.Where(v => v.Enrollments.Count == 0);
 
-            return volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
+            return volunteersAvailable.Union(volunteersWithNoAnyAssignments);
         }
 
         /// <summary>
@@ -80,9 +79,9 @@ namespace VolunteersProject.Repository
         /// Get all volunteers.
         /// </summary>
         /// <returns>List of all volunteers.</returns>
-        public List<Volunteer> GetVolunteers()
+        public IQueryable<Volunteer> GetVolunteers()
         {
-            return _context.Volunteers.ToList();
+            return _context.Volunteers;
         }
 
         /// <summary>
@@ -97,6 +96,10 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Update volunteer.
+        /// </summary>
+        /// <param name="volunteer">Volunteer.</param>
         public void UpdateVolunteer(Volunteer volunteer)
         {
             //todo Radu - check if this volunteer already exist (not by id)
@@ -106,10 +109,10 @@ namespace VolunteersProject.Repository
         }
 
         /// <summary>
-        /// Check if exist volunteer by id.
+        /// Check by id if volunteer exist.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>True if exist, otherwise false.</returns>
         public bool VolunteerExists(int id)
         {
             return _context.Volunteers.Any(e => e.ID == id);
@@ -132,17 +135,16 @@ namespace VolunteersProject.Repository
         /// <returns>True if exist, otherwise false.</returns>
         public bool CheckVolunteerExistByPhoneOrEmail(Volunteer volunteer)
         {
-            var result = _context.Volunteers.AsNoTracking().FirstOrDefault(v => v.Phone == volunteer.Phone
-                                                           || v.Email == volunteer.Email);
+            if (volunteer.Email != null && volunteer.Phone != null)
+            {
+                var result = _context.Volunteers.AsNoTracking().FirstOrDefault(
+                    v => v.Phone == volunteer.Phone || 
+                    v.Email == volunteer.Email);
 
-            if (result == null || result.ID == volunteer.ID)
-            {
-                return false;
+                return (result == null || result.ID == volunteer.ID) ? false : true;
             }
-            else
-            {
-                return true;
-            }
+
+            return false;
         }
     }
 }

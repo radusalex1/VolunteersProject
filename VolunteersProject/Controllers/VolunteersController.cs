@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,26 +22,29 @@ namespace VolunteersProject.Controllers
     [Authorize]
     public class VolunteersController : Controller
     {
-        //private readonly VolunteersContext _context;
         private readonly ILogger<VolunteersController> logger;
         private IVolunteerRepository volunteerRepository;
-
+        private IConfiguration configuration;
+        private int pageSize;
 
         /// <summary>
         /// Contructor
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IVolunteerRepository volunteerRepository)
+        /// <param name="configuration">Application configuration.</param>
+        public VolunteersController(ILogger<VolunteersController> logger, IVolunteerRepository volunteerRepository, IConfiguration configuration)
         {
             this.logger = logger;
             this.volunteerRepository = volunteerRepository;
-        }
+            this.configuration = configuration;
 
+            pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
+        }
 
         // GET: Volunteers
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Index(
+        public IActionResult Index(
             string sortOrder,
             string SearchString,
             string currentFilter,
@@ -75,53 +79,51 @@ namespace VolunteersProject.Controllers
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString)).ToList();
+                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
+            //todo Radu - rename student/s to volunteer/s
             students = GetSortedVolunteers(sortOrder, students);
-
-            ///todo Radu - read from appconfig
-            int pageSize = 5;
-
+            
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
         }
 
-        //private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-        private List<Volunteer> GetSortedVolunteers(string sortOrder, List<Volunteer> students)
+        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        //private List<Volunteer> GetSortedVolunteers(string sortOrder, List<Volunteer> students)
         {
             switch (sortOrder)
             {
                 case "name_desc":
                     //students = students.OrderByDescending(s => s.Name);
-                    students = students.OrderByDescending(s => s.Name).ToList();
+                    students = students.OrderByDescending(s => s.Name);
                     break;
                 case "Age":
                     //students = students.OrderBy(s => s.BirthDate);
-                    students = students.OrderBy(s => s.BirthDate).ToList();
+                    students = students.OrderBy(s => s.BirthDate);
                     break;
                 case "Age_desc":
                     //students = students.OrderByDescending(s => s.BirthDate);
-                    students = students.OrderByDescending(s => s.BirthDate).ToList();
+                    students = students.OrderByDescending(s => s.BirthDate);
                     break;
                 case "City_desc":
                     //students = students.OrderByDescending(s => s.City);
-                    students = students.OrderByDescending(s => s.City).ToList();
+                    students = students.OrderByDescending(s => s.City);
                     break;
                 case "City":
                     //students = students.OrderBy(s => s.City);
-                    students = students.OrderBy(s => s.City).ToList();
+                    students = students.OrderBy(s => s.City);
                     break;
                 case "JoinHubDate":
                     //students = students.OrderBy(s => s.JoinHubDate);
-                    students = students.OrderBy(s => s.JoinHubDate).ToList();
+                    students = students.OrderBy(s => s.JoinHubDate);
                     break;
                 case "JoinHubDate_desc":
                     //students = students.OrderByDescending(s => s.JoinHubDate);
-                    students = students.OrderByDescending(s => s.JoinHubDate).ToList();
+                    students = students.OrderByDescending(s => s.JoinHubDate);
                     break;
                 default:
                     //students = students.OrderBy(s => s.Name);
-                    students = students.OrderBy(s => s.Name).ToList();
+                    students = students.OrderBy(s => s.Name);
                     break;
             }
 
@@ -133,7 +135,6 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-
         // GET: Volunteers/Details/5        
         public IActionResult Details(int? id)
         {
@@ -160,7 +161,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Role.Admin)]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        public IActionResult Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
             {
@@ -190,14 +191,13 @@ namespace VolunteersProject.Controllers
 
                 if (volunteer.ImageProfile != null)
                 {
+                    if (volunteer.ImageProfile.Length > 1600)
+                    {
+                        ViewBag.Alert = "Profile image to big. Please use an image having no more than 60*60 pixels.";
+                        return View(volunteer);
+                    }
+
                     volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
-
-                    //using (var ms = new MemoryStream(volunteer.ImageProfileByteArray))
-                    //{
-                    //    var image = Image.FromStream(ms);
-                    //}
-
-
                 }
 
                 volunteerRepository.AddVolunteer(volunteer);
@@ -210,7 +210,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
             if (id == null)
             {
@@ -218,7 +218,7 @@ namespace VolunteersProject.Controllers
             }
 
             var volunteer = volunteerRepository.GetVolunteerById(id);
-           
+
             if (volunteer == null)
             {
                 return NotFound();
@@ -233,7 +233,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        public IActionResult Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (id != volunteer.ID)
             {
@@ -271,6 +271,12 @@ namespace VolunteersProject.Controllers
 
                     if (volunteer.ImageProfile != null)
                     {
+                        if (volunteer.ImageProfile.Length > 1600)
+                        {
+                            ViewBag.Alert = "Profile image to big. Please use an image having no more than 60*60 pixels.";
+                            return View(volunteer);
+                        }
+
                         volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
                     }
 
@@ -293,11 +299,15 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
+        /// <summary>
+        /// Get volunteer by id.
+        /// </summary>
+        /// <param name="id">Volunteer id.</param>
+        /// <returns>Volunteer.</returns>
         // GET: Volunteers/Delete/5
         [Authorize(Roles = Role.Admin)]
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -312,7 +322,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
 
             var volunteer = volunteerRepository.GetVolunteerById(id);
@@ -325,10 +335,10 @@ namespace VolunteersProject.Controllers
         /// <summary>
         /// Set the volunteer image profile.
         /// </summary>
-        /// <param name="volunteerId"></param>
+        /// <param name="volunteerId">Volunteer id.</param>
         /// <returns>Volunteer image profile as a file.</returns>
         [HttpGet]
-        public async Task<IActionResult> SetVolunteerImageProfile(int volunteerId)
+        public IActionResult SetVolunteerImageProfile(int volunteerId)
         {
             var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
 
@@ -405,7 +415,5 @@ namespace VolunteersProject.Controllers
                 return false;
             }
         }
-
-       
     }
 }
