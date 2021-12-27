@@ -5,11 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using VolunteersProject.Common;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
@@ -26,6 +24,8 @@ namespace VolunteersProject.Controllers
         private IVolunteerRepository volunteerRepository;
         private IConfiguration configuration;
         private int pageSize;
+        private int imgWidth;
+        private int imgHeight;
 
         /// <summary>
         /// Contructor
@@ -40,6 +40,8 @@ namespace VolunteersProject.Controllers
             this.configuration = configuration;
 
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
+            imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
+            imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
         }
 
         // GET: Volunteers
@@ -84,7 +86,7 @@ namespace VolunteersProject.Controllers
 
             //todo Radu - rename student/s to volunteer/s
             students = GetSortedVolunteers(sortOrder, students);
-            
+
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
         }
 
@@ -191,9 +193,9 @@ namespace VolunteersProject.Controllers
 
                 if (volunteer.ImageProfile != null)
                 {
-                    if (volunteer.ImageProfile.Length > 1600)
+                    if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
                     {
-                        ViewBag.Alert = "Profile image to big. Please use an image having no more than 60*60 pixels.";
+                        ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
                         return View(volunteer);
                     }
 
@@ -206,8 +208,9 @@ namespace VolunteersProject.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
             return View(volunteer);
-        }
+        }        
 
         // GET: Volunteers/Edit/5
         public IActionResult Edit(int id)
@@ -271,9 +274,9 @@ namespace VolunteersProject.Controllers
 
                     if (volunteer.ImageProfile != null)
                     {
-                        if (volunteer.ImageProfile.Length > 1600)
+                        if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
                         {
-                            ViewBag.Alert = "Profile image to big. Please use an image having no more than 60*60 pixels.";
+                            ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
                             return View(volunteer);
                         }
 
@@ -317,7 +320,7 @@ namespace VolunteersProject.Controllers
 
             return View(volunteer);
         }
-
+        
         // POST: Volunteers/Delete/5
         [Authorize(Roles = Role.Admin)]
         [HttpPost, ActionName("Delete")]
@@ -361,6 +364,11 @@ namespace VolunteersProject.Controllers
 
         private string validateCity(string city)
         {
+            if(string.IsNullOrEmpty(city))
+            {
+                return string.Empty;
+            }
+
             return char.ToUpper(city[0]) + city.Substring(1);
         }
 
@@ -414,6 +422,11 @@ namespace VolunteersProject.Controllers
             {
                 return false;
             }
+        }
+
+        private bool ValidateImageProfile(Volunteer volunteer, int width, int height)
+        {
+            return (volunteer.ImageProfile.Length > width * height) ? true : false;
         }
     }
 }
