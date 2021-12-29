@@ -18,12 +18,16 @@ namespace VolunteersProject.Repository
             _context = context;
         }
       
-        
-
-        public User GetUser(UserModel userModel)
+        public User GetUser(LoginModel userModel)
         {
             return _context.Users.Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
                 && x.Password == userModel.Password).FirstOrDefault();
+        }
+
+        public void AddUser(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace VolunteersProject.Models
 {
+    /// <summary>
+    /// used to get logged user from dbo.
+    /// </summary>
     public class User
     {
         public int Id { get; set; }

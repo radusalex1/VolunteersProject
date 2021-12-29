@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VolunteersProject.Models
+namespace VolunteersProject.DTO
 {
-    //todo Radu : move this in DTO folder and rename it as LoginDTO
-    public class UserModel
+    /// <summary>
+    /// login model
+    /// </summary>
+    public class LoginModel
     {
         public int Id { get; set; }
 

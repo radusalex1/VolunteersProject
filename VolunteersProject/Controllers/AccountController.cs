@@ -68,7 +68,7 @@ namespace VolunteersProject.Controllers
         [AllowAnonymous]
         [Route("Login")]
         [HttpPost]
-        public IActionResult Login(UserModel userModel)
+        public IActionResult Login(LoginModel userModel)
         {
             this.logger.LogInformation("httpPost Login()");
 
@@ -189,7 +189,7 @@ namespace VolunteersProject.Controllers
             return result;
         }
 
-        private User GetUser(UserModel userModel)
+        private User GetUser(LoginModel userModel)
         {
             //todo Radu - move this to repository
 

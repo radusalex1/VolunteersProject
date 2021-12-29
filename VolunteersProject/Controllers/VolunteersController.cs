@@ -45,12 +45,8 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers
-        [Authorize(Roles = "User, Admin")]
-        public IActionResult Index(
-            string sortOrder,
-            string SearchString,
-            string currentFilter,
-            int? pageNumber)
+        [Authorize(Roles = Role.Admin)]
+        public IActionResult Index(string sortOrder,string SearchString,string currentFilter,int? pageNumber)
         {
             this.logger.LogInformation("HttpGet VolunteersContr Index()");
 
@@ -242,7 +238,6 @@ namespace VolunteersProject.Controllers
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
