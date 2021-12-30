@@ -20,12 +20,12 @@ namespace VolunteersProject.Controllers
     [Authorize]
     public class ContributionsController : GeneralConstroller
     {
-        private readonly VolunteersContext _context;
+        //private readonly VolunteersContext _context;
        
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
-        private IContributionRepository contributionRepositor;
+        private IContributionRepository contributionRepository;
 
         public ContributionsController
              (
@@ -34,15 +34,15 @@ namespace VolunteersProject.Controllers
                  IVolunteerRepository volunteerRepository,
                  IEmailService emailService,
                  IEnrollmentRepository enrollmentRepository,
-                 IContributionRepository contributionRepositor,
+                 IContributionRepository contributionRepository,
                  IConfiguration configuration
              ):base(logger,configuration)
         {
-            _context = context;
+            //_context = context;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
-            this.contributionRepositor = contributionRepositor;
+            this.contributionRepository = contributionRepository;
            
         }
 
@@ -60,7 +60,7 @@ namespace VolunteersProject.Controllers
                 ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
                 ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
 
-                contributions = contributionRepositor.GetContributions();
+                contributions = contributionRepository.GetContributions();
 
                 if (contributions == null)
                 {
@@ -117,15 +117,11 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var contribution = await _context.Contributions.FirstOrDefaultAsync(m => m.ID == id);
-
+            
+            var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
             {
                 return NotFound();
@@ -149,22 +145,23 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contribution);
-                await _context.SaveChangesAsync();
+                contributionRepository.AddContribution(contribution);
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(contribution);
         }
 
         // GET: Contributions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contribution = await _context.Contributions.FindAsync(id);
+            var contribution = contributionRepository.GetContributionById(id);
+
             if (contribution == null)
             {
                 return NotFound();
@@ -179,21 +176,17 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
-            if (id != contribution.ID)
-            {
-                return NotFound();
-            }
+           
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(contribution);
-                    await _context.SaveChangesAsync();
+                    contributionRepository.UpdateContribution(contribution);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContributionExists(contribution.ID))
+                    if (contributionRepository.ContributionExists(contribution.ID))
                     {
                         return NotFound();
                     }
@@ -208,15 +201,15 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contribution = await _context.Contributions
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var contribution = contributionRepository.GetContributionById(id);
+            
             if (contribution == null)
             {
                 return NotFound();
@@ -230,17 +223,11 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contribution = await _context.Contributions.FindAsync(id);
-            _context.Contributions.Remove(contribution);
-            await _context.SaveChangesAsync();
+            var contribution = contributionRepository.GetContributionById(id);
+            contributionRepository.DeleteContribution(contribution);
             return RedirectToAction(nameof(Index));
         }
 
-        //todo Radu - move to repository
-        private bool ContributionExists(int id)
-        {
-            return _context.Contributions.Any(e => e.ID == id);
-        }
 
         public async Task<IActionResult> Assign(int id)
         {
@@ -336,7 +323,7 @@ namespace VolunteersProject.Controllers
                     new EmailAddress { Address = volunteer.Email }
                 };
 
-                var contribution = contributionRepositor.GetContributionById(contributionId);
+                var contribution = contributionRepository.GetContributionById(contributionId);
 
                 var link = GetLink(contributionId, volunteer.ID);
 

@@ -66,5 +66,25 @@ namespace VolunteersProject.Repository
 
             return _context.Contributions.ToList();
         }
+
+        public void AddContribution(Contribution contribution)
+        {
+            _context.Add(contribution);
+            _context.SaveChanges();
+        }
+        public void UpdateContribution(Contribution contribution)
+        {
+            _context.Update(contribution);
+            _context.SaveChanges();
+        }
+        public void DeleteContribution(Contribution contribution)
+        {
+            _context.Remove(contribution);
+            _context.SaveChanges();
+        }
+        public bool ContributionExists(int id)
+        {
+            return _context.Contributions.Any(e => e.ID == id);
+        }
     }
 }

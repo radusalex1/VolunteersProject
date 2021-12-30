@@ -7,5 +7,9 @@ namespace VolunteersProject.Repository
     {
         Contribution GetContributionById(int id);
         List<Contribution> GetContributions();
+        void AddContribution(Contribution contribution);
+        void UpdateContribution(Contribution contribution);
+        void DeleteContribution(Contribution contribution);
+        bool ContributionExists(int id);
     }
 }
