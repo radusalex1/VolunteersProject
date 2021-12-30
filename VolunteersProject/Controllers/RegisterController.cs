@@ -52,6 +52,18 @@ namespace VolunteersProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                 
+                    var user = new User
+                    {
+                        FirstName = registerFormModel.Name,
+                        LastName = registerFormModel.Surname,
+                        UserName = registerFormModel.UserName,
+                        Password = registerFormModel.Password,
+                        Role = "User"
+                    };  
+
+                    int userId = userRepository.AddUser(user);
+
                     var volunteer = new Volunteer
                     {
                         Name = registerFormModel.Name,
@@ -61,19 +73,10 @@ namespace VolunteersProject.Controllers
                         BirthDate = registerFormModel.BirthDate,
                         JoinHubDate = registerFormModel.JoinHubDate,
                         InstagramProfile = registerFormModel.InstagramProfile,
-                        FaceBookProfile = registerFormModel.InstagramProfile
+                        FaceBookProfile = registerFormModel.InstagramProfile,
+                        UserID = userId
                     };
 
-                    var user = new User
-                    {
-                        FirstName = registerFormModel.Name,
-                        LastName = registerFormModel.Surname,
-                        UserName = registerFormModel.UserName,
-                        Password = registerFormModel.Password,
-                        Role = "User"
-                    };
-
-                    userRepository.AddUser(user);
                     volunteerRepository.AddVolunteer(volunteer);
                 }
                 return View();

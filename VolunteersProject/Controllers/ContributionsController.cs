@@ -18,40 +18,38 @@ using VolunteersProject.DTO;
 namespace VolunteersProject.Controllers
 {
     [Authorize]
-    public class ContributionsController : Controller
+    public class ContributionsController : GeneralConstroller
     {
         private readonly VolunteersContext _context;
-        private readonly ILogger<ContributionsController> logger;
+       
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
         private IContributionRepository contributionRepositor;
-        private IConfiguration configuration;
 
         public ContributionsController
-            (
-                ILogger<ContributionsController> logger,
-                VolunteersContext context,
-                IVolunteerRepository volunteerRepository,
-                IEmailService emailService,
-                IEnrollmentRepository enrollmentRepository,
-                IContributionRepository contributionRepositor,
-                IConfiguration configuration
-            )
+             (
+                 ILogger<ContributionsController> logger,
+                 VolunteersContext context,
+                 IVolunteerRepository volunteerRepository,
+                 IEmailService emailService,
+                 IEnrollmentRepository enrollmentRepository,
+                 IContributionRepository contributionRepositor,
+                 IConfiguration configuration
+             ):base(logger,configuration)
         {
             _context = context;
-            this.logger = logger;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
             this.contributionRepositor = contributionRepositor;
-            this.configuration = configuration;
+           
         }
 
         // GET: Contributions
         public async Task<IActionResult> Index(string sortOrder)
         {
-            this.logger.LogInformation("HttpGet ContributionsController Index()");
+            this.Logger.LogInformation("HttpGet ContributionsController Index()");
 
             var contributions = new List<Contribution>();
 

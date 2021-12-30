@@ -16,6 +16,7 @@ namespace VolunteersProject.Models
         /// </summary>
         public int ID { get; set; }
 
+        public int UserID { get; set; }
         /// <summary>
         /// Gets or sets the name.
         /// </summary>

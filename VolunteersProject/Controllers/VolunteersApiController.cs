@@ -23,7 +23,6 @@ namespace VolunteersProject.Controllers
         //[ApiExplorerSettings(GroupName = "Volunteer > GetVolunteers")]
         public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
-            //return await _context.Volunteers.ToListAsync();
 
             var volunteers = this.volunteerRepository.GetVolunteers();
 
@@ -60,7 +59,7 @@ namespace VolunteersProject.Controllers
 
             try
             {
-                //await _context.SaveChangesAsync();
+              
                 volunteerRepository.UpdateVolunteer(volunteer);
             }
             catch (DbUpdateConcurrencyException)
@@ -85,12 +84,11 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public ActionResult PostVolunteer(Volunteer volunteer)
         {
-            //_context.Volunteers.Add(volunteer);
-            //await _context.SaveChangesAsync();
+
             volunteerRepository.AddVolunteer(volunteer);
 
-            //return CreatedAtAction("GetVolunteer", new { id = volunteer.ID }, volunteer);
             return Ok();
+
         }
 
         // DELETE: api/VolunteersApi/5
@@ -98,7 +96,6 @@ namespace VolunteersProject.Controllers
         //[ApiExplorerSettings(GroupName = "Volunteer > DeleteVolunteer")]
         public ActionResult DeleteVolunteer(int id)
         {
-            //var volunteer = await _context.Volunteers.FindAsync(id);
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -106,11 +103,10 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
 
-            //_context.Volunteers.Remove(volunteer);
-            //await _context.SaveChangesAsync();
+            
             volunteerRepository.DeleteVolunteer(volunteer);
 
-            //return NoContent();
+          
             return Ok();
         }        
     }

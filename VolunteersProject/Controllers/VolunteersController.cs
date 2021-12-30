@@ -18,11 +18,9 @@ namespace VolunteersProject.Controllers
     /// Volunteer controller.
     /// </summary>
     [Authorize]
-    public class VolunteersController : Controller
+    public class VolunteersController : GeneralConstroller
     {
-        private readonly ILogger<VolunteersController> logger;
-        private IVolunteerRepository volunteerRepository;
-        private IConfiguration configuration;
+        public IVolunteerRepository volunteerRepository;
         private int pageSize;
         private int imgWidth;
         private int imgHeight;
@@ -33,12 +31,9 @@ namespace VolunteersProject.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IVolunteerRepository volunteerRepository, IConfiguration configuration)
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration,IVolunteerRepository volunteerRepository) : base(logger,configuration)
         {
-            this.logger = logger;
             this.volunteerRepository = volunteerRepository;
-            this.configuration = configuration;
-
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
             imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
             imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
@@ -48,7 +43,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         public IActionResult Index(string sortOrder,string SearchString,string currentFilter,int? pageNumber)
         {
-            this.logger.LogInformation("HttpGet VolunteersContr Index()");
+            this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
 
@@ -87,40 +82,32 @@ namespace VolunteersProject.Controllers
         }
 
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-        //private List<Volunteer> GetSortedVolunteers(string sortOrder, List<Volunteer> students)
+       
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    //students = students.OrderByDescending(s => s.Name);
                     students = students.OrderByDescending(s => s.Name);
                     break;
                 case "Age":
-                    //students = students.OrderBy(s => s.BirthDate);
                     students = students.OrderBy(s => s.BirthDate);
                     break;
                 case "Age_desc":
-                    //students = students.OrderByDescending(s => s.BirthDate);
                     students = students.OrderByDescending(s => s.BirthDate);
                     break;
                 case "City_desc":
-                    //students = students.OrderByDescending(s => s.City);
                     students = students.OrderByDescending(s => s.City);
                     break;
                 case "City":
-                    //students = students.OrderBy(s => s.City);
                     students = students.OrderBy(s => s.City);
                     break;
                 case "JoinHubDate":
-                    //students = students.OrderBy(s => s.JoinHubDate);
                     students = students.OrderBy(s => s.JoinHubDate);
                     break;
                 case "JoinHubDate_desc":
-                    //students = students.OrderByDescending(s => s.JoinHubDate);
                     students = students.OrderByDescending(s => s.JoinHubDate);
                     break;
                 default:
-                    //students = students.OrderBy(s => s.Name);
                     students = students.OrderBy(s => s.Name);
                     break;
             }

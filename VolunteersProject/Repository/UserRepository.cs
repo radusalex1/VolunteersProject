@@ -24,10 +24,13 @@ namespace VolunteersProject.Repository
                 && x.Password == userModel.Password).FirstOrDefault();
         }
 
-        public void AddUser(User user)
+        public int AddUser(User user)
         {
             _context.Users.Add(user);
             _context.SaveChanges();
+            return user.Id; 
         }
+
+
     }
 }
