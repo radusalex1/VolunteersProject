@@ -30,7 +30,5 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
             return user.Id; 
         }
-
-
     }
 }

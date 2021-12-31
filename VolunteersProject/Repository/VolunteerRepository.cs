@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -26,7 +27,7 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="contributionId">Contribution id.</param>
         /// <returns>List of not assigned volunteers.</returns>
-        public IQueryable<Volunteer> GetAvailableVolunteers(int contributionId)
+        public List<Volunteer> GetAvailableVolunteers(int contributionId)
         {
             var volunteers = _context.Volunteers
              .Include(e => e.Enrollments)
@@ -37,9 +38,11 @@ namespace VolunteersProject.Repository
 
             var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID != contributionId) && !volunteersAssigned.Contains(v));
 
-            var volunteersWithNoAnyAssignments = _context.Volunteers.Where(v => v.Enrollments.Count == 0);
+            var volunteersWithNoAnyAssignments = volunteers.Where(v => v.Enrollments.Count == 0);
 
-            return volunteersAvailable.Union(volunteersWithNoAnyAssignments);
+            var test =  volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
+
+            return test;
         }
 
         /// <summary>

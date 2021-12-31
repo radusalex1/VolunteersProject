@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using VolunteersProject.Models;
 
 namespace VolunteersProject.Repository
@@ -35,7 +36,7 @@ namespace VolunteersProject.Repository
         /// <param name="contributionId">Contribution id.</param>
         /// <returns>List of not assigned volunteers.</returns>
         //List<Volunteer> GetAvailableVolunteers(int ContributionID);
-        IQueryable<Volunteer> GetAvailableVolunteers(int contributionId);
+        List<Volunteer> GetAvailableVolunteers(int contributionId);
 
         /// <summary>
         /// Add volunteer.
