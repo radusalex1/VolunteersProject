@@ -253,7 +253,6 @@ namespace VolunteersProject.Controllers
                     volunteer.City = validateCity(volunteer.City);
                     volunteer.Name = validateName(volunteer.Name);
 
-
                     if (volunteer.ImageProfile != null)
                     {
                         if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
@@ -342,73 +341,6 @@ namespace VolunteersProject.Controllers
                 file.CopyTo(target);
                 return target.ToArray();
             }
-        }
-
-        private string validateCity(string city)
-        {
-            if(string.IsNullOrEmpty(city))
-            {
-                return string.Empty;
-            }
-
-            return char.ToUpper(city[0]) + city.Substring(1);
-        }
-
-        private string validateName(string name)
-        {
-            name = name.ToUpper();
-            return name;
-        }
-
-        private bool PhoneNumberIsValid(string phoneNumber)
-        {
-            string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
-            Match m = Regex.Match(phoneNumber, pattern);
-            if (m.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool InstagramIsValid(string instagramProfile)
-        {
-            string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
-            Match m = Regex.Match(instagramProfile, pattern);
-
-            if (m.Success)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool EmailIsValid(string email)
-        {
-            if (email.Trim().EndsWith("."))
-            {
-                return false;
-            }
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool ValidateImageProfile(Volunteer volunteer, int width, int height)
-        {
-            return (volunteer.ImageProfile.Length > width * height) ? true : false;
         }
     }
 }

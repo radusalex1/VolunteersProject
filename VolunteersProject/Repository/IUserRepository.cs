@@ -7,5 +7,6 @@ namespace VolunteersProject.Repository
     {
         User GetUser(LoginModel userMode);
         int AddUser(User user);
+        bool AlreadyUseUsername(string username);
     }
 }

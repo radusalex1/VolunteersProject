@@ -1,79 +1,88 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VolunteersProject.Repository;
 using VolunteersProject.Models;
+using Microsoft.Extensions.Logging;
 
 namespace VolunteersProject.Controllers
 {
 
-    public class RegisterController : Controller
+    public class RegisterController : GeneralConstroller
     {
         private IVolunteerRepository volunteerRepository;
         private IConfiguration configuration;
         private IUserRepository userRepository;
 
-        public RegisterController(IVolunteerRepository volunteerRepository, IConfiguration configuration, IUserRepository userRepository)
+        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository,ILogger<RegisterController> logger, IConfiguration configuration):base(logger,configuration)
         {
             this.volunteerRepository = volunteerRepository;
-            this.configuration = configuration;
             this.userRepository = userRepository;
         }
-
 
         // GET: RegisterController
         public ActionResult Index()
         {
             return View();
         }
-
-        // GET: RegisterController/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Create()
         {
             return View();
         }
-
-        // GET: RegisterController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // POST: RegisterController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,Surname,UserName,Password,City,Email,Phone,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile")] RegisterFormModel registerFormModel)
+        public ActionResult Create([Bind("Name,Surname,UserName,Password,City,Email,Phone,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile")] RegisterFormModel newUser)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                 
+
+                    if(!string.IsNullOrEmpty(newUser.Phone) && PhoneNumberIsValid(newUser.Phone))
+                    {
+                        ViewBag.Phone_Error = "Incorrect phone number";
+                        return View(newUser);
+                    }
+                    
+                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& InstagramIsValid(newUser.InstagramProfile))
+                    {
+                        ViewBag.Insta_Error = "Incorrect Instragram Profile";
+                        return View(newUser);
+                    }
+
+                    if (!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
+                    {
+                        ViewBag.Email_Error = "Incorrect Email Adress";
+                        return View(newUser);
+                    }
+
                     var user = new User
                     {
-                        FirstName = registerFormModel.Name,
-                        LastName = registerFormModel.Surname,
-                        UserName = registerFormModel.UserName,
-                        Password = registerFormModel.Password,
+                        FirstName = newUser.Name,
+                        LastName = newUser.Surname,
+                        UserName = newUser.UserName,
+                        Password = newUser.Password,
                         Role = "User"
-                    };  
+                    }; 
+                    
+                    if(userRepository.AlreadyUseUsername(user.UserName))
+                    {
+                        ViewBag.Username_Error = "Username Already Use";
+                        return View(newUser);
+                    }
 
                     int userId = userRepository.AddUser(user);
 
                     var volunteer = new Volunteer
                     {
-                        Name = registerFormModel.Name,
-                        Surname = registerFormModel.Surname,
-                        City = registerFormModel.City,
-                        Email = registerFormModel.Email,
-                        BirthDate = registerFormModel.BirthDate,
-                        JoinHubDate = registerFormModel.JoinHubDate,
-                        InstagramProfile = registerFormModel.InstagramProfile,
-                        FaceBookProfile = registerFormModel.InstagramProfile,
+                        Name = validateName(newUser.Name),
+                        Surname = newUser.Surname,
+                        City = validateCity(newUser.City),
+                        Email = newUser.Email,
+                        BirthDate = newUser.BirthDate,
+                        JoinHubDate = newUser.JoinHubDate,
+                        InstagramProfile = newUser.InstagramProfile,
+                        FaceBookProfile = newUser.InstagramProfile,
                         UserID = userId
                     };
 
@@ -87,46 +96,5 @@ namespace VolunteersProject.Controllers
             }
         }
 
-        // GET: RegisterController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: RegisterController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: RegisterController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: RegisterController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

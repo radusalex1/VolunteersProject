@@ -30,5 +30,12 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
             return user.Id; 
         }
+
+        public bool AlreadyUseUsername(string username)
+        {
+
+            return _context.Users.Any(e => e.UserName == username);
+
+        }
     }
 }
