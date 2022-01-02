@@ -38,21 +38,8 @@ namespace VolunteersProject.Models
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime BirthDate {
-            ///not working here
-            ///display by default todays date/
-            ///validations not working... now. investigate here
-            get
-            {
-                return BirthDate;
-            }
-            set 
-            {
-                BirthDate = DateTime.Now;
-            } 
-
-        } 
-
+        public DateTime BirthDate { get;set; }
+     
         /// <summary>
         /// Get or sets the join date to the hub.
         /// </summary>

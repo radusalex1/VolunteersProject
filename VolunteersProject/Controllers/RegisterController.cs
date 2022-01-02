@@ -26,7 +26,13 @@ namespace VolunteersProject.Controllers
         }
         public IActionResult Create()
         {
-            return View();
+            var newUser = new RegisterFormModel
+            {
+                BirthDate = System.DateTime.Today,
+                JoinHubDate = System.DateTime.Today
+            };
+
+            return View(newUser);
         }
         // POST: RegisterController/Create
         [HttpPost]
