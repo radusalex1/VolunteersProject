@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.DTO;
@@ -36,9 +35,7 @@ namespace VolunteersProject.Repository
 
         public bool AlreadyUseUsername(string username)
         {
-
             return _context.Users.Any(e => e.UserName == username);
-
         }
     }
 }

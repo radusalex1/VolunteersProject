@@ -45,6 +45,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Index(string SortOrder)
         {
 
@@ -85,6 +86,7 @@ namespace VolunteersProject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Enrollments/Details/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Details(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
@@ -97,6 +99,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Create
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
             //todo cia - fill ViewData below only with not assigned data - first select a contribution and after that display only the not already assigned volunteers
@@ -127,6 +130,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Edit/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
 
@@ -150,6 +154,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentID)
@@ -182,6 +187,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Delete/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -201,6 +207,7 @@ namespace VolunteersProject.Controllers
         // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);

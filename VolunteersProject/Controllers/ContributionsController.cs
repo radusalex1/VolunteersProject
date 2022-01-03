@@ -117,6 +117,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Details/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Details(int id)
         {
 
@@ -131,6 +132,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Create
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
             var contribution = new Contribution
@@ -148,6 +150,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Create([Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
@@ -160,6 +163,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Edit/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
@@ -181,6 +185,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
            
@@ -208,6 +213,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Delete/5
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -228,6 +234,7 @@ namespace VolunteersProject.Controllers
         // POST: Contributions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var contribution = contributionRepository.GetContributionById(id);
@@ -235,7 +242,7 @@ namespace VolunteersProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Assign(int id)
         {
             var selectedVolunteers = GetAvailableVolunteersDTO(id);
@@ -245,6 +252,7 @@ namespace VolunteersProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public ActionResult Assign(IFormCollection form, int contributionId)
         {            
             var selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
@@ -317,6 +325,7 @@ namespace VolunteersProject.Controllers
         /// Send email to selected volunteers
         /// </summary>
         /// <param name="sendInvitationEmailList">Selected volunteer list.</param>
+        [Authorize(Roles = Common.Role.Admin)]
         public void SendEmail(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
         {
             foreach (var volunteer in sendInvitationEmailList)
@@ -361,6 +370,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="contributionId">Contribution id.</param>
         /// <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
+        [Authorize(Roles = Common.Role.Admin)]
         public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<VolunteerDTO> directAssignmentVolunteerList)
         {
             foreach (var selectedVolunteer in directAssignmentVolunteerList)
