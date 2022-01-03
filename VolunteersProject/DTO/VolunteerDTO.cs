@@ -10,7 +10,7 @@ namespace VolunteersProject.DTO
         /// <summary>
         /// Gets or sets the volunteer id.
         /// </summary>
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         public string FullName { get; set; }
 

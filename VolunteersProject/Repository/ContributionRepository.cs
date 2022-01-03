@@ -33,7 +33,7 @@ namespace VolunteersProject.Repository
         /// <returns></returns>
         public Contribution GetContributionById(int id)
         {
-            return _context.Contributions.FirstOrDefault(i => i.ID.Equals(id));
+            return _context.Contributions.FirstOrDefault(i => i.Id.Equals(id));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace VolunteersProject.Repository
         }
         public bool ContributionExists(int id)
         {
-            return _context.Contributions.Any(e => e.ID == id);
+            return _context.Contributions.Any(e => e.Id == id);
         }
     }
 }

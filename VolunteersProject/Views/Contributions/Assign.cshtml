@@ -52,15 +52,15 @@
                     <td>
                         @if (!item.IsSelected)
                         {
-                            @Html.CheckBox("chk_emailInvitation_" + item.ID, false, new { name = "assignChkBx" })
+                            @Html.CheckBox("chk_emailInvitation_" + item.Id, false, new { name = "assignChkBx" })
                         }
                         else
                         {
-                            @Html.CheckBox("chk_emailInvitation_" + item.ID, true, new { name = "assignChkBx" })
+                            @Html.CheckBox("chk_emailInvitation_" + item.Id, true, new { name = "assignChkBx" })
                         }
                     </td>
                     <td>
-                        @Html.CheckBox("chk_directAssignment_" + item.ID, false, new { name = "directAssignmentChkBx" })
+                        @Html.CheckBox("chk_directAssignment_" + item.Id, false, new { name = "directAssignmentChkBx" })
                     </td>
                 </tr>
             }

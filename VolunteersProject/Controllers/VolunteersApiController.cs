@@ -64,7 +64,7 @@ namespace VolunteersProject.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!volunteerRepository.VolunteerExists(volunteer.ID))
+                if (!volunteerRepository.VolunteerExists(volunteer.Id))
                 {
                     return NotFound();
                 }

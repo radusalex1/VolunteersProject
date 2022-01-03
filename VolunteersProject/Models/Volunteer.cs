@@ -14,34 +14,35 @@ namespace VolunteersProject.Models
         /// <summary>
         /// Gets or sets the volunteer id.
         /// </summary>
-        public int ID { get; set; }
+        public int Id { get; set; }
 
-        public int UserID { get; set; }
+        public User User { get; set; }
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [Required]
-        [Display(Name="Nume",Prompt ="Family Name/Last Name")]
-        public string Name { get; set; }
+        [Display(Name = "Nume", Prompt = "Family Name/Last Name")]
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the first/sur name.
         /// </summary>
         [Required]
         [Display(Name ="Prenume",Prompt ="First Name")]
-        public string Surname { get; set; }
+        public string Surname { get; set; } = null!;
 
         public string City { get; set; }
 
         [Required]
-        [Display(Prompt ="example@example.org")]
-        public string Email { get; set; }
+        [Display(Prompt = "example@example.org")]
+        public string Email { get; set; } = null!;
 
         /// <summary>
         /// Get or sets the phone.
         /// </summary>
         [Required]
-        public string Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

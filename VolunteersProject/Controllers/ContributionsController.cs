@@ -148,7 +148,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        public async Task<IActionResult> Create([Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
@@ -181,7 +181,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
            
 
@@ -193,7 +193,7 @@ namespace VolunteersProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (contributionRepository.ContributionExists(contribution.ID))
+                    if (contributionRepository.ContributionExists(contribution.Id))
                     {
                         return NotFound();
                     }
@@ -270,7 +270,7 @@ namespace VolunteersProject.Controllers
                 var enrollment = new Enrollment();
 
                 enrollment.contributionId = contributionId;
-                enrollment.VolunteerID = selectedVolunteer.ID;
+                enrollment.VolunteerID = selectedVolunteer.Id;
                 enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Pending;
                 enrollmentRepository.Save(enrollment);
             }
@@ -282,9 +282,9 @@ namespace VolunteersProject.Controllers
 
             foreach (var volunteer in availableVolunteers)
             {
-                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.ID]))
+                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.Id]))
                 {
-                    if (form["chk_directAssignment_" + volunteer.ID][0] == "true")
+                    if (form["chk_directAssignment_" + volunteer.Id][0] == "true")
                     {
                         directAssignmentVolunteerList.Add(volunteer);
                     }
@@ -300,9 +300,9 @@ namespace VolunteersProject.Controllers
 
             foreach (var volunteer in availableVolunteers)
             {
-                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
+                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.Id]))
                 {
-                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
+                    if (form["chk_emailInvitation_" + volunteer.Id][0] == "true")
                     {
                         volunteer.IsSelected = true;
                         sendInvitationEmailList.Add(volunteer);
@@ -332,7 +332,7 @@ namespace VolunteersProject.Controllers
 
                 var contribution = contributionRepository.GetContributionById(contributionId);
 
-                var link = GetLink(contributionId, volunteer.ID);
+                var link = GetLink(contributionId, volunteer.Id);
 
                 emailMessage.Content = $"You where invited to \"{contribution.Name}\", a HappyCamps activitity, that will take place between {contribution.StartDate.ToString("yyyy-MM-dd")} and {contribution.FinishDate.ToString("yyyy-MM-dd")}. " +
                $"Click on {link} for more details.";
@@ -368,7 +368,7 @@ namespace VolunteersProject.Controllers
                 var enrollment = new Enrollment();
 
                 enrollment.contributionId = contributionId;
-                enrollment.VolunteerID = selectedVolunteer.ID;
+                enrollment.VolunteerID = selectedVolunteer.Id;
                 enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Accepted;
                 enrollmentRepository.Save(enrollment);
             }
@@ -400,7 +400,7 @@ namespace VolunteersProject.Controllers
             {
                 var volunteerDTO = new VolunteerDTO
                 {
-                    ID = volunteerItem.ID,
+                    Id = volunteerItem.Id,
                     Phone = volunteerItem.Phone,
                     Email = volunteerItem.Email,
                     FullName = volunteerItem.FullName,

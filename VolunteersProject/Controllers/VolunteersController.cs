@@ -40,7 +40,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Index(string sortOrder,string SearchString,string currentFilter,int? pageNumber)
         {
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
@@ -134,7 +134,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Create
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
             var volunteer = new Volunteer
@@ -150,8 +150,8 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Role.Admin)]
-        public IActionResult Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        [Authorize(Roles = Common.Role.Admin)]
+        public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
             {
@@ -221,12 +221,12 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        public IActionResult Edit(int id, [Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
-            if (id != volunteer.ID)
+            if (id != volunteer.Id)
             {
                 return NotFound();
             }
@@ -273,7 +273,7 @@ namespace VolunteersProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!volunteerRepository.VolunteerExists(volunteer.ID))
+                    if (!volunteerRepository.VolunteerExists(volunteer.Id))
                     {
                         return NotFound();
                     }
@@ -294,7 +294,7 @@ namespace VolunteersProject.Controllers
         /// <param name="id">Volunteer id.</param>
         /// <returns>Volunteer.</returns>
         // GET: Volunteers/Delete/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Delete(int? id)
         {
             var volunteer = volunteerRepository.GetVolunteerById(id);
@@ -308,7 +308,7 @@ namespace VolunteersProject.Controllers
         }
         
         // POST: Volunteers/Delete/5
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

@@ -116,7 +116,7 @@
             DTO for volunteer.
             </summary>
         </member>
-        <member name="P:VolunteersProject.DTO.VolunteerDTO.ID">
+        <member name="P:VolunteersProject.DTO.VolunteerDTO.Id">
             <summary>
             Gets or sets the volunteer id.
             </summary>
@@ -151,7 +151,7 @@
             Volunteer model.
             </summary>
         </member>
-        <member name="P:VolunteersProject.Models.Volunteer.ID">
+        <member name="P:VolunteersProject.Models.Volunteer.Id">
             <summary>
             Gets or sets the volunteer id.
             </summary>

@@ -34,9 +34,9 @@ namespace VolunteersProject.Repository
              .ThenInclude(c => c.contribution);
             
 
-            var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID == contributionId));
+            var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.Id == contributionId));
 
-            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID != contributionId) && !volunteersAssigned.Contains(v));
+            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.Id != contributionId) && !volunteersAssigned.Contains(v));
 
             var volunteersWithNoAnyAssignments = volunteers.Where(v => v.Enrollments.Count == 0);
 
@@ -57,7 +57,7 @@ namespace VolunteersProject.Repository
                 return null;
             }
 
-            return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
+            return _context.Volunteers.FirstOrDefault(i => i.Id.Equals(id));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace VolunteersProject.Repository
             return _context.Volunteers
                 .Include(e => e.Enrollments)
                 .ThenInclude(c => c.contribution)
-                     .FirstOrDefault(m => m.ID == id);
+                     .FirstOrDefault(m => m.Id == id);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace VolunteersProject.Repository
         /// <returns>True if exist, otherwise false.</returns>
         public bool VolunteerExists(int id)
         {
-            return _context.Volunteers.Any(e => e.ID == id);
+            return _context.Volunteers.Any(e => e.Id == id);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace VolunteersProject.Repository
                     v => v.Phone == volunteer.Phone || 
                     v.Email == volunteer.Email);
 
-                return (result == null || result.ID == volunteer.ID) ? false : true;
+                return (result == null || result.Id == volunteer.Id) ? false : true;
             }
 
             return false;

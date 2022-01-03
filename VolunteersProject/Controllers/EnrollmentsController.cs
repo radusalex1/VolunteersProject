@@ -100,9 +100,9 @@ namespace VolunteersProject.Controllers
         public IActionResult Create()
         {
             //todo cia - fill ViewData below only with not assigned data - first select a contribution and after that display only the not already assigned volunteers
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "ID");
-            ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "FullName");
-            ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "ID", "Name");
+            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
+            ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName");
+            ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name");
 
             return View();
         }
@@ -121,7 +121,7 @@ namespace VolunteersProject.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "ID", enrollment.VolunteerID);
+            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
 
             return View(enrollment);
         }
@@ -137,10 +137,10 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
 
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "ID", enrollment.VolunteerID);
-            ViewData["contributionId"] = new SelectList(contributionRepository.GetContributions(), "ID", "ID", enrollment.contributionId);
-            ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "FullName", enrollment.volunteer);
-            ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "ID", "Name", enrollment.contribution);
+            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
+            ViewData["contributionId"] = new SelectList(contributionRepository.GetContributions(), "Id", "Id", enrollment.contributionId);
+            ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName", enrollment.volunteer);
+            ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name", enrollment.contribution);
 
             return View(enrollment);
         }
@@ -177,7 +177,7 @@ namespace VolunteersProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "ID", "ID", enrollment.VolunteerID);
+            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
             return View(enrollment);
         }
 
@@ -224,11 +224,11 @@ namespace VolunteersProject.Controllers
 
             var volunteerEmailAnswer = new VolunteerEmailAnswerModel
             {
-                ContributionId = contribution.ID,
+                ContributionId = contribution.Id,
                 ContributionName = contribution.Name,
                 StartDate = contribution.StartDate.ToString("yyyy-MM-dd"),
                 FinishDate = contribution.FinishDate.ToString("yyyy-MM-dd"),
-                VolunteerId = volunteer.ID,
+                VolunteerId = volunteer.Id,
             };
 
             return View(volunteerEmailAnswer);

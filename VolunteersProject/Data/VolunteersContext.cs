@@ -18,14 +18,16 @@ namespace VolunteersProject.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Volunteer> Volunteers { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Roles> Roles { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Contribution>().ToTable("Contributions");
             modelBuilder.Entity<Enrollment>().ToTable("Enrollments");
             modelBuilder.Entity<Volunteer>().ToTable("Volunteers");
             modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<Roles>().ToTable("Roles");
+            modelBuilder.Entity<Role>().ToTable("Roles");
         }
+
     }
 }

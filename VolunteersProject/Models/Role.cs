@@ -1,22 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace VolunteersProject.Models
 {
-    public class Roles
+    public class Role
     {
         public int Id { get; set; }
 
         /// <summary>
         /// administrator,simple user etc;
         /// </summary>
-        public string Description { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// the more power the more rights the user has
         /// </summary>
         public int Power { get; set; }
+
+        /// <summary>
+        /// administrator,simple user etc;
+        /// </summary>
+        public string Description { get; set; }
+
+        public ICollection<User> Users { get; set; }
     }
 }

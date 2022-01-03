@@ -10,13 +10,14 @@ namespace VolunteersProject.Controllers
     public class RegisterController : GeneralConstroller
     {
         private IVolunteerRepository volunteerRepository;
-        private IConfiguration configuration;
         private IUserRepository userRepository;
+        private IRolesRepository rolesRepository;
 
-        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository,ILogger<RegisterController> logger, IConfiguration configuration):base(logger,configuration)
+        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration):base(logger,configuration)
         {
             this.volunteerRepository = volunteerRepository;
             this.userRepository = userRepository;
+           this.rolesRepository = rolesRepository;
         }
 
         // GET: RegisterController
@@ -34,6 +35,8 @@ namespace VolunteersProject.Controllers
 
             return View(newUser);
         }
+
+
         // POST: RegisterController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -49,7 +52,7 @@ namespace VolunteersProject.Controllers
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
-                    
+
                     if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
@@ -68,7 +71,7 @@ namespace VolunteersProject.Controllers
                         LastName = newUser.Surname,
                         UserName = newUser.UserName,
                         Password = newUser.Password,
-                        Role = "User"
+                        Role = rolesRepository.GetUserRight()
                     }; 
                     
                     if(userRepository.AlreadyUseUsername(user.UserName))
@@ -89,7 +92,7 @@ namespace VolunteersProject.Controllers
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,
                         FaceBookProfile = newUser.InstagramProfile,
-                        UserID = userId
+                        User = user
                     };
 
                     volunteerRepository.AddVolunteer(volunteer);

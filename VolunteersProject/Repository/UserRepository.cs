@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.DTO;
@@ -20,7 +21,9 @@ namespace VolunteersProject.Repository
       
         public User GetUser(LoginModel userModel)
         {
-            return _context.Users.Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
+            return _context.Users
+                .Include(r => r.Role)
+                .Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
                 && x.Password == userModel.Password).FirstOrDefault();
         }
 

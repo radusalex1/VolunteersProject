@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace VolunteersProject.Models
 {
@@ -11,8 +12,10 @@ namespace VolunteersProject.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
-        public string Role { get; set; }
-        public int RoleId { get; set; }
+        public Role Role { get; set; }
+
+        public ICollection<Volunteer> Volunteers { get; set; }
+
         [JsonIgnore]
         public string Password { get; set; }
     }
