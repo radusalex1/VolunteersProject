@@ -137,7 +137,12 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Role.Admin)]
         public IActionResult Create()
         {
-            return View();
+            var volunteer = new Volunteer
+            {
+                BirthDate = DateTime.Today,
+                JoinHubDate = DateTime.Today
+            };
+            return View(volunteer);
         }
 
         // POST: Volunteers/Create

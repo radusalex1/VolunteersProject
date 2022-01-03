@@ -21,7 +21,7 @@ namespace VolunteersProject.Controllers
     public class ContributionsController : GeneralConstroller
     {
         //private readonly VolunteersContext _context;
-       
+
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
@@ -36,14 +36,14 @@ namespace VolunteersProject.Controllers
                  IEnrollmentRepository enrollmentRepository,
                  IContributionRepository contributionRepository,
                  IConfiguration configuration
-             ):base(logger,configuration)
+             ) : base(logger, configuration)
         {
             //_context = context;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
             this.contributionRepository = contributionRepository;
-           
+
         }
 
         // GET: Contributions
@@ -120,7 +120,7 @@ namespace VolunteersProject.Controllers
         public async Task<IActionResult> Details(int id)
         {
 
-            
+
             var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
             {
@@ -133,7 +133,14 @@ namespace VolunteersProject.Controllers
         // GET: Contributions/Create
         public IActionResult Create()
         {
-            return View();
+            var contribution = new Contribution
+            {
+                StartDate = DateTime.Today,
+                FinishDate = DateTime.Today,
+                VolunteerDeadlineConfirmation = DateTime.Today
+            };
+
+            return View(contribution);
         }
 
         // POST: Contributions/Create
