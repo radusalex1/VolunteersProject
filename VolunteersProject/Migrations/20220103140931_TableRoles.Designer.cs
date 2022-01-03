@@ -10,15 +10,15 @@ using VolunteersProject.Data;
 namespace VolunteersProject.Migrations
 {
     [DbContext(typeof(VolunteersContext))]
-    [Migration("20210930100356_20210930100317_s.cs")]
-    partial class _20210930100317_scs
+    [Migration("20220103140931_TableRoles")]
+    partial class TableRoles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("VolunteersProject.Models.Contribution", b =>
@@ -31,8 +31,20 @@ namespace VolunteersProject.Migrations
                     b.Property<int>("Credits")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FinishDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("VolunteerDeadlineConfirmation")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -49,6 +61,9 @@ namespace VolunteersProject.Migrations
                     b.Property<int>("VolunteerID")
                         .HasColumnType("int");
 
+                    b.Property<int>("VolunteerStatus")
+                        .HasColumnType("int");
+
                     b.Property<int>("contributionId")
                         .HasColumnType("int");
 
@@ -59,6 +74,51 @@ namespace VolunteersProject.Migrations
                     b.HasIndex("contributionId");
 
                     b.ToTable("Enrollments");
+                });
+
+            modelBuilder.Entity("VolunteersProject.Models.Roles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Power")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("VolunteersProject.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("VolunteersProject.Models.Volunteer", b =>
@@ -74,17 +134,39 @@ namespace VolunteersProject.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DescriptionContributionToHub")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FaceBookProfile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageProfileByteArray")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("InstagramProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("JoinHubDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 

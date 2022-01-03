@@ -12,7 +12,7 @@ namespace VolunteersProject.Models
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string Role { get; set; }
-
+        public int RoleId { get; set; }
         [JsonIgnore]
         public string Password { get; set; }
     }

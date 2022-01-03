@@ -1,4 +1,10 @@
-﻿insert into [Users]
+﻿
+insert into [Users]
   (FirstName, LastName, UserName, [Password], [Role])
   values
   ('ciprian', 'alexandru', 't','t','admin');
+
+
+insert into Roles
+values('Admin',100),
+	('User',10);
