@@ -45,7 +45,6 @@ namespace VolunteersProject.Data
             };
             foreach (Contribution c in contributions)
             {
-              
                 context.Contributions.Add(c);
             }
             context.SaveChanges();

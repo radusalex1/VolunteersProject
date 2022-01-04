@@ -16,7 +16,7 @@ namespace VolunteersProject.Services
         {
             var claims = new[] {
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Role.ToString(), user.Role.Name),
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
         };
 
@@ -26,20 +26,7 @@ namespace VolunteersProject.Services
                 expires: DateTime.Now.AddMinutes(EXPIRY_DURATION_MINUTES), signingCredentials: credentials);
             
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-        }
-
-        //public string GenerateJSONWebToken(string key, string issuer, UserDTO user)
-        //{
-        //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-        //    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        //    var token = new JwtSecurityToken(issuer, issuer,
-        //      null,
-        //      expires: DateTime.Now.AddMinutes(120),
-        //      signingCredentials: credentials);
-
-        //    return new JwtSecurityTokenHandler().WriteToken(token);
-        //}
+        }       
 
         public bool IsTokenValid(string key, string issuer, string token)
         {
