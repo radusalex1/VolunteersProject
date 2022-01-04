@@ -1,4 +1,8 @@
-﻿
+﻿insert into Roles
+values
+('Admin',100,'Admin-right'),
+('User',10,'User-right');
+
 INSERT INTO [dbo].[Users]
            ([FirstName]
            ,[LastName]
@@ -8,12 +12,5 @@ INSERT INTO [dbo].[Users]
      VALUES
           ('radu','alexandru','radu_admin',1,'admin'),
 		  ('radu','radu','radu_user',2,'user');
-
-
-insert into Roles
-values
-('Admin',100,'Admin-right'),
-('User',10,'User-right');
-
 
 
