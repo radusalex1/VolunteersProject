@@ -29,7 +29,8 @@ namespace VolunteersProject.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, IVolunteerRepository volunteerRepository) : base(logger, configuration)
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, IVolunteerRepository volunteerRepository) 
+            : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);

@@ -3,28 +3,31 @@ using Microsoft.Extensions.Configuration;
 using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VolunteersProject.Controllers
 {
-
+    [AllowAnonymous]
     public class RegisterController : GeneralConstroller
     {
         private IVolunteerRepository volunteerRepository;
         private IUserRepository userRepository;
         private IRolesRepository rolesRepository;
 
-        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration):base(logger,configuration)
+        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration)
+            : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
             this.userRepository = userRepository;
-           this.rolesRepository = rolesRepository;
+            this.rolesRepository = rolesRepository;
         }
-
+        
         // GET: RegisterController
         public ActionResult Index()
         {
             return View();
         }
+
         public IActionResult Create()
         {
             var newUser = new RegisterFormModel
@@ -47,13 +50,13 @@ namespace VolunteersProject.Controllers
                 if (ModelState.IsValid)
                 {
 
-                    if(!string.IsNullOrEmpty(newUser.Phone) && PhoneNumberIsValid(newUser.Phone))
+                    if (!string.IsNullOrEmpty(newUser.Phone) && PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
 
-                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& InstagramIsValid(newUser.InstagramProfile))
+                    if (!string.IsNullOrEmpty(newUser.InstagramProfile) && InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
                         return View(newUser);
@@ -72,9 +75,9 @@ namespace VolunteersProject.Controllers
                         UserName = newUser.UserName,
                         Password = newUser.Password,
                         Role = rolesRepository.GetUserRight()
-                    }; 
-                    
-                    if(userRepository.AlreadyUseUsername(user.UserName))
+                    };
+
+                    if (userRepository.AlreadyUseUsername(user.UserName))
                     {
                         ViewBag.Username_Error = "Username Already Use";
                         return View(newUser);
