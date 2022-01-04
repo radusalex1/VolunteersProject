@@ -1,12 +1,1 @@
 ﻿Update-Database InitialCreate
-Update-Database s
-Update-Database  phone_number_added_to_volunteers
-Update-Database  ContrbutionNewFields
-Update-Database  descriptionFieldToContribution
-Update-Database  VolunteerNewFlds
-Update-Database  VolunteerStatus
-Update-Database  Add_VolunteerDeadlineConfirmation_to_Contribution
-Update-Database  UsersTable
-Update-Database Add_Role_column_Users
-Update-Database Add_ImageProfile_To_VolunteerModel
-Update-Database UserIdFieldVolunteer --- asta nu

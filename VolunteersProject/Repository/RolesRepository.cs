@@ -9,15 +9,20 @@ namespace VolunteersProject.Repository
     {
         private readonly VolunteersContext _context;
 
+        public RolesRepository(VolunteersContext context)
+        {
+            _context = context;
+        }
+
         public Role GetAdminRight()
         {
-            return _context.Roles.FirstOrDefault(r => r.Description == "Admin");
-
+            return _context.Roles.FirstOrDefault(r => r.Name == "Admin");
         }
 
         public Role GetUserRight()
         {
-            return _context.Roles.FirstOrDefault(r => r.Description == "User");
+            var test =  _context.Roles.FirstOrDefault(r => r.Name == "User");
+            return test;
         }
 
     }
