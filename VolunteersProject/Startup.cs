@@ -186,7 +186,7 @@ namespace VolunteersProject
             app.UseAuthorization();
 
             //todo cia - check if this is need
-            // custom jwt auth middleware
+            //custom jwt auth middleware
             //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>

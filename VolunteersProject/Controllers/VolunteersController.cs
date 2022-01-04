@@ -73,52 +73,51 @@ namespace VolunteersProject.Controllers
             ViewData["CurrentFilter"] = SearchString;
 
 
-            var students = volunteerRepository.GetVolunteers();
+            var volunteers = volunteerRepository.GetVolunteers();
 
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
+                volunteers = volunteers.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
-            //todo Radu - rename student/s to volunteer/s
-            students = GetSortedVolunteers(sortOrder, students);
+             volunteers = GetSortedVolunteers(sortOrder, volunteers);
 
-            return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Volunteer>.Create(volunteers, pageNumber ?? 1, pageSize));
         }
 
-        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> volunteers)
 
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    students = students.OrderByDescending(s => s.Name);
+                    volunteers = volunteers.OrderByDescending(s => s.Name);
                     break;
                 case "Age":
-                    students = students.OrderBy(s => s.BirthDate);
+                    volunteers = volunteers.OrderBy(s => s.BirthDate);
                     break;
                 case "Age_desc":
-                    students = students.OrderByDescending(s => s.BirthDate);
+                    volunteers = volunteers.OrderByDescending(s => s.BirthDate);
                     break;
                 case "City_desc":
-                    students = students.OrderByDescending(s => s.City);
+                    volunteers = volunteers.OrderByDescending(s => s.City);
                     break;
                 case "City":
-                    students = students.OrderBy(s => s.City);
+                    volunteers = volunteers.OrderBy(s => s.City);
                     break;
                 case "JoinHubDate":
-                    students = students.OrderBy(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderBy(s => s.JoinHubDate);
                     break;
                 case "JoinHubDate_desc":
-                    students = students.OrderByDescending(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderByDescending(s => s.JoinHubDate);
                     break;
                 default:
-                    students = students.OrderBy(s => s.Name);
+                    volunteers = volunteers.OrderBy(s => s.Name);
                     break;
             }
 
-            return students;
+            return volunteers;
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace VolunteersProject.Controllers
 {
@@ -59,7 +60,7 @@ namespace VolunteersProject.Controllers
                         return View(newUser);
                     }
 
-                    if (!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
+                    if(!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
                     {
                         ViewBag.Email_Error = "Incorrect Email Adress";
                         return View(newUser);
@@ -87,11 +88,12 @@ namespace VolunteersProject.Controllers
                         Name = validateName(newUser.Name),
                         Surname = newUser.Surname,
                         City = validateCity(newUser.City),
+                        Phone = newUser.Phone,
                         Email = newUser.Email,
                         BirthDate = newUser.BirthDate,
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,
-                        FaceBookProfile = newUser.InstagramProfile,
+                        FaceBookProfile = newUser.FaceBookProfile,
                         User = user
                     };
 
@@ -99,8 +101,9 @@ namespace VolunteersProject.Controllers
                 }
                 return View();
             }
-            catch
+            catch(Exception ex)
             {
+                Logger.LogError(ex.Message);
                 return View();
             }
         }
