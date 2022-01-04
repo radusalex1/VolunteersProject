@@ -9,7 +9,7 @@ namespace VolunteersProject.Data
 {
     public class VolunteersContext : DbContext
     {
-        public VolunteersContext(DbContextOptions<VolunteersContext> options):base(options)
+        public VolunteersContext(DbContextOptions<VolunteersContext> options) : base(options)
         {
 
         }
