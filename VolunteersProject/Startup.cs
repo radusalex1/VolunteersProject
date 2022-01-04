@@ -129,7 +129,7 @@ namespace VolunteersProject
             services.AddTransient<IVolunteerRepository, VolunteerRepository>();
             services.AddTransient<IContributionRepository, ContributionRepository>();
             services.AddTransient<IEnrollmentRepository, EnrollmentRepository>();
-
+            services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<ITokenService, TokenService>();

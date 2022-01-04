@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using VolunteersProject.Common;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
@@ -31,7 +29,7 @@ namespace VolunteersProject.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration,IVolunteerRepository volunteerRepository) : base(logger,configuration)
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, IVolunteerRepository volunteerRepository) : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
@@ -39,9 +37,17 @@ namespace VolunteersProject.Controllers
             imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
         }
 
+        /// <summary>
+        /// Display a list of volunteers.
+        /// </summary>
+        /// <param name="sortOrder">Sort order.</param>
+        /// <param name="SearchString">Search string.</param>
+        /// <param name="currentFilter">Current filter.</param>
+        /// <param name="pageNumber">Page number.</param>
+        /// <returns></returns>
         // GET: Volunteers
-        [Authorize(Roles = Common.Role.Admin)]
-        public IActionResult Index(string sortOrder,string SearchString,string currentFilter,int? pageNumber)
+        [Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
+        public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
@@ -82,7 +88,7 @@ namespace VolunteersProject.Controllers
         }
 
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-       
+
         {
             switch (sortOrder)
             {
@@ -146,8 +152,7 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: Volunteers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enable the specific properties you want to bind to.       
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Common.Role.Admin)]
@@ -198,8 +203,9 @@ namespace VolunteersProject.Controllers
             }
 
             return View(volunteer);
-        }        
+        }
 
+        [Authorize(Roles = Common.Role.Admin)]
         // GET: Volunteers/Edit/5
         public IActionResult Edit(int id)
         {
@@ -306,7 +312,7 @@ namespace VolunteersProject.Controllers
 
             return View(volunteer);
         }
-        
+
         // POST: Volunteers/Delete/5
         [Authorize(Roles = Common.Role.Admin)]
         [HttpPost, ActionName("Delete")]
@@ -326,6 +332,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="volunteerId">Volunteer id.</param>
         /// <returns>Volunteer image profile as a file.</returns>
+        [Authorize(Roles = Common.Role.Admin)]
         [HttpGet]
         public IActionResult SetVolunteerImageProfile(int volunteerId)
         {

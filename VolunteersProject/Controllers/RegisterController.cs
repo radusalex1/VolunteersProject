@@ -47,13 +47,13 @@ namespace VolunteersProject.Controllers
                 if (ModelState.IsValid)
                 {
 
-                    if(!string.IsNullOrEmpty(newUser.Phone) && PhoneNumberIsValid(newUser.Phone))
+                    if(!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
 
-                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& InstagramIsValid(newUser.InstagramProfile))
+                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& !InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
                         return View(newUser);
