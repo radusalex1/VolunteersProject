@@ -149,5 +149,33 @@ namespace VolunteersProject.Repository
 
             return false;
         }
+
+        /// <summary>
+        /// Return points of volunteer
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        public int GetVolunteerTotalPoints(Volunteer volunteer)
+        {
+            
+            var result = _context.Enrollments
+                .Include(e => e.volunteer)
+                .Include(c => c.contribution)
+                .Where(e => e.volunteer.Id == volunteer.Id).ToList().ToArray();
+
+            var totalPoints = 0;
+            
+            for(int i=0;i<result.Length;i++)
+            {
+                totalPoints += result[i].contribution.Credits;
+            }
+
+            return totalPoints;
+            /*select sum(c.Credits) as totalPoints from Volunteers v
+              inner join Enrollments e on e.VolunteerID=v.Id
+              inner join Contributions c on c.Id=e.contributionId
+              where Surname='Radu - Serban';*/
+            
+        }
     }
 }

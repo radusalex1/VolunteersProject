@@ -166,7 +166,6 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-
                     enrollmentRepository.UpdateEnrollment(enrollment);
                 }
                 catch (DbUpdateConcurrencyException)

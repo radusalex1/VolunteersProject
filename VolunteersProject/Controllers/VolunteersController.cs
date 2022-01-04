@@ -81,14 +81,12 @@ namespace VolunteersProject.Controllers
                 students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
-            //todo Radu - rename student/s to volunteer/s
             students = GetSortedVolunteers(sortOrder, students);
 
             return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
         }
 
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-
         {
             switch (sortOrder)
             {
@@ -130,7 +128,7 @@ namespace VolunteersProject.Controllers
         public IActionResult Details(int? id)
         {
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
-
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);;
             if (volunteer == null)
             {
                 return NotFound();

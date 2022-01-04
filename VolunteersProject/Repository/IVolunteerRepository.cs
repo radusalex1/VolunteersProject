@@ -69,5 +69,12 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="volunteer">Volunteer.</param>
         void DeleteVolunteer(Volunteer volunteer);
+
+        /// <summary>
+        /// Returns volunteers total points based on events.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        int GetVolunteerTotalPoints(Volunteer volunteer);
     }
 }
