@@ -37,13 +37,13 @@
             <param name="errorMessage"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SendEmail(System.Int32,System.Collections.Generic.List{VolunteersProject.DTO.VolunteerDTO})">
             <summary>
             Send email to selected volunteers
             </summary>
             <param name="sendInvitationEmailList">Selected volunteer list.</param>
         </member>
-        <member name="M:VolunteersProject.Controllers.ContributionsController.SaveDirectAssignedVoluteersToContribution(System.Int32,System.Collections.Generic.List{VolunteersProject.Models.Volunteer})">
+        <member name="M:VolunteersProject.Controllers.ContributionsController.SaveDirectAssignedVoluteersToContribution(System.Int32,System.Collections.Generic.List{VolunteersProject.DTO.VolunteerDTO})">
             <summary>
             Save assignment of volunteers to a specific contribution.
             </summary>
@@ -67,12 +67,13 @@
             Volunteer controller.
             </summary>
         </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},VolunteersProject.Repository.IVolunteerRepository)">
+        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},VolunteersProject.Repository.IVolunteerRepository,Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
             Contructor
             </summary>
             <param name="logger">Logger.</param>
             <param name="volunteerRepository">Volunteer repository.</param>
+            <param name="configuration">Application configuration.</param>
         </member>
         <member name="M:VolunteersProject.Controllers.VolunteersController.Details(System.Nullable{System.Int32})">
             <summary>
@@ -80,6 +81,45 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.Delete(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Volunteer.</returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.SetVolunteerImageProfile(System.Int32)">
+            <summary>
+            Set the volunteer image profile.
+            </summary>
+            <param name="volunteerId">Volunteer id.</param>
+            <returns>Volunteer image profile as a file.</returns>
+        </member>
+        <member name="T:VolunteersProject.DTO.AvailableVolunters">
+            <summary>
+            DTO that contains available volunteers for a contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.ContributionId">
+            <summary>
+            Gets or sets the contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.VolunteersDTO">
+            <summary>
+            Gets or sets the volunteersDTO list.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.DTO.VolunteerDTO">
+            <summary>
+            DTO for volunteer.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.VolunteerDTO.Id">
+            <summary>
+            Gets or sets the volunteer id.
+            </summary>
         </member>
         <member name="T:VolunteersProject.Models.AuthenticateRequest">
             <summary>
@@ -111,6 +151,66 @@
             Volunteer model.
             </summary>
         </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Id">
+            <summary>
+            Gets or sets the volunteer id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Surname">
+            <summary>
+            Gets or sets the first/sur name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Phone">
+            <summary>
+            Get or sets the phone.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.Age">
+            <summary>
+            Gets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.FullName">
+            <summary>
+            Gets or sets the full name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.JoinHubDate">
+            <summary>
+            Get or sets the join date to the hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.InstagramProfile">
+            <summary>
+            Gets or sets the instagram profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.FaceBookProfile">
+            <summary>
+            Gets or sets the Facebook profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.DescriptionContributionToHub">
+            <summary>
+            Gets or set the description contribution to hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.ImageProfile">
+            <summary>
+            Gets or sets the image profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.ImageProfileByteArray">
+            <summary>
+            Gets or sets the image profile byte array.
+            </summary>
+        </member>
         <member name="T:VolunteersProject.Repository.ContributionRepository">
             <summary>
             Contribution repository.
@@ -120,7 +220,8 @@
             <summary>
             Contructor
             </summary>
-            <param name="context"></param>
+            <param name="logger">Logger.</param>
+            <param name="context">context.</param>
         </member>
         <member name="M:VolunteersProject.Repository.ContributionRepository.GetContributionById(System.Int32)">
             <summary>
@@ -154,12 +255,69 @@
             </summary>
             <returns>List of all volunteers.</returns>
         </member>
+        <member name="T:VolunteersProject.Repository.IVolunteerRepository">
+            <summary>
+            Interface for volunteers repository.
+            </summary>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteers">
+            <summary>
+            Get all volunteers.
+            </summary>
+            <returns>List of all volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteerById(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Volunteer.</returns>
+        </member>
         <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetVolunteerWithEnrollmentsById(System.Nullable{System.Int32})">
             <summary>
             Get volunteer with related enrollments.
             </summary>
             <param name="id">Volunteer id.</param>
             <returns>Return colunteer with related enrollments.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.GetAvailableVolunteers(System.Int32)">
+            <summary>
+            Get all not assigned volunteers to the current contribution id.
+            </summary>
+            <param name="contributionId">Contribution id.</param>
+            <returns>List of not assigned volunteers.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.AddVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Add volunteer.
+            </summary>
+            <param name="volunteer"></param>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.UpdateVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Update volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.VolunteerExists(System.Int32)">
+            <summary>
+            Check by id if volunteer exist.
+            </summary>
+            <param name="id"></param>
+            <returns>True if exist, otherwise false.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.CheckVolunteerExistByPhoneOrEmail(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Search by phone, email if volunteer exist.
+            </summary>
+            <param name="volunteer"></param>
+            <returns>True if exist, otherwise false.</returns>
+        </member>
+        <member name="M:VolunteersProject.Repository.IVolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Delete volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
         </member>
         <member name="T:VolunteersProject.Repository.UserRepository">
             <summary>
@@ -210,11 +368,31 @@
             </summary>
             <param name="volunteer"></param>
         </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.UpdateVolunteer(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Update volunteer.
+            </summary>
+            <param name="volunteer">Volunteer.</param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.VolunteerExists(System.Int32)">
+            <summary>
+            Check by id if volunteer exist.
+            </summary>
+            <param name="id"></param>
+            <returns>True if exist, otherwise false.</returns>
+        </member>
         <member name="M:VolunteersProject.Repository.VolunteerRepository.DeleteVolunteer(VolunteersProject.Models.Volunteer)">
             <summary>
             Delete volunteer.
             </summary>
             <param name="volunteer">Volunteer.</param>
+        </member>
+        <member name="M:VolunteersProject.Repository.VolunteerRepository.CheckVolunteerExistByPhoneOrEmail(VolunteersProject.Models.Volunteer)">
+            <summary>
+            Search by phone, email if volunteer exist.
+            </summary>
+            <param name="volunteer"></param>
+            <returns>True if exist, otherwise false.</returns>
         </member>
     </members>
 </doc>

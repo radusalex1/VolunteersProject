@@ -31,16 +31,18 @@ namespace VolunteersProject.Repository
         {
             var volunteers = _context.Volunteers
              .Include(e => e.Enrollments)
-             .ThenInclude(c => c.contribution)
-             .ToList();
+             .ThenInclude(c => c.contribution);
+            
 
-            var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID == contributionId));
+            var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.Id == contributionId));
 
-            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.ID != contributionId) && !volunteersAssigned.Contains(v)).ToList();
+            var volunteersAvailable = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.Id != contributionId) && !volunteersAssigned.Contains(v));
 
-            var volunteersWithNoAnyAssignments = _context.Volunteers.Where(v => v.Enrollments.Count == 0).ToList();
+            var volunteersWithNoAnyAssignments = volunteers.Where(v => v.Enrollments.Count == 0);
 
-            return volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
+            var test =  volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
+
+            return test;
         }
 
         /// <summary>
@@ -55,9 +57,9 @@ namespace VolunteersProject.Repository
                 return null;
             }
 
-            return _context.Volunteers.FirstOrDefault(i => i.ID.Equals(id));
+            return _context.Volunteers.FirstOrDefault(i => i.Id.Equals(id));
         }
- 
+
         /// <summary>
         /// Get volunteer with related enrollments.
         /// </summary>
@@ -73,16 +75,16 @@ namespace VolunteersProject.Repository
             return _context.Volunteers
                 .Include(e => e.Enrollments)
                 .ThenInclude(c => c.contribution)
-                     .FirstOrDefault(m => m.ID == id);
+                     .FirstOrDefault(m => m.Id == id);
         }
 
         /// <summary>
         /// Get all volunteers.
         /// </summary>
         /// <returns>List of all volunteers.</returns>
-        public List<Volunteer> GetVolunteers()
+        public IQueryable<Volunteer> GetVolunteers()
         {
-            return _context.Volunteers.ToList();
+            return _context.Volunteers;
         }
 
         /// <summary>
@@ -97,6 +99,10 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Update volunteer.
+        /// </summary>
+        /// <param name="volunteer">Volunteer.</param>
         public void UpdateVolunteer(Volunteer volunteer)
         {
             //todo Radu - check if this volunteer already exist (not by id)
@@ -105,9 +111,14 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Check by id if volunteer exist.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>True if exist, otherwise false.</returns>
         public bool VolunteerExists(int id)
         {
-            return _context.Volunteers.Any(e => e.ID == id);
+            return _context.Volunteers.Any(e => e.Id == id);
         }
 
         /// <summary>
@@ -120,18 +131,23 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
         }
 
-       public bool VolunteerExists(Volunteer volunteer)
+        /// <summary>
+        /// Search by phone, email if volunteer exist.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns>True if exist, otherwise false.</returns>
+        public bool CheckVolunteerExistByPhoneOrEmail(Volunteer volunteer)
         {
-            var result = _context.Volunteers.FirstOrDefault(v => v.Phone == volunteer.Phone
-                                                           && v.Email == volunteer.Email);
-            if(result==null)
+            if (volunteer.Email != null && volunteer.Phone != null)
             {
-                return false;
+                var result = _context.Volunteers.AsNoTracking().FirstOrDefault(
+                    v => v.Phone == volunteer.Phone || 
+                    v.Email == volunteer.Email);
+
+                return (result == null || result.Id == volunteer.Id) ? false : true;
             }
-            else
-            {
-                return true;
-            }
+
+            return false;
         }
     }
 }

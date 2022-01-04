@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using VolunteersProject.Data;
 using VolunteersProject.DTO;
@@ -18,12 +18,24 @@ namespace VolunteersProject.Repository
             _context = context;
         }
       
-        
-
-        public User GetUser(UserModel userModel)
+        public User GetUser(LoginModel userModel)
         {
-            return _context.Users.Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
+            return _context.Users
+                .Include(r => r.Role)
+                .Where(x => x.UserName.ToLower() == userModel.UserName.ToLower()
                 && x.Password == userModel.Password).FirstOrDefault();
+        }
+
+        public int AddUser(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return user.Id; 
+        }
+
+        public bool AlreadyUseUsername(string username)
+        {
+            return _context.Users.Any(e => e.UserName == username);
         }
     }
 }

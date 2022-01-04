@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 using VolunteersProject.Common;
 using VolunteersProject.Data;
 using VolunteersProject.Models;
@@ -33,11 +34,18 @@ namespace VolunteersProject.Repository
         /// Get all volunteers.
         /// </summary>
         /// <returns>List of all volunteers.</returns>
-        public List<Enrollment> GetEnrollments()
+        public IQueryable<Enrollment> GetEnrollments()
         {
-            return _context.Enrollments.ToList();
+            return _context.Enrollments;
         }
+        public IQueryable<Enrollment> GetEnrollments_With_Data()
+        {
+            IQueryable<Enrollment> enrollments = _context.Enrollments
+                .Include(e => e.volunteer)
+                .Include(c => c.contribution);
 
+            return enrollments;
+        }
         public void Save(Enrollment enrollment)
         {
             _context.Add(enrollment);
@@ -67,6 +75,12 @@ namespace VolunteersProject.Repository
             {
                 return true;
             }
+        }
+
+        public void DeleteEnrollment(Enrollment enrollment)
+        {
+            _context.Enrollments.Remove(enrollment);
+            _context.SaveChanges();
         }
     }
 }

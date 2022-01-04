@@ -9,7 +9,7 @@ namespace VolunteersProject.Models
     /// </summary>
     public class Contribution
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         
         public string Name { get; set; }
        [Display(Name="Happy Points")]

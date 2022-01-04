@@ -1,10 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VolunteersProject.Models
+namespace VolunteersProject.DTO
 {
-    public class UserModel
+    /// <summary>
+    /// login model
+    /// </summary>
+    public class LoginModel
     {
         public int Id { get; set; }
+
         [Required]
         public string UserName { get; set; }
 
