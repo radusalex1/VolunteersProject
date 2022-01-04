@@ -13,11 +13,20 @@ namespace VolunteersProject.Repository
     {
         private readonly VolunteersContext _context;
 
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="context"></param>
         public UserRepository(VolunteersContext context)
         {
             _context = context;
         }
       
+        /// <summary>
+        /// get user
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
         public User GetUser(LoginModel userModel)
         {
             return _context.Users
@@ -26,6 +35,11 @@ namespace VolunteersProject.Repository
                 && x.Password == userModel.Password).FirstOrDefault();
         }
 
+        /// <summary>
+        /// add user to database
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public int AddUser(User user)
         {
             _context.Users.Add(user);
@@ -33,6 +47,11 @@ namespace VolunteersProject.Repository
             return user.Id; 
         }
 
+        /// <summary>
+        /// method to check username unique
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public bool AlreadyUseUsername(string username)
         {
             return _context.Users.Any(e => e.UserName == username);

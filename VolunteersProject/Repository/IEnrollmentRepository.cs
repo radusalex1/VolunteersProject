@@ -11,8 +11,8 @@ namespace VolunteersProject.Repository
         IQueryable<Enrollment> GetEnrollments();
         IQueryable<Enrollment> GetEnrollments_With_Data();
         void Save(Enrollment enrollment);
-        void Update(Enrollment enrollment);
-        bool IfExist(Enrollment enrollment);
+        void UpdateEnrollment(Enrollment enrollment);
+        bool EnrollmentExists(Enrollment enrollment);
         void DeleteEnrollment(Enrollment enrollment);
     }
 }

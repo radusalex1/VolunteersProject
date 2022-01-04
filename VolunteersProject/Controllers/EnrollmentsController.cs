@@ -167,7 +167,7 @@ namespace VolunteersProject.Controllers
                 try
                 {
 
-                    enrollmentRepository.Update(enrollment);
+                    enrollmentRepository.UpdateEnrollment(enrollment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -255,8 +255,6 @@ namespace VolunteersProject.Controllers
                 volunteerEnrollmentStatus = 3;
             }
 
-            //todo Radu - implement volunteerEnrollmentStatus column in Enrollment tbl (column type = integer)
-
             var enrollment = new Enrollment
             {
                 contributionId = contributionId,
@@ -264,7 +262,7 @@ namespace VolunteersProject.Controllers
                 VolunteerStatus = (int)volunteerEnrollmentStatus
             };
 
-            enrollmentRepository.Update(enrollment);
+            enrollmentRepository.UpdateEnrollment(enrollment);
 
             return View("Close");
         }
@@ -272,7 +270,7 @@ namespace VolunteersProject.Controllers
         private bool EnrollmentExists(int id)
         {
             Enrollment enrollment = enrollmentRepository.GetEnrollmentById(id);
-            return enrollmentRepository.IfExist(enrollment);
+            return enrollmentRepository.EnrollmentExists(enrollment);
 
         }
     }
