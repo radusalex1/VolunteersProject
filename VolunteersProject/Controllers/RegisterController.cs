@@ -88,6 +88,7 @@ namespace VolunteersProject.Controllers
                         Surname = newUser.Surname,
                         City = validateCity(newUser.City),
                         Email = newUser.Email,
+                        Phone=newUser.Phone,
                         BirthDate = newUser.BirthDate,
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,

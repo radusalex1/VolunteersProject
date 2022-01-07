@@ -20,7 +20,6 @@ namespace VolunteersProject.Controllers
     [Authorize]
     public class ContributionsController : GeneralConstroller
     {
-        //private readonly VolunteersContext _context;
 
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
@@ -38,12 +37,10 @@ namespace VolunteersProject.Controllers
                  IConfiguration configuration
              ) : base(logger, configuration)
         {
-            //_context = context;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
             this.contributionRepository = contributionRepository;
-
         }
 
         // GET: Contributions

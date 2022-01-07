@@ -9,7 +9,6 @@ namespace VolunteersProject.Controllers
     /// </summary>
     public class HomeController : Controller
     {
-        //todo Radu - use logger everywhere
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -24,12 +23,5 @@ namespace VolunteersProject.Controllers
 
             return View("HomeView");
         }
-
-        //todo cia - check if this is needed
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        //}
     }
 }

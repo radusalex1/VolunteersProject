@@ -31,6 +31,7 @@ namespace VolunteersProject.Controllers
             }
             return char.ToUpper(city[0]) + city.Substring(1);
         }
+
         protected string validateName(string name)
         {
             name = name.ToUpper();

@@ -93,8 +93,6 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer"></param>
         public void AddVolunteer(Volunteer volunteer)
         {
-            //todo Radu - check if this volunteer already exist (not by id)
-
             _context.Add(volunteer);
             _context.SaveChanges();
         }
@@ -105,8 +103,6 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer">Volunteer.</param>
         public void UpdateVolunteer(Volunteer volunteer)
         {
-            //todo Radu - check if this volunteer already exist (not by id)
-
             _context.Update(volunteer);
             _context.SaveChanges();
         }
