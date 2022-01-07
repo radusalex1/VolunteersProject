@@ -7,7 +7,7 @@ namespace VolunteersProject.Models
 {
     public class CurrentUser
     {
-        public Volunteer volunteer;
-        public User user;
+        public Volunteer Volunteer { get; set; }
+        public User User { get; set; }
     }
 }

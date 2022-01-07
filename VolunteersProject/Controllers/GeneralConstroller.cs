@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using VolunteersProject.Models;
-using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
@@ -16,14 +11,16 @@ namespace VolunteersProject.Controllers
     {
         public readonly ILogger<GeneralConstroller> Logger;
         public IConfiguration configuration;
+        protected CurrentUser currentUser;
 
         public GeneralConstroller(ILogger<GeneralConstroller> logger, IConfiguration configuration)
         {
+            currentUser = new CurrentUser();
             this.Logger = logger;
             this.configuration = configuration;
         }
 
-        protected string validateCity(string city)
+        protected string ValidateCity(string city)
         {
             if(string.IsNullOrEmpty(city))
             {
@@ -32,7 +29,7 @@ namespace VolunteersProject.Controllers
             return char.ToUpper(city[0]) + city.Substring(1);
         }
 
-        protected string validateName(string name)
+        protected string ValidateName(string name)
         {
             name = name.ToUpper();
             return name;

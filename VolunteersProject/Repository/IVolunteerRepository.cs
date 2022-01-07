@@ -76,5 +76,12 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer"></param>
         /// <returns></returns>
         int GetVolunteerTotalPoints(Volunteer volunteer);
+
+        /// <summary>
+        /// Return the volunteer based on its userId
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Volunteer GetVolunteerByUserId(int id);
     }
 }

@@ -173,5 +173,17 @@ namespace VolunteersProject.Repository
               where Surname='Radu - Serban';*/
             
         }
+
+        /// <summary>
+        /// Return the volunteer with the useriD given as parameter
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Volunteer GetVolunteerByUserId(int Id)
+        {
+
+            return _context.Volunteers
+                .FirstOrDefault(v => v.User.Id == Id);
+        }
     }
 }
