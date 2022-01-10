@@ -16,7 +16,7 @@ namespace VolunteersProject.Controllers
 
         public GeneralConstroller(ILogger<GeneralConstroller> logger, IConfiguration configuration)
         {
-            currentUser = new CurrentUser();
+            
             this.Logger = logger;
             this.configuration = configuration;
         }

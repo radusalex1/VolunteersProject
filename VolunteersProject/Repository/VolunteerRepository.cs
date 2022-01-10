@@ -73,14 +73,13 @@ namespace VolunteersProject.Repository
                 return v;
             }
 
-            ///bug here gets declined enrollments!!!!!
-            ///
-            return _context.Volunteers
-                 .Include(e => e.Enrollments)
-                 .ThenInclude(c => c.contribution)
-                      .FirstOrDefault(m => m.Id == id);
-                 
-           
+            var result = _context.Enrollments
+                .Include(v => v.volunteer)
+                .Include(c => c.contribution)
+                    .FirstOrDefault(r => r.VolunteerID == id && r.VolunteerStatus == 2);
+
+            return result.volunteer;
+
         }
 
         /// <summary>
@@ -206,6 +205,11 @@ namespace VolunteersProject.Repository
 
         }
 
+        /// <summary>
+        /// return list of contributions of volunteer given as parameter to be displayed on HomePage;
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
         public List<Contribution> GetContributionsByVolunteer(Volunteer volunteer)
         {
             List<Contribution> result = new List<Contribution>();
@@ -214,18 +218,15 @@ namespace VolunteersProject.Repository
             {
                 return result;
             }
-                var tempEnrollemts = _context.Enrollments
+
+            var tempEnrollemts = _context.Enrollments
                 .Include(v => v.volunteer)
                 .Include(c => c.contribution)
-                .Where(v => v.volunteer.Id == volunteer.Id).ToList();
+                .Where(v => v.volunteer.Id == volunteer.Id && v.VolunteerStatus==2).AsNoTracking().ToList();
 
             foreach(Enrollment e in tempEnrollemts)
             {
-                if(e.VolunteerStatus==2)
-                {
-                    result.Add(e.contribution);
-                }
-                
+               result.Add(e.contribution);
             }
 
             return result;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace VolunteersProject.Models
 {
 
-    public class CurrentUser:User
+    public class CurrentUser
     {
         public int LoggedUserId { get; set; }
     }

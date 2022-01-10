@@ -90,7 +90,8 @@ namespace VolunteersProject.Controllers
                     ApplicationValues.JwtToken = generatedToken;
 
                     currentUserId = validUser.Id;
-                    currentUser.LoggedUserId = validUser.Id;
+
+                    //CurrentUser = validUser.Id;
 
                     HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName+validUser.LastName}");
                   
