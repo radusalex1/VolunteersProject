@@ -11,7 +11,6 @@ using VolunteersProject.DTO;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
-using Controller = Microsoft.AspNetCore.Mvc.Controller;
 
 namespace VolunteersProject.Controllers
 {
@@ -80,7 +79,7 @@ namespace VolunteersProject.Controllers
             }
 
             IActionResult response = Unauthorized();
-            var validUser = GetUser(userModel);
+            var validUser = GetUser(userModel); // returns User
 
             if (validUser != null)
             {
@@ -89,11 +88,12 @@ namespace VolunteersProject.Controllers
                 if (generatedToken != null)
                 {
                     ApplicationValues.JwtToken = generatedToken;
-                    HttpContext.Session.SetString("LoggedUser", validUser.UserName);
 
-                    currentUser.User = validUser;
-                    currentUser.Volunteer = _volunteerRepository.GetVolunteerByUserId(currentUser.User.Id);
+                    currentUserId = validUser.Id;
+                    currentUser.LoggedUserId = validUser.Id;
 
+                    HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName+validUser.LastName}");
+                  
                     return RedirectToAction("MainWindow");
                 }
                 else
@@ -195,9 +195,7 @@ namespace VolunteersProject.Controllers
         }
 
         private User GetUser(LoginModel userModel)
-        {
-            //todo Radu - move this to repository
-
+        { 
             //Write your code here to authenticate the user
             return _userRepository.GetUser(userModel);
         }

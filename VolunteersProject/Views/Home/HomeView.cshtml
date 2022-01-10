@@ -6,11 +6,15 @@
 
 <body>
     @{
-        //ViewBag.Title = "Demonstrating JWTs in ASP.NET Core MVC 5";
         ViewBag.Title = "Volunteers Application";
     }
 
-    <p>You're logged in as:&nbsp;@User.Identity.Name</p>
-    <p>@ViewBag.Message</p>
+    <p>Welcome, to HappyCamps portal.&nbsp</p>
+
+    <h5>Total HappyPoints is:@ViewBag.TotalPoints</h5>
+
+    @{
+        Html.RenderPartial("LoggedUserEventsInfo");
+    }
 </body>
 </html>

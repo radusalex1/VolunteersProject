@@ -1,27 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     /// <summary>
     /// Contructor
     /// </summary>
-    public class HomeController : Controller
+    public class HomeController : GeneralConstroller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private IVolunteerRepository volunteerRepository;
+
+        public HomeController(IVolunteerRepository volunteerRepository,ILogger<HomeController> logger, IConfiguration configuration) :base(logger,configuration)
         {
-            _logger = logger;
+            this.volunteerRepository = volunteerRepository;
         }       
 
         [Authorize]
         public IActionResult HomeIndex()
         {
-            _logger.LogInformation("HttpGet HomeIndex()");
+            Logger.LogInformation("HttpGet HomeIndex()");
 
-            return View("HomeView");
+            int LoggedUserId = currentUserId;
+
+            var CurrentVolunteer = volunteerRepository.GetVolunteerByUserId(LoggedUserId);
+
+            var Contributions = volunteerRepository.GetContributionsByVolunteer(CurrentVolunteer) ;
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(CurrentVolunteer);
+
+            return View("HomeView",Contributions);
         }
     }
 }

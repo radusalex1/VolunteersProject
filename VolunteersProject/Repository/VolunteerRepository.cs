@@ -69,13 +69,18 @@ namespace VolunteersProject.Repository
         {
             if (id == null)
             {
-                return null;
+                Volunteer v = new Volunteer();
+                return v;
             }
 
+            ///bug here gets declined enrollments!!!!!
+            ///
             return _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefault(m => m.Id == id);
+                 .Include(e => e.Enrollments)
+                 .ThenInclude(c => c.contribution)
+                      .FirstOrDefault(m => m.Id == id);
+                 
+           
         }
 
         /// <summary>
@@ -153,6 +158,11 @@ namespace VolunteersProject.Repository
         /// <returns></returns>
         public int GetVolunteerTotalPoints(Volunteer volunteer)
         {
+
+            if(volunteer==null)
+            {
+                return 0;
+            }
             
             var result = _context.Enrollments
                 .Include(e => e.volunteer)
@@ -163,7 +173,11 @@ namespace VolunteersProject.Repository
             
             for(int i=0;i<result.Length;i++)
             {
-                totalPoints += result[i].contribution.Credits;
+                if(result.ElementAt(i).VolunteerStatus==2)
+                {
+                    totalPoints += result[i].contribution.Credits;
+                }
+               
             }
 
             return totalPoints;
@@ -181,9 +195,41 @@ namespace VolunteersProject.Repository
         /// <returns></returns>
         public Volunteer GetVolunteerByUserId(int Id)
         {
-
+            if(Id==null)
+            {
+                Volunteer v = new Volunteer();
+                v.Id = 0;
+                return v;
+            }
             return _context.Volunteers
                 .FirstOrDefault(v => v.User.Id == Id);
+
+        }
+
+        public List<Contribution> GetContributionsByVolunteer(Volunteer volunteer)
+        {
+            List<Contribution> result = new List<Contribution>();
+
+            if(volunteer==null)
+            {
+                return result;
+            }
+                var tempEnrollemts = _context.Enrollments
+                .Include(v => v.volunteer)
+                .Include(c => c.contribution)
+                .Where(v => v.volunteer.Id == volunteer.Id).ToList();
+
+            foreach(Enrollment e in tempEnrollemts)
+            {
+                if(e.VolunteerStatus==2)
+                {
+                    result.Add(e.contribution);
+                }
+                
+            }
+
+            return result;
+           
         }
     }
 }

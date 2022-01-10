@@ -11,7 +11,8 @@ namespace VolunteersProject.Controllers
     {
         public readonly ILogger<GeneralConstroller> Logger;
         public IConfiguration configuration;
-        protected CurrentUser currentUser;
+        protected static int currentUserId;
+        protected static CurrentUser currentUser;
 
         public GeneralConstroller(ILogger<GeneralConstroller> logger, IConfiguration configuration)
         {

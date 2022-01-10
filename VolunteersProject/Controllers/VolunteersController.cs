@@ -126,10 +126,13 @@ namespace VolunteersProject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Volunteers/Details/5        
-        public IActionResult Details(int? id)
+        public IActionResult Details(int id)
         {
+
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
-            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);;
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);
+
             if (volunteer == null)
             {
                 return NotFound();
