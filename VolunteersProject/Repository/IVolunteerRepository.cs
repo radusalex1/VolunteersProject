@@ -90,8 +90,5 @@ namespace VolunteersProject.Repository
         /// <param name="user"></param>
         /// <returns></returns>
         Volunteer GetVolunteerByUserId(int id);
-
-
-
     }
 }
