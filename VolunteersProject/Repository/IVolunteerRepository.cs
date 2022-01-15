@@ -10,6 +10,13 @@ namespace VolunteersProject.Repository
     public interface IVolunteerRepository
     {
         /// <summary>
+        /// Gets the contributions where the volunteer given as parameter participated at.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        List<Contribution> GetContributionsByVolunteer(Volunteer volunteer);
+
+        /// <summary>
         /// Get all volunteers.
         /// </summary>
         /// <returns>List of all volunteers.</returns>
@@ -69,5 +76,19 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="volunteer">Volunteer.</param>
         void DeleteVolunteer(Volunteer volunteer);
+
+        /// <summary>
+        /// Returns volunteers total points based on events.
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        int GetVolunteerTotalPoints(Volunteer volunteer);
+
+        /// <summary>
+        /// Return the volunteer based on its userId
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Volunteer GetVolunteerByUserId(int id);
     }
 }

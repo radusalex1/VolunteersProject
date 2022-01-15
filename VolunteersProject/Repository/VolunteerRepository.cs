@@ -69,13 +69,17 @@ namespace VolunteersProject.Repository
         {
             if (id == null)
             {
-                return null;
+                Volunteer v = new Volunteer();
+                return v;
             }
 
-            return _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefault(m => m.Id == id);
+            var result = _context.Enrollments
+                .Include(v => v.volunteer)
+                .Include(c => c.contribution)
+                    .FirstOrDefault(r => r.VolunteerID == id && r.VolunteerStatus == 2);
+
+            return result.volunteer;
+
         }
 
         /// <summary>
@@ -93,8 +97,6 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer"></param>
         public void AddVolunteer(Volunteer volunteer)
         {
-            //todo Radu - check if this volunteer already exist (not by id)
-
             _context.Add(volunteer);
             _context.SaveChanges();
         }
@@ -105,8 +107,6 @@ namespace VolunteersProject.Repository
         /// <param name="volunteer">Volunteer.</param>
         public void UpdateVolunteer(Volunteer volunteer)
         {
-            //todo Radu - check if this volunteer already exist (not by id)
-
             _context.Update(volunteer);
             _context.SaveChanges();
         }
@@ -148,6 +148,89 @@ namespace VolunteersProject.Repository
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Return points of volunteer
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        public int GetVolunteerTotalPoints(Volunteer volunteer)
+        {
+
+            if(volunteer==null)
+            {
+                return 0;
+            }
+            
+            var result = _context.Enrollments
+                .Include(e => e.volunteer)
+                .Include(c => c.contribution)
+                .Where(e => e.volunteer.Id == volunteer.Id).ToList().ToArray();
+
+            var totalPoints = 0;
+            
+            for(int i=0;i<result.Length;i++)
+            {
+                if(result.ElementAt(i).VolunteerStatus==2)
+                {
+                    totalPoints += result[i].contribution.Credits;
+                }
+               
+            }
+
+            return totalPoints;
+            /*select sum(c.Credits) as totalPoints from Volunteers v
+              inner join Enrollments e on e.VolunteerID=v.Id
+              inner join Contributions c on c.Id=e.contributionId
+              where Surname='Radu - Serban';*/
+            
+        }
+
+        /// <summary>
+        /// Return the volunteer with the useriD given as parameter
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Volunteer GetVolunteerByUserId(int Id)
+        {
+            if(Id==null)
+            {
+                Volunteer v = new Volunteer();
+                v.Id = 0;
+                return v;
+            }
+            return _context.Volunteers
+                .FirstOrDefault(v => v.User.Id == Id);
+
+        }
+
+        /// <summary>
+        /// return list of contributions of volunteer given as parameter to be displayed on HomePage;
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <returns></returns>
+        public List<Contribution> GetContributionsByVolunteer(Volunteer volunteer)
+        {
+            List<Contribution> result = new List<Contribution>();
+
+            if(volunteer==null)
+            {
+                return result;
+            }
+
+            var tempEnrollemts = _context.Enrollments
+                .Include(v => v.volunteer)
+                .Include(c => c.contribution)
+                .Where(v => v.volunteer.Id == volunteer.Id && v.VolunteerStatus==2).AsNoTracking().ToList();
+
+            foreach(Enrollment e in tempEnrollemts)
+            {
+               result.Add(e.contribution);
+            }
+
+            return result;
+           
         }
     }
 }

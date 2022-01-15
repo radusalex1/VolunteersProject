@@ -46,7 +46,8 @@ namespace VolunteersProject.Repository
         {
             IQueryable<Enrollment> enrollments = _context.Enrollments
                 .Include(e => e.volunteer)
-                .Include(c => c.contribution);
+                .Include(c => c.contribution)
+                .Where(ee => ee.VolunteerStatus == 2);
 
             return enrollments;
         }
@@ -67,8 +68,7 @@ namespace VolunteersProject.Repository
         public void UpdateEnrollment(Enrollment enrollment)
         {
             var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&  e.contributionId == enrollment.contributionId);
-            
-            result.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Declined;
+            result.VolunteerStatus = enrollment.VolunteerStatus;
             _context.SaveChanges();
         }
 

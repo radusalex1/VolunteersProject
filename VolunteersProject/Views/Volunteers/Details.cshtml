@@ -8,6 +8,7 @@
 
 <div>
     <h4>Volunteer</h4>
+    <h5>Total HappyPoints is:@ViewBag.TotalPoints</h5>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -101,10 +102,12 @@
             <th></th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var item in Model.Enrollments)
         {
             <tr>
+                
                 <td>
                     @Html.DisplayFor(modelItem => item.contribution.Name)
                 </td>

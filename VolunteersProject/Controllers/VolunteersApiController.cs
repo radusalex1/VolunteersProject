@@ -29,7 +29,6 @@ namespace VolunteersProject.Controllers
             return Ok(volunteers);
         }
 
-        //todo cia - implement this: GetVolunteerWithEnrollmentsById
 
         //GET: api/VolunteersApi/5
         [HttpGet("{id}")]
@@ -55,8 +54,6 @@ namespace VolunteersProject.Controllers
         //public async Task<IActionResult> PutVolunteer(int id, Volunteer volunteer)
         public ActionResult PutVolunteer(Volunteer volunteer)
         {           
-            //context.Entry(volunteer).State = EntityState.Modified;
-
             try
             {
               

@@ -11,18 +11,18 @@ using VolunteersProject.DTO;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
-using Controller = Microsoft.AspNetCore.Mvc.Controller;
 
 namespace VolunteersProject.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : GeneralConstroller
     {
-        private readonly IConfiguration _config;
+        
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IVolunteerRepository _volunteerRepository;
         private string generatedToken = null;
         private string loggedUser;
-        private readonly ILogger<AccountController> logger;
+        
 
         /// <summary>
         /// Contructor
@@ -30,10 +30,10 @@ namespace VolunteersProject.Controllers
         /// <param name="config">Inject config service.</param>
         /// <param name="tokenService">Inject jwt token service.</param>
         /// <param name="userRepository">Inject user repository service.</param>
-        public AccountController(IConfiguration config, ITokenService tokenService, IUserRepository userRepository, ILogger<AccountController> logger)//, MDUOptions options)
+        public AccountController(IVolunteerRepository volunteerRepository,IConfiguration config, ITokenService tokenService, IUserRepository userRepository, ILogger<AccountController> logger):
+            base(logger,config)
         {
-            this.logger = logger;
-            _config = config;
+            _volunteerRepository = volunteerRepository;
             _tokenService = tokenService;
             _userRepository = userRepository;
         }
@@ -46,7 +46,8 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            this.logger.LogInformation("HttpGet Login()");
+            
+            this.Logger.LogInformation("HttpGet Login()");
 
             return View("Login");
         }
@@ -60,7 +61,7 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult ReloadLogin()
         {
-            this.logger.LogInformation("HttpGet ReloadLogin()");
+            this.Logger.LogInformation("HttpGet ReloadLogin()");
 
             return View("Login");
         }
@@ -70,7 +71,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public IActionResult Login(LoginModel userModel)
         {
-            this.logger.LogInformation("httpPost Login()");
+            this.Logger.LogInformation("httpPost Login()");
 
             if (string.IsNullOrEmpty(userModel.UserName) || string.IsNullOrEmpty(userModel.Password))
             {
@@ -78,17 +79,22 @@ namespace VolunteersProject.Controllers
             }
 
             IActionResult response = Unauthorized();
-            var validUser = GetUser(userModel);
+            var validUser = GetUser(userModel); // returns User
 
             if (validUser != null)
             {
-                generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), validUser);
+                generatedToken = _tokenService.BuildToken(configuration["Jwt:Key"].ToString(), configuration["Jwt:Issuer"].ToString(), validUser);
 
                 if (generatedToken != null)
                 {
                     ApplicationValues.JwtToken = generatedToken;
-                    HttpContext.Session.SetString("LoggedUser", validUser.UserName);
-                    
+
+                    currentUserId = validUser.Id;
+
+                    //CurrentUser = validUser.Id;
+
+                    HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName+validUser.LastName}");
+                  
                     return RedirectToAction("MainWindow");
                 }
                 else
@@ -114,8 +120,8 @@ namespace VolunteersProject.Controllers
                 return (RedirectToAction("Index"));
             }
 
-            if (!_tokenService.IsTokenValid(_config["Jwt:Key"].ToString(),
-                _config["Jwt:Issuer"].ToString(), token))
+            if (!_tokenService.IsTokenValid(configuration["Jwt:Key"].ToString(),
+                configuration["Jwt:Issuer"].ToString(), token))
             {
                 return (RedirectToAction("Index"));
             }
@@ -131,7 +137,7 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         public IActionResult Logout()
         {
-            this.logger.LogInformation("HttpGet Logout()");
+            this.Logger.LogInformation("HttpGet Logout()");
 
             ApplicationValues.JwtToken = string.Empty;
             HttpContext.Session.SetString("userIsLogged", "false");
@@ -190,9 +196,7 @@ namespace VolunteersProject.Controllers
         }
 
         private User GetUser(LoginModel userModel)
-        {
-            //todo Radu - move this to repository
-
+        { 
             //Write your code here to authenticate the user
             return _userRepository.GetUser(userModel);
         }

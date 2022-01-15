@@ -85,11 +85,11 @@ namespace VolunteersProject.Controllers
 
                     var volunteer = new Volunteer
                     {
-                        Name = validateName(newUser.Name),
+                        Name = ValidateName(newUser.Name),
                         Surname = newUser.Surname,
-                        City = validateCity(newUser.City),
-                        Phone = newUser.Phone,
+                        City = ValidateCity(newUser.City),
                         Email = newUser.Email,
+                        Phone=newUser.Phone,
                         BirthDate = newUser.BirthDate,
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,

@@ -1,35 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
     /// <summary>
     /// Contructor
     /// </summary>
-    public class HomeController : Controller
+    public class HomeController : GeneralConstroller
     {
-        //todo Radu - use logger everywhere
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private IVolunteerRepository volunteerRepository;
+
+        public HomeController(IVolunteerRepository volunteerRepository,ILogger<HomeController> logger, IConfiguration configuration) :base(logger,configuration)
         {
-            _logger = logger;
+            this.volunteerRepository = volunteerRepository;
         }       
 
         [Authorize]
         public IActionResult HomeIndex()
         {
-            _logger.LogInformation("HttpGet HomeIndex()");
+            Logger.LogInformation("HttpGet HomeIndex()");
 
-            return View("HomeView");
+            int LoggedUserId = currentUserId;
+
+            var CurrentVolunteer = volunteerRepository.GetVolunteerByUserId(LoggedUserId);
+
+            var Contributions = volunteerRepository.GetContributionsByVolunteer(CurrentVolunteer) ;
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(CurrentVolunteer);
+
+            return View("HomeView",Contributions);
         }
-
-        //todo cia - check if this is needed
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        //}
     }
 }

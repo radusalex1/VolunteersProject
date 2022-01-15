@@ -45,10 +45,11 @@ namespace VolunteersProject.Controllers
         /// <param name="currentFilter">Current filter.</param>
         /// <param name="pageNumber">Page number.</param>
         /// <returns></returns>
-        // GET: Volunteers
+        /// GET: Volunteers
         [Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
         public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {
+            
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
@@ -87,7 +88,6 @@ namespace VolunteersProject.Controllers
         }
 
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> volunteers)
-
         {
             switch (sortOrder)
             {
@@ -126,9 +126,12 @@ namespace VolunteersProject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Volunteers/Details/5        
-        public IActionResult Details(int? id)
+        public IActionResult Details(int id)
         {
+
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);
 
             if (volunteer == null)
             {
@@ -180,8 +183,8 @@ namespace VolunteersProject.Controllers
                     return View(volunteer);
                 }
 
-                volunteer.City = validateCity(volunteer.City);
-                volunteer.Name = validateName(volunteer.Name);
+                volunteer.City = ValidateCity(volunteer.City);
+                volunteer.Name = ValidateName(volunteer.Name);
 
                 if (volunteer.ImageProfile != null)
                 {
@@ -260,8 +263,8 @@ namespace VolunteersProject.Controllers
                         return View(volunteer);
                     }
 
-                    volunteer.City = validateCity(volunteer.City);
-                    volunteer.Name = validateName(volunteer.Name);
+                    volunteer.City = ValidateCity(volunteer.City);
+                    volunteer.Name = ValidateName(volunteer.Name);
 
                     if (volunteer.ImageProfile != null)
                     {
