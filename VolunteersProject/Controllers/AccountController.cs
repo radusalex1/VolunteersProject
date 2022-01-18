@@ -91,9 +91,9 @@ namespace VolunteersProject.Controllers
 
                     currentUserId = validUser.Id;
 
-                    //CurrentUser = validUser.Id;
 
-                    HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName+validUser.LastName}");
+
+                    HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName+" "+validUser.LastName}");
                   
                     return RedirectToAction("MainWindow");
                 }
@@ -179,6 +179,23 @@ namespace VolunteersProject.Controllers
             return Content($"<a class=\"nav-link text-dark\" asp-area=\"\" asp-controller=\"Account\" asp-action=\"{ action}\">Login</a>");
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult RecoverPassword()
+        {
+            return View("RecoverPasswordGetEmail");
+        }
+
+        [HttpPost]
+        public IActionResult RecoverPassword([Bind("Email")] EnterEmailForPasswordRecoveryDTO enterEmailForPasswordRecoveryDTO)
+        {
+            ///se trimite mail;
+            ///check if email exist
+            ///send email if email exist;
+            ///else mesaj err;
+            var test = enterEmailForPasswordRecoveryDTO.Email;
+            return View("Login");
+        }
 
         private string BuildMessage(string stringToSplit, int chunkSize)
         {

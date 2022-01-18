@@ -38,6 +38,7 @@ namespace VolunteersProject.Controllers
 
         protected bool PhoneNumberIsValid(string phoneNumber)
         {
+            //to do: move this to appConfig
             string pattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
             Match m = Regex.Match(phoneNumber, pattern);
             if (m.Success)
@@ -52,6 +53,7 @@ namespace VolunteersProject.Controllers
 
         protected bool InstagramIsValid(string instagramProfile)
         {
+            //to do: move this to appConfig
             string pattern = @"(?:^|[^\w])(?:@)([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)";
             Match m = Regex.Match(instagramProfile, pattern);
 

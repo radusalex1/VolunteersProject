@@ -297,6 +297,7 @@ namespace VolunteersProject.Controllers
             }
 
             return directAssignmentVolunteerList;
+
         }
 
         private List<VolunteerDTO> GetSelectedVolunteersForSendEmail(IFormCollection form, List<VolunteerDTO> availableVolunteers)

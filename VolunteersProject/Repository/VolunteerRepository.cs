@@ -76,7 +76,7 @@ namespace VolunteersProject.Repository
             var result = _context.Enrollments
                 .Include(v => v.volunteer)
                 .Include(c => c.contribution)
-                    .FirstOrDefault(r => r.VolunteerID == id && r.VolunteerStatus == 2);
+                    .FirstOrDefault(r => r.VolunteerID == id);
 
             return result.volunteer;
 
@@ -166,24 +166,10 @@ namespace VolunteersProject.Repository
             var result = _context.Enrollments
                 .Include(e => e.volunteer)
                 .Include(c => c.contribution)
-                .Where(e => e.volunteer.Id == volunteer.Id).ToList().ToArray();
+                .Where(e => e.volunteer.Id == volunteer.Id && e.VolunteerStatus==2).ToList();
 
-            var totalPoints = 0;
-            
-            for(int i=0;i<result.Length;i++)
-            {
-                if(result.ElementAt(i).VolunteerStatus==2)
-                {
-                    totalPoints += result[i].contribution.Credits;
-                }
-               
-            }
-
-            return totalPoints;
-            /*select sum(c.Credits) as totalPoints from Volunteers v
-              inner join Enrollments e on e.VolunteerID=v.Id
-              inner join Contributions c on c.Id=e.contributionId
-              where Surname='Radu - Serban';*/
+            return result.Sum(item => item.contribution.Credits);
+          
             
         }
 
