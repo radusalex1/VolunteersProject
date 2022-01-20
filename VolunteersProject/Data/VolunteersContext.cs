@@ -32,5 +32,7 @@ namespace VolunteersProject.Data
 
         public DbSet<VolunteersProject.DTO.EnterEmailForPasswordRecoveryDTO> EnterEmailForPasswordRecoveryDTO { get; set; }
 
+        public DbSet<VolunteersProject.DTO.NewPasswordDTO> NewPasswordDTO { get; set; }
+
     }
 }

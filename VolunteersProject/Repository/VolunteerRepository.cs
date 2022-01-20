@@ -218,5 +218,22 @@ namespace VolunteersProject.Repository
             return result;
            
         }
+
+        public bool EmailExists(string Email)
+        {
+            
+            var result = _context.Volunteers
+                   .FirstOrDefault(v => v.Email == Email);
+
+                if(result!=null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            
+        }
     }
 }

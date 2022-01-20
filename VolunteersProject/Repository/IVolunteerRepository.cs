@@ -90,5 +90,13 @@ namespace VolunteersProject.Repository
         /// <param name="user"></param>
         /// <returns></returns>
         Volunteer GetVolunteerByUserId(int id);
+
+
+        /// <summary>
+        /// Return true is email Exists, false otherwise
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        bool EmailExists(string Email);
     }
 }

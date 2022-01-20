@@ -3,10 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
-
+    /// <summary>
+    /// General Controller
+    /// </summary>
     public class GeneralConstroller : Controller
     {
         public readonly ILogger<GeneralConstroller> Logger;
@@ -14,13 +17,22 @@ namespace VolunteersProject.Controllers
         protected static int currentUserId;
         protected static CurrentUser currentUser;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="configuration"></param>
         public GeneralConstroller(ILogger<GeneralConstroller> logger, IConfiguration configuration)
         {
-            
             this.Logger = logger;
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Validates city(to capitals)
+        /// </summary>
+        /// <param name="city"></param>
+        /// <returns></returns>
         protected string ValidateCity(string city)
         {
             if(string.IsNullOrEmpty(city))
@@ -30,12 +42,22 @@ namespace VolunteersProject.Controllers
             return char.ToUpper(city[0]) + city.Substring(1);
         }
 
+        /// <summary>
+        /// Validates Name(all capitals)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected string ValidateName(string name)
         {
             name = name.ToUpper();
             return name;
         }
 
+        /// <summary>
+        /// Validates Phone number
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
         protected bool PhoneNumberIsValid(string phoneNumber)
         {
             //to do: move this to appConfig
@@ -51,6 +73,11 @@ namespace VolunteersProject.Controllers
             }
         }
 
+        /// <summary>
+        /// Validates Instagram
+        /// </summary>
+        /// <param name="instagramProfile"></param>
+        /// <returns></returns>
         protected bool InstagramIsValid(string instagramProfile)
         {
             //to do: move this to appConfig
@@ -67,6 +94,11 @@ namespace VolunteersProject.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns true is email is valid, false otherwise
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         protected bool EmailIsValid(string email)
         {
             if (email.Trim().EndsWith("."))
@@ -84,9 +116,17 @@ namespace VolunteersProject.Controllers
             }
         }
 
+        /// <summary>
+        /// Validates Image profile
+        /// </summary>
+        /// <param name="volunteer"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
         protected bool ValidateImageProfile(Volunteer volunteer, int width, int height)
         {
             return (volunteer.ImageProfile.Length > width * height) ? true : false;
         }
+
     }
 }
