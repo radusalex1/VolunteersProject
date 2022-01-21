@@ -10,6 +10,13 @@ namespace VolunteersProject.Repository
     public interface IVolunteerRepository
     {
         /// <summary>
+        /// Return the user id of volunteer based on email
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        int ReturnUserIdBasedOnEmail(string Email);
+
+        /// <summary>
         /// Gets the contributions where the volunteer given as parameter participated at.
         /// </summary>
         /// <param name="volunteer"></param>
@@ -90,5 +97,13 @@ namespace VolunteersProject.Repository
         /// <param name="user"></param>
         /// <returns></returns>
         Volunteer GetVolunteerByUserId(int id);
+
+
+        /// <summary>
+        /// Return true is email Exists, false otherwise
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        bool EmailExists(string Email);
     }
 }
