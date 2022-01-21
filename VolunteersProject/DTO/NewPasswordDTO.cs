@@ -12,6 +12,8 @@ namespace VolunteersProject.DTO
 
         public int Email { get; set; }
 
+        public int UserId { get; set; }
+
         [Required]
         [Display(Prompt ="New Password")]
         public string NewPassword { get; set; }

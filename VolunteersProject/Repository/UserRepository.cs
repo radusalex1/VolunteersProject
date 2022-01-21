@@ -56,5 +56,15 @@ namespace VolunteersProject.Repository
         {
             return _context.Users.Any(e => e.UserName == username);
         }
+
+        public void ChangePasswordBasedOnUserId(int id, string NewPassword)
+        {
+            var user = _context.Users
+                 .FirstOrDefault(u => u.Id == id);
+            user.Password = NewPassword;
+            _context.Update(user);
+            _context.SaveChanges();
+                
+        }
     }
 }

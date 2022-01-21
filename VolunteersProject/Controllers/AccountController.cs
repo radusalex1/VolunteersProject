@@ -211,10 +211,6 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         public IActionResult InputEmailResetPassword([Bind("Email")] EnterEmailForPasswordRecoveryDTO enterEmailForPasswordRecoveryDTO)
         {
-            ///se trimite mail;
-            ///check if email exist done
-            ///send email if email exist;
-            ///else mesaj err; done
             var email = enterEmailForPasswordRecoveryDTO.Email;
 
             if (string.IsNullOrEmpty(email))
@@ -239,15 +235,21 @@ namespace VolunteersProject.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult ResetPassword()
+        public IActionResult ResetPassword(int UserId)
         {
-            return View();
+            var newPasswordDTO = new NewPasswordDTO()
+            {
+                UserId = UserId
+            };
+
+            return View(newPasswordDTO);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult ResetPassword([Bind("NewPassword,ConfirmNewPassword")] NewPasswordDTO newPasswordDTO)
+        public IActionResult ResetPassword(int UserId,[Bind("NewPassword,ConfirmNewPassword")] NewPasswordDTO newPasswordDTO )
         {
+
             if(ModelState.IsValid)
             {
                 if(newPasswordDTO.NewPassword!=newPasswordDTO.ConfirmNewPassword)
@@ -255,6 +257,7 @@ namespace VolunteersProject.Controllers
                     ViewBag.NewPassword_Error = "Does not match!";
                     return View(newPasswordDTO);
                 }
+                _userRepository.ChangePasswordBasedOnUserId(UserId, newPasswordDTO.NewPassword);
             }
             else
             {
@@ -293,13 +296,14 @@ namespace VolunteersProject.Controllers
         private string GetLink(string email)
         {
 
-            //localhost: 9307 / Enrollments / VolunteerEmailAnswer ? contributionId = 4 & volunteerId = 35
+            //localhost: 9307/Enrollments/VolunteerEmailAnswer?contributionId = 4&volunteerId = 35
+            //http://localhost:9307/account/resetpassword?email=radus_alexandru@yahoo.com
 
             var server = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
             var applicationSiteName = configuration.GetSection("AppSettings").GetSection("ApplicationSiteName").Value;
 
-            var action = $"{applicationSiteName}/Account/ResetPassword ? {email}";
+            var action = $"{applicationSiteName}/Account/ResetPassword?UserId={_volunteerRepository.ReturnUserIdBasedOnEmail(email)}";
 
             return $"<a href=\"{server}{action}\">link</a>";
 

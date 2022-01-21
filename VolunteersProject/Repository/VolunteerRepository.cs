@@ -235,5 +235,13 @@ namespace VolunteersProject.Repository
                 }
             
         }
+
+        public int ReturnUserIdBasedOnEmail(string Email)
+        {
+            var volunteer = _context.Volunteers
+                .Include(u=>u.User)
+                .FirstOrDefault(v => v.Email == Email);
+            return volunteer.User.Id;
+        }
     }
 }
