@@ -31,5 +31,18 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="NewPassword"></param>
         void ChangePasswordBasedOnUserId(int id,string NewPassword);
+
+        /// <summary>
+        /// Get user by id;
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        User GetUserById(int id);
+
+        /// <summary>
+        /// Deletes a user
+        /// </summary>
+        /// <param name="user"></param>
+        void DeteleUser(User user);
     }
 }

@@ -19,6 +19,7 @@ namespace VolunteersProject.Controllers
     public class VolunteersController : GeneralConstroller
     {
         public IVolunteerRepository volunteerRepository;
+        public readonly IUserRepository userRepository;
         private int pageSize;
         private int imgWidth;
         private int imgHeight;
@@ -29,9 +30,11 @@ namespace VolunteersProject.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, IVolunteerRepository volunteerRepository) : base(logger, configuration)
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, 
+            IVolunteerRepository volunteerRepository,IUserRepository userRepository) : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
+            this.userRepository = userRepository;
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
             imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
             imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
@@ -325,6 +328,10 @@ namespace VolunteersProject.Controllers
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             volunteerRepository.DeleteVolunteer(volunteer);
+
+            var user = userRepository.GetUserById(volunteer.User.Id);
+
+            userRepository.DeteleUser(user);
 
             return RedirectToAction(nameof(Index));
         }

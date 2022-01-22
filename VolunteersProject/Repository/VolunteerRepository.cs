@@ -57,7 +57,9 @@ namespace VolunteersProject.Repository
                 return null;
             }
 
-            return _context.Volunteers.FirstOrDefault(i => i.Id.Equals(id));
+            return _context.Volunteers
+                .Include(u=>u.User)
+                .FirstOrDefault(i => i.Id.Equals(id));
         }
 
         /// <summary>
@@ -88,8 +90,6 @@ namespace VolunteersProject.Repository
                 return result1;
 
               }
-
-            
 
             return result.volunteer;
 
