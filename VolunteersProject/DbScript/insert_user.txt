@@ -22,3 +22,23 @@ inner join Contributions c on c.Id=e.contributionId
 where Surname='Radu - Serban';
 
 
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+delete from Volunteers
+where id>16;
+
+delete From Users
+where id = 25;
+
+select * from Volunteers
+select * from Users
+
+select * from Enrollments
+
+select * from Contributions
+
+select * from Enrollments
+
+
+

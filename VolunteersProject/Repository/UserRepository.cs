@@ -66,5 +66,26 @@ namespace VolunteersProject.Repository
             _context.SaveChanges();
                 
         }
+
+        /// <summary>
+        /// Returns user by its id;
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public User GetUserById(int id)
+        {
+            return _context.Users
+                .FirstOrDefault(u => u.Id == id);
+        }
+
+        /// <summary>
+        /// Deletes this user;
+        /// </summary>
+        /// <param name="user"></param>
+        public void DeteleUser(User user)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+        }
     }
 }
