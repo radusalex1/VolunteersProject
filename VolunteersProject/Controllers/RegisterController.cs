@@ -4,6 +4,7 @@ using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
 using System;
+using VolunteersProject.DTO;
 
 namespace VolunteersProject.Controllers
 {
@@ -47,7 +48,6 @@ namespace VolunteersProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
                     if(!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
@@ -99,7 +99,7 @@ namespace VolunteersProject.Controllers
 
                     volunteerRepository.AddVolunteer(volunteer);
                 }
-                return View();
+                return RedirectToAction("Login", "Account");
             }
             catch(Exception ex)
             {

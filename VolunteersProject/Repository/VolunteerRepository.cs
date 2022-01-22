@@ -74,9 +74,22 @@ namespace VolunteersProject.Repository
             }
 
             var result = _context.Enrollments
-                .Include(v => v.volunteer)
-                .Include(c => c.contribution)
-                    .FirstOrDefault(r => r.VolunteerID == id);
+                   .Include(v => v.volunteer)
+                   .Include(c => c.contribution)
+                       .FirstOrDefault(r => r.VolunteerID == id);
+
+             if(result==null)
+              {
+                  var result1 = _context.Volunteers
+                        .FirstOrDefault(v => v.Id == id);
+            
+                    result1.Enrollments = new List<Enrollment>();
+
+                return result1;
+
+              }
+
+            
 
             return result.volunteer;
 

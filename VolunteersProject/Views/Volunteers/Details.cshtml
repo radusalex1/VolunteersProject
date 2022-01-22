@@ -82,6 +82,7 @@
         </dd>
     </dl>
 </div>
+
 <table class="table">
     <thead>
         <tr>
@@ -105,7 +106,7 @@
         @foreach (var item in Model.Enrollments)
         {
             <tr>
-                
+
                 <td>
                     @Html.DisplayFor(modelItem => item.contribution.Name)
                 </td>
@@ -128,7 +129,15 @@
             </tr>
         }
     </tbody>
+
+
 </table>
+
+
+@*@{
+    Html.RenderPartial("../Home/LoggedUserEventsInfo.cshtml");
+}*@
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
