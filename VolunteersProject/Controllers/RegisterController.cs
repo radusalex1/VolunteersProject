@@ -98,8 +98,11 @@ namespace VolunteersProject.Controllers
                     };
 
                     volunteerRepository.AddVolunteer(volunteer);
+                    
+                    return RedirectToAction("Login", "Account");
+
                 }
-                return RedirectToAction("Login", "Account");
+                return View(newUser);
             }
             catch(Exception ex)
             {
