@@ -50,7 +50,17 @@
             <param name="contributionId">Contribution id.</param>
             <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
         </member>
-        <member name="M:VolunteersProject.Controllers.EnrollmentsController.Details(System.Nullable{System.Int32})">
+        <member name="M:VolunteersProject.Controllers.EnrollmentsController.#ctor(VolunteersProject.Repository.IEnrollmentRepository,VolunteersProject.Repository.IVolunteerRepository,VolunteersProject.Repository.IContributionRepository,Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            constructor
+            </summary>
+            <param name="enrollmentRepository"></param>
+            <param name="volunteerRepository"></param>
+            <param name="contributionRepository"></param>
+            <param name="logger"></param>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.EnrollmentsController.Details(System.Int32)">
             <summary>
             get sorted elements;
             </summary>
@@ -67,11 +77,21 @@
             Volunteer controller.
             </summary>
         </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(VolunteersProject.Repository.IVolunteerRepository)">
+        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},Microsoft.Extensions.Configuration.IConfiguration,VolunteersProject.Repository.IVolunteerRepository)">
             <summary>
             Contructor
             </summary>       
             <param name="volunteerRepository"></param>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.Index(System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Display a list of volunteers.
+            </summary>
+            <param name="sortOrder">Sort order.</param>
+            <param name="SearchString">Search string.</param>
+            <param name="currentFilter">Current filter.</param>
+            <param name="pageNumber">Page number.</param>
+            <returns></returns>
         </member>
         <member name="M:VolunteersProject.Controllers.VolunteersController.Details(System.Nullable{System.Int32})">
             <summary>
@@ -79,6 +99,50 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.Delete(System.Nullable{System.Int32})">
+            <summary>
+            Get volunteer by id.
+            </summary>
+            <param name="id">Volunteer id.</param>
+            <returns>Volunteer.</returns>
+        </member>
+        <member name="M:VolunteersProject.Controllers.VolunteersController.SetVolunteerImageProfile(System.Int32)">
+            <summary>
+            Set the volunteer image profile.
+            </summary>
+            <param name="volunteerId">Volunteer id.</param>
+            <returns>Volunteer image profile as a file.</returns>
+        </member>
+        <member name="T:VolunteersProject.DTO.LoginModel">
+            <summary>
+            login model
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.DTO.AvailableVolunters">
+            <summary>
+            DTO that contains available volunteers for a contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.ContributionId">
+            <summary>
+            Gets or sets the contribution id.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.AvailableVolunters.VolunteersDTO">
+            <summary>
+            Gets or sets the volunteersDTO list.
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.DTO.VolunteerDTO">
+            <summary>
+            DTO for volunteer.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.DTO.VolunteerDTO.Id">
+            <summary>
+            Gets or sets the volunteer id.
+            </summary>
         </member>
         <member name="T:VolunteersProject.Models.AuthenticateRequest">
             <summary>
@@ -103,6 +167,51 @@
         <member name="T:VolunteersProject.Models.ErrorViewModel">
             <summary>
             Error model.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Surname">
+            <summary>
+            Gets or sets the first/sur name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.JoinHubDate">
+            <summary>
+            Get or sets the join date to the hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.InstagramProfile">
+            <summary>
+            Gets or sets the instagram profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.FaceBookProfile">
+            <summary>
+            Gets or sets the Facebook profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Name">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Power">
+            <summary>
+            the more power the more rights the user has
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Description">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.User">
+            <summary>
+            used to get logged user from dbo.
             </summary>
         </member>
         <member name="T:VolunteersProject.Models.Volunteer">
