@@ -27,7 +27,11 @@ namespace VolunteersProject.Repository
         /// <returns></returns>
         public Enrollment GetEnrollmentById(int id)
         {
-            return _context.Enrollments.FirstOrDefault(i => i.EnrollmentID.Equals(id));
+            return _context.Enrollments
+                .Include(v=>v.volunteer)
+                .Include(c=>c.contribution)
+                .FirstOrDefault(i => i.EnrollmentID.Equals(id));
+                
         }
 
         /// <summary>

@@ -105,7 +105,6 @@ namespace VolunteersProject.Controllers
                     currentUserId = validUser.Id;
 
 
-
                     HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName + " " + validUser.LastName}");
 
                     return RedirectToAction("MainWindow");

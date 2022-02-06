@@ -152,10 +152,35 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                contributionRepository.AddContribution(contribution);
-                
+               
+                if(string.IsNullOrEmpty(contribution.Name))
+                {
+                    ViewBag.Contribution_Name_Err = "Name cannot be empty";
+                    return View(contribution);
+                }
+
+                if(contribution.Credits<=0)
+                {
+                    ViewBag.Credits_Err = "Cannot be less then 0";
+                    return View(contribution);
+
+                }
+
+                if (contribution.StartDate > contribution.FinishDate)
+                {
+                    ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                    return View(contribution);
+                }
+
+                if(contribution.VolunteerDeadlineConfirmation>contribution.StartDate)
+                {
+                    ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date";
+                    return View(contribution);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+            contributionRepository.AddContribution(contribution);
             return View(contribution);
         }
 
@@ -191,6 +216,30 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
+                    if (string.IsNullOrEmpty(contribution.Name))
+                    {
+                        ViewBag.Contribution_Name_Err = "Name cannot be empty";
+                        return View(contribution);
+                    }
+
+                    if (contribution.Credits <= 0)
+                    {
+                        ViewBag.Credits_Err = "Cannot be less then 0";
+                        return View(contribution);
+
+                    }
+
+                    if (contribution.StartDate > contribution.FinishDate)
+                    {
+                        ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                        return View(contribution);
+                    }
+
+                    if (contribution.VolunteerDeadlineConfirmation > contribution.StartDate)
+                    {
+                        ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date";
+                        return View(contribution);
+                    }
                     contributionRepository.UpdateContribution(contribution);
                 }
                 catch (DbUpdateConcurrencyException)

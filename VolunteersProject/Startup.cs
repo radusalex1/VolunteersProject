@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -42,7 +41,11 @@ namespace VolunteersProject
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddSession();
+            services.AddMvc();
+            services.AddSession(options=>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(35);
+            });
 
             services.AddControllersWithViews();
 
@@ -136,6 +139,8 @@ namespace VolunteersProject
 
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
+
+            
         }
 
 
