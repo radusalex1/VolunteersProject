@@ -9,7 +9,7 @@ namespace VolunteersProject.Services
 {
     public class TokenService : ITokenService
     {
-        private const double EXPIRY_DURATION_MINUTES = 30;
+        private const double EXPIRY_DURATION_MINUTES = 35;
 
         public string BuildToken(string key, string issuer, User user)
         {
