@@ -90,6 +90,12 @@ namespace VolunteersProject.Controllers
             return View(PaginatedList<Volunteer>.Create(volunteers, pageNumber ?? 1, pageSize));
         }
 
+        /// <summary>
+        /// Here sort volunteers
+        /// </summary>
+        /// <param name="sortOrder"></param>
+        /// <param name="volunteers"></param>
+        /// <returns></returns>
         private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> volunteers)
         {
             switch (sortOrder)
@@ -124,7 +130,7 @@ namespace VolunteersProject.Controllers
         }
 
         /// <summary>
-        /// Here sort Students
+        /// Details of volunteer
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

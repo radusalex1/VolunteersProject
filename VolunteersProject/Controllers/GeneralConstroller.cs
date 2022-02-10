@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
@@ -126,6 +128,45 @@ namespace VolunteersProject.Controllers
         protected bool ValidateImageProfile(Volunteer volunteer, int width, int height)
         {
             return (volunteer.ImageProfile.Length > width * height) ? true : false;
+        }
+
+        /// <summary>
+        /// Method to sort events by criterias.
+        /// </summary>
+        /// <param name="sortOrder"></param>
+        /// <param name="contributions"></param>
+        /// <returns></returns>
+        protected static List<Contribution> SortContributions(string sortOrder, List<Contribution> contributions)
+        {
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    contributions = contributions.OrderByDescending(c => c.Name).ToList();
+                    break;
+                case "Credits":
+                    contributions = contributions.OrderBy(c => c.Credits).ToList();
+                    break;
+                case "Credits_desc":
+                    contributions = contributions.OrderByDescending(c => c.Credits).ToList();
+                    break;
+                case "sd_asc":
+                    contributions = contributions.OrderBy(c => c.StartDate).ToList();
+                    break;
+                case "sd_desc":
+                    contributions = contributions.OrderByDescending(c => c.StartDate).ToList();
+                    break;
+                case "fd_asc":
+                    contributions = contributions.OrderBy(c => c.FinishDate).ToList();
+                    break;
+                case "fd_desc":
+                    contributions = contributions.OrderByDescending(c => c.FinishDate).ToList();
+                    break;
+                default:
+                    contributions = contributions.OrderBy(c => c.Name).ToList();
+                    break;
+            }
+
+            return contributions;
         }
 
     }

@@ -55,6 +55,7 @@ namespace VolunteersProject.Services
                     ValidIssuer = issuer,
                     ValidAudience = issuer,
                     IssuerSigningKey = mySecurityKey,
+
                 }, out SecurityToken validatedToken);
             }
             catch
