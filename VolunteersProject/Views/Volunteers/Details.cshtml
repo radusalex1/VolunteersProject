@@ -101,12 +101,10 @@
             <th></th>
         </tr>
     </thead>
-
     <tbody>
         @foreach (var item in Model.Enrollments)
         {
-            <tr>
-
+            <tr class="@(item.VolunteerStatus < 3 ? "green" : "red")">
                 <td>
                     @Html.DisplayFor(modelItem => item.contribution.Name)
                 </td>
@@ -127,16 +125,20 @@
                     }
                 </td>
             </tr>
+
         }
     </tbody>
-
-
 </table>
 
+<style>
+    .red {
+        background-color: #E63907;
+    }
 
-@*@{
-    Html.RenderPartial("../Home/LoggedUserEventsInfo.cshtml");
-}*@
+    .green {
+        background-color: #55C14A;
+    }
+</style>
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

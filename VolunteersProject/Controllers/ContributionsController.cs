@@ -80,38 +80,7 @@ namespace VolunteersProject.Controllers
             return View(contributions);
         }
 
-        private static List<Contribution> SortContributions(string sortOrder, List<Contribution> contributions)
-        {
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    contributions = contributions.OrderByDescending(c => c.Name).ToList();
-                    break;
-                case "Credits":
-                    contributions = contributions.OrderBy(c => c.Credits).ToList();
-                    break;
-                case "Credits_desc":
-                    contributions = contributions.OrderByDescending(c => c.Credits).ToList();
-                    break;
-                case "sd_asc":
-                    contributions = contributions.OrderBy(c => c.StartDate).ToList();
-                    break;
-                case "sd_desc":
-                    contributions = contributions.OrderByDescending(c => c.StartDate).ToList();
-                    break;
-                case "fd_asc":
-                    contributions = contributions.OrderBy(c => c.FinishDate).ToList();
-                    break;
-                case "fd_desc":
-                    contributions = contributions.OrderByDescending(c => c.FinishDate).ToList();
-                    break;
-                default:
-                    contributions = contributions.OrderBy(c => c.Name).ToList();
-                    break;
-            }
-
-            return contributions;
-        }
+        
 
         // GET: Contributions/Details/5
         [Authorize(Roles = Common.Role.Admin)]
@@ -178,9 +147,10 @@ namespace VolunteersProject.Controllers
                     return View(contribution);
                 }
 
+                contributionRepository.AddContribution(contribution);
                 return RedirectToAction(nameof(Index));
             }
-            contributionRepository.AddContribution(contribution);
+           
             return View(contribution);
         }
 
@@ -210,8 +180,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
-           
-
+          
             if (ModelState.IsValid)
             {
                 try
