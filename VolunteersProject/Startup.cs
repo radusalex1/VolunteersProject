@@ -41,10 +41,12 @@ namespace VolunteersProject
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            ////here is session timeSpan
             services.AddMvc();
             services.AddSession(options=>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(35);
+               
             });
 
             services.AddControllersWithViews();

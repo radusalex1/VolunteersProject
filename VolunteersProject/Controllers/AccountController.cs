@@ -92,8 +92,9 @@ namespace VolunteersProject.Controllers
             }
 
             IActionResult response = Unauthorized();
-            var validUser = GetUser(userModel); // returns User
 
+            var validUser = GetUser(userModel);
+           
             if (validUser != null)
             {
                 generatedToken = _tokenService.BuildToken(configuration["Jwt:Key"].ToString(), configuration["Jwt:Issuer"].ToString(), validUser);
@@ -104,14 +105,19 @@ namespace VolunteersProject.Controllers
 
                     currentUserId = validUser.Id;
 
+                    var CurrentVolunteer = _volunteerRepository.GetVolunteerByUserId(currentUserId);
 
-                    HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName + " " + validUser.LastName}");
+                    currentVolunteerId = CurrentVolunteer.Id;
+
+                    HttpContext.Session.SetInt32("currentVolunteerId", currentVolunteerId);
+
+                    //HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName + " " + validUser.LastName}");
 
                     return RedirectToAction("MainWindow");
                 }
                 else
                 {
-                    return RedirectToAction("Error", new { errorMessage = "Jwt tokem is null." });
+                    return RedirectToAction("Error", new { errorMessage = "Jwt token is null." });
                 }
             }
             else

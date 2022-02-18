@@ -16,6 +16,9 @@ namespace VolunteersProject.Models
         /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public User User { get; set; }
 
         /// <summary>
@@ -32,6 +35,9 @@ namespace VolunteersProject.Models
         [Display(Name ="Prenume",Prompt ="First Name")]
         public string Surname { get; set; } = null!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string City { get; set; }
 
         [Required]
@@ -63,6 +69,9 @@ namespace VolunteersProject.Models
             }
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public ICollection<Enrollment> Enrollments{ get; set; }
 
         /// <summary>

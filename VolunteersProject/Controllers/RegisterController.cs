@@ -68,8 +68,7 @@ namespace VolunteersProject.Controllers
 
                     var user = new User
                     {
-                        FirstName = newUser.Name,
-                        LastName = newUser.Surname,
+                 
                         UserName = newUser.UserName,
                         Password = newUser.Password,
                         Role = rolesRepository.GetUserRight()
