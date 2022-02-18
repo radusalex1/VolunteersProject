@@ -42,7 +42,11 @@ namespace VolunteersProject
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddSession();
+            //set session timeout
+            //services.AddSession(option =>
+            //{ 
+            //     option.IdleTimeout = TimeSpan.FromMinutes(30);
+            //});
 
             services.AddControllersWithViews();
 
