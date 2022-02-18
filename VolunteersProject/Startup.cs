@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -41,7 +41,13 @@ namespace VolunteersProject
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddSession();
+            ////here is session timeSpan
+            services.AddMvc();
+            services.AddSession(options=>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(35);
+               
+            });
 
             services.AddControllersWithViews();
 
@@ -128,19 +134,23 @@ namespace VolunteersProject
             services.AddTransient<IVolunteerRepository, VolunteerRepository>();
             services.AddTransient<IContributionRepository, ContributionRepository>();
             services.AddTransient<IEnrollmentRepository, EnrollmentRepository>();
-
+            services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<ITokenService, TokenService>();
 
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
+
+            
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("Logs/mylog-{Date}.txt");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -183,7 +193,7 @@ namespace VolunteersProject
             app.UseAuthorization();
 
             //todo cia - check if this is need
-            // custom jwt auth middleware
+            //custom jwt auth middleware
             //app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>

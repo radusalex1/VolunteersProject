@@ -8,6 +8,7 @@
 
 <div>
     <h4>Volunteer</h4>
+    <h5>Total HappyPoints is:@ViewBag.TotalPoints</h5>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -46,27 +47,42 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Phone)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Phone)
         </dd>
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.InstagramProfile)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.InstagramProfile)
         </dd>
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FaceBookProfile)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FaceBookProfile)
         </dd>
-        <textarea asp-for="DescriptionContributionToHub" readonly="true" rows="5" cols="40"> @Html.DisplayFor(model => model.DescriptionContributionToHub)</textarea>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageProfile)
+        </dt>
+        <dd class="col-sm-10">
+            <img src='@Url.Action("SetVolunteerImageProfile", "Volunteers", new { volunteerId = Model.Id })' class="rounded-circle" height="40" width="40" />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DescriptionContributionToHub)
+        </dt>
+        <dd class="col-sm-10">
+            <textarea asp-for="DescriptionContributionToHub" readonly="true" rows="5" cols="40"> @Html.DisplayFor(model => model.DescriptionContributionToHub)</textarea>
+        </dd>
     </dl>
 </div>
+
 <table class="table">
     <thead>
         <tr>
@@ -88,31 +104,43 @@
     <tbody>
         @foreach (var item in Model.Enrollments)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.contribution.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.contribution.Credits)
-            </td>
-            <td>
-                @if(item.contribution.StartDate != DateTime.MinValue)
-                {
-                    @Html.DisplayFor(modelItem => item.contribution.StartDate)
-                }
-            </td>
-            <td>
-                @if (item.contribution.FinishDate != DateTime.MinValue)
-                {
+            <tr class="@(item.VolunteerStatus < 3 ? "green" : "red")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.contribution.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.contribution.Credits)
+                </td>
+                <td>
+                    @if (item.contribution.StartDate != DateTime.MinValue)
+                    {
+                        @Html.DisplayFor(modelItem => item.contribution.StartDate)
+                    }
+                </td>
+                <td>
+                    @if (item.contribution.FinishDate != DateTime.MinValue)
+                    {
 
-                    @Html.DisplayFor(modelItem => item.contribution.FinishDate)
-                }
-            </td>
-        </tr>
+                        @Html.DisplayFor(modelItem => item.contribution.FinishDate)
+                    }
+                </td>
+            </tr>
+
         }
     </tbody>
 </table>
+
+<style>
+    .red {
+        background-color: #E63907;
+    }
+
+    .green {
+        background-color: #55C14A;
+    }
+</style>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

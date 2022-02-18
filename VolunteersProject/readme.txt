@@ -13,9 +13,10 @@ https://stackoverflow.com/questions/1333002/how-do-you-set-the-startup-page-for-
 //group actions in swagger
 http://www.mattruma.com/adventures-in-apis-grouping-controllers-in-swagger/
 
-Logging
+//Logging
+https://www.tutorialsteacher.com/core/aspnet-core-logging
 
-	//auth jwt
+//auth jwt
 	https://jasonwatmore.com/post/2019/10/14/aspnet-core-3-simple-api-for-authentication-registration-and-user-management#projectstructure
 	
 	//not finalized
@@ -25,8 +26,28 @@ Logging
 
 	https://stackoverflow.com/questions/54461127/how-to-return-403-instead-of-redirect-to-access-denied-when-authorizefilter-fail/54461389
 
+	//implement roles
+	https://jasonwatmore.com/post/2019/10/16/aspnet-core-3-role-based-authorization-tutorial-with-example-api#projectstructure
+	-set multiple roles
+	https://stackoverflow.com/questions/700166/allow-multiple-roles-to-access-controller-action
 
 
 //EF migrations
 https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-first.aspx
+
+
+//UPLOAD files
+	https://stackoverflow.com/questions/35379309/how-to-upload-files-in-asp-net-core
+
+	//display image
+	http://aspsolution.net/Code/5/5171/Upload-and-Display-Image-from-Database-in-ASPNET-Core-20/
+	//better for display the file then the previous
+	https://stackoverflow.com/questions/49865677/display-image-from-byte-array-in-asp-net-mvc-core
+
+	//another way to display and upload image
+	https://www.c-sharpcorner.com/article/upload-and-display-image-in-asp-net-core-3-1/
+
+	-security considerations for upload
+	https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
+	
 

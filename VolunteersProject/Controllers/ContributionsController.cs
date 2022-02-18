@@ -12,95 +12,81 @@ using VolunteersProject.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using VolunteersProject.Common;
+using Microsoft.Extensions.Logging;
+using VolunteersProject.DTO;
 
 namespace VolunteersProject.Controllers
 {
     [Authorize]
-    public class ContributionsController : Controller
+    public class ContributionsController : GeneralConstroller
     {
-        private readonly VolunteersContext _context;
+
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
-        private IContributionRepository contributionRepositor;
-        private IConfiguration configuration;
+        private IContributionRepository contributionRepository;
 
         public ContributionsController
-            (
-                VolunteersContext context, 
-                IVolunteerRepository volunteerRepository, 
-                IEmailService emailService, 
-                IEnrollmentRepository enrollmentRepository, 
-                IContributionRepository contributionRepositor,
-                IConfiguration configuration
-            )
+             (
+                 ILogger<ContributionsController> logger,
+                 VolunteersContext context,
+                 IVolunteerRepository volunteerRepository,
+                 IEmailService emailService,
+                 IEnrollmentRepository enrollmentRepository,
+                 IContributionRepository contributionRepository,
+                 IConfiguration configuration
+             ) : base(logger, configuration)
         {
-            _context = context;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
-            this.contributionRepositor = contributionRepositor;
-            this.configuration = configuration;
+            this.contributionRepository = contributionRepository;
         }
 
         // GET: Contributions
         public async Task<IActionResult> Index(string sortOrder)
         {
-            ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
-            ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
-            ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
+            this.Logger.LogInformation("HttpGet ContributionsController Index()");
 
-            var contributions = contributionRepositor.GetContributions();
+            var contributions = new List<Contribution>();
 
-            contributions = SortContributions(sortOrder, contributions);
-           
+            try
+            {
+                ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+                ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
+                ViewData["StartDateSortParam"] = sortOrder == "sd_asc" ? "sd_desc" : "sd_asc";
+                ViewData["FinishDateSortParam"] = sortOrder == "fd_asc" ? "fd_desc" : "fd_asc";
+
+                contributions = contributionRepository.GetContributions();
+
+                if (contributions == null)
+                {
+
+                    return RedirectToAction("Error", "Account", new { errorMessage = "Contribution is null." });
+                }
+
+                contributions = SortContributions(sortOrder, contributions);
+
+                if (contributions == null)
+                {
+                    return RedirectToAction("Error", "Account", new { errorMessage = "SortContributions returns null." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Account", new { errorMessage = ex.Message });
+            }
+
             return View(contributions);
         }
 
-        private static List<Contribution> SortContributions(string sortOrder, List<Contribution>contributions)
-        {
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    contributions = contributions.OrderByDescending(c => c.Name).ToList();
-                    break;
-                case "Credits":
-                    contributions = contributions.OrderBy(c => c.Credits).ToList();
-                    break;
-                case "Credits_desc":
-                    contributions = contributions.OrderByDescending(c => c.Credits).ToList();
-                    break;
-                case "sd_asc":
-                    contributions = contributions.OrderBy(c => c.StartDate).ToList();
-                    break;
-                case "sd_desc":
-                    contributions = contributions.OrderByDescending(c => c.StartDate).ToList();
-                    break;
-                case "fd_asc":
-                    contributions = contributions.OrderBy(c => c.FinishDate).ToList();
-                    break;
-                case "fd_desc":
-                    contributions = contributions.OrderByDescending(c => c.FinishDate).ToList();
-                    break;
-                default:
-                    contributions = contributions.OrderBy(c => c.Name).ToList();
-                    break;
-            }
-
-            return contributions;
-        }
+        
 
         // GET: Contributions/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Authorize(Roles = Common.Role.Admin)]
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var contribution = await _context.Contributions.FirstOrDefaultAsync(m => m.ID == id);
-
+            var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
             {
                 return NotFound();
@@ -110,9 +96,17 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Create
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
-            return View();
+            var contribution = new Contribution
+            {
+                StartDate = DateTime.Today,
+                FinishDate = DateTime.Today,
+                VolunteerDeadlineConfirmation = DateTime.Today
+            };
+
+            return View(contribution);
         }
 
         // POST: Contributions/Create
@@ -120,26 +114,55 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        [Authorize(Roles = Common.Role.Admin)]
+        public async Task<IActionResult> Create([Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(contribution);
-                await _context.SaveChangesAsync();
+               
+                if(string.IsNullOrEmpty(contribution.Name))
+                {
+                    ViewBag.Contribution_Name_Err = "Name cannot be empty!";
+                    return View(contribution);
+                }
+
+                if(contribution.Credits<=0)
+                {
+                    ViewBag.Credits_Err = "Invalid input!";
+                    return View(contribution);
+
+                }
+
+                if (contribution.StartDate > contribution.FinishDate)
+                {
+                    ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                    return View(contribution);
+                }
+
+                if(contribution.VolunteerDeadlineConfirmation>contribution.StartDate)
+                {
+                    ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date!";
+                    return View(contribution);
+                }
+
+                contributionRepository.AddContribution(contribution);
                 return RedirectToAction(nameof(Index));
             }
+           
             return View(contribution);
         }
 
         // GET: Contributions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize(Roles = Common.Role.Admin)]
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contribution = await _context.Contributions.FindAsync(id);
+            var contribution = contributionRepository.GetContributionById(id);
+
             if (contribution == null)
             {
                 return NotFound();
@@ -152,23 +175,43 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        [Authorize(Roles = Common.Role.Admin)]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
-            if (id != contribution.ID)
-            {
-                return NotFound();
-            }
-
+          
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(contribution);
-                    await _context.SaveChangesAsync();
+                    if (string.IsNullOrEmpty(contribution.Name))
+                    {
+                        ViewBag.Contribution_Name_Err = "Name cannot be empty!";
+                        return View(contribution);
+                    }
+
+                    if (contribution.Credits <= 0)
+                    {
+                        ViewBag.Credits_Err = "Invalid input!";
+                        return View(contribution);
+
+                    }
+
+                    if (contribution.StartDate > contribution.FinishDate)
+                    {
+                        ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                        return View(contribution);
+                    }
+
+                    if (contribution.VolunteerDeadlineConfirmation > contribution.StartDate)
+                    {
+                        ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date!";
+                        return View(contribution);
+                    }
+                    contributionRepository.UpdateContribution(contribution);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ContributionExists(contribution.ID))
+                    if (contributionRepository.ContributionExists(contribution.Id))
                     {
                         return NotFound();
                     }
@@ -183,15 +226,16 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Contributions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Authorize(Roles = Common.Role.Admin)]
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contribution = await _context.Contributions
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var contribution = contributionRepository.GetContributionById(id);
+            
             if (contribution == null)
             {
                 return NotFound();
@@ -203,83 +247,65 @@ namespace VolunteersProject.Controllers
         // POST: Contributions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contribution = await _context.Contributions.FindAsync(id);
-            _context.Contributions.Remove(contribution);
-            await _context.SaveChangesAsync();
+            var contribution = contributionRepository.GetContributionById(id);
+            contributionRepository.DeleteContribution(contribution);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ContributionExists(int id)
-        {
-            return _context.Contributions.Any(e => e.ID == id);
-        }
-
+        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Assign(int id)
         {
-            var volunteers = volunteerRepository.GetAvailableVolunteers(id);
-
-            var selectedVolunteers = new SelectedVolunters
-            {
-                ContributionId = id,
-                Volunteers = new List<Volunteer>()
-            };
-            selectedVolunteers.Volunteers.AddRange(volunteers);
+            var selectedVolunteers = GetAvailableVolunteersDTO(id);
 
             return View(selectedVolunteers);
         }
 
-        private void UpdateToPending(int contributionId, List<Volunteer> sendInvitationEmailList)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
+        public ActionResult Assign(IFormCollection form, int contributionId)
+        {            
+            var selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
+            
+            var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, selectedVolunteers.VolunteersDTO);
+
+            UpdateToPending(contributionId, sendInvitationEmailList);
+            SendEmail(contributionId, sendInvitationEmailList);
+
+            var directAssignmentVolunteerList = GetSelectedVolunteersForDirectAssignment(form, selectedVolunteers.VolunteersDTO);
+            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
+
+            //reload evailable list
+            selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
+
+            return View(selectedVolunteers);
+        }
+
+        private void UpdateToPending(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
         {
             foreach (var selectedVolunteer in sendInvitationEmailList)
             {
                 var enrollment = new Enrollment();
 
                 enrollment.contributionId = contributionId;
-                enrollment.VolunteerID = selectedVolunteer.ID;
+                enrollment.VolunteerID = selectedVolunteer.Id;
                 enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Pending;
                 enrollmentRepository.Save(enrollment);
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Assign(IFormCollection form, int contributionId)
+        private List<VolunteerDTO> GetSelectedVolunteersForDirectAssignment(IFormCollection form, List<VolunteerDTO> availableVolunteers)
         {
-            var availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
-
-            var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, availableVolunteers);
-
-
-            UpdateToPending(contributionId, sendInvitationEmailList);
-            SendEmail(contributionId, sendInvitationEmailList);
-           
-            var directAssignmentVolunteerList = GetGetSelectedVolunteersForDirectAssignment(form, availableVolunteers);
-            SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
-
-
-            //reload evailable list
-            availableVolunteers = volunteerRepository.GetAvailableVolunteers(Convert.ToInt32(contributionId));
-            var selectedVolunteers = new SelectedVolunters
-            {
-                ContributionId = contributionId,
-                Volunteers = new List<Volunteer>()
-            };
-            selectedVolunteers.Volunteers.AddRange(availableVolunteers);
-
-            return View(selectedVolunteers);
-        }
-
-        private List<Volunteer> GetGetSelectedVolunteersForDirectAssignment(IFormCollection form, List<Volunteer> availableVolunteers)
-        {            
-            var directAssignmentVolunteerList = new List<Volunteer>();
+            var directAssignmentVolunteerList = new List<VolunteerDTO>();
 
             foreach (var volunteer in availableVolunteers)
             {
-                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.ID]))
+                if (!string.IsNullOrEmpty(form["chk_directAssignment_" + volunteer.Id]))
                 {
-                    if (form["chk_directAssignment_" + volunteer.ID][0] == "true")
+                    if (form["chk_directAssignment_" + volunteer.Id][0] == "true")
                     {
                         directAssignmentVolunteerList.Add(volunteer);
                     }
@@ -287,17 +313,18 @@ namespace VolunteersProject.Controllers
             }
 
             return directAssignmentVolunteerList;
+
         }
 
-        private List<Volunteer> GetSelectedVolunteersForSendEmail(IFormCollection form, List<Volunteer> availableVolunteers)
-        {            
-            var sendInvitationEmailList = new List<Volunteer>();
+        private List<VolunteerDTO> GetSelectedVolunteersForSendEmail(IFormCollection form, List<VolunteerDTO> availableVolunteers)
+        {
+            var sendInvitationEmailList = new List<VolunteerDTO>();
 
             foreach (var volunteer in availableVolunteers)
             {
-                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.ID]))
+                if (!string.IsNullOrEmpty(form["chk_emailInvitation_" + volunteer.Id]))
                 {
-                    if (form["chk_emailInvitation_" + volunteer.ID][0] == "true")
+                    if (form["chk_emailInvitation_" + volunteer.Id][0] == "true")
                     {
                         volunteer.IsSelected = true;
                         sendInvitationEmailList.Add(volunteer);
@@ -312,7 +339,8 @@ namespace VolunteersProject.Controllers
         /// Send email to selected volunteers
         /// </summary>
         /// <param name="sendInvitationEmailList">Selected volunteer list.</param>
-        public void SendEmail(int contributionId, List<Volunteer> sendInvitationEmailList)
+        [Authorize(Roles = Common.Role.Admin)]
+        public void SendEmail(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
         {
             foreach (var volunteer in sendInvitationEmailList)
             {
@@ -325,14 +353,15 @@ namespace VolunteersProject.Controllers
                     new EmailAddress { Address = volunteer.Email }
                 };
 
-                var contribution = contributionRepositor.GetContributionById(contributionId);
+                var contribution = contributionRepository.GetContributionById(contributionId);
 
-                var link = GetLink(contributionId, volunteer.ID);
+                var link = GetLink(contributionId, volunteer.Id);
 
                 emailMessage.Content = $"You where invited to \"{contribution.Name}\", a HappyCamps activitity, that will take place between {contribution.StartDate.ToString("yyyy-MM-dd")} and {contribution.FinishDate.ToString("yyyy-MM-dd")}. " +
                $"Click on {link} for more details.";
 
                 var emailSender = configuration.GetSection("AppSettings").GetSection("EmailSender").Value;
+                
                 emailMessage.FromAddresses = new List<EmailAddress>
                 {
                     new EmailAddress { Address = emailSender }
@@ -346,9 +375,11 @@ namespace VolunteersProject.Controllers
         {
             var server = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
-            var action = $"/Enrollments/VolunteerEmailAnswer?contributionId={contributionId}&volunteerId={volunteerId}";
+            var applicationSiteName = configuration.GetSection("AppSettings").GetSection("ApplicationSiteName").Value;
 
-            return $"<a href=\"{ server}{ action}\">link</a>";
+            var action = $"{applicationSiteName}/Enrollments/VolunteerEmailAnswer?contributionId={contributionId}&volunteerId={volunteerId}";
+
+            return $"<a href=\"{server}{action}\">link</a>";
         }
 
         /// <summary>
@@ -356,17 +387,57 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="contributionId">Contribution id.</param>
         /// <param name="directAssignmentVolunteerList">Selected volunteer list.</param>
-        public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<Volunteer> directAssignmentVolunteerList)
+        [Authorize(Roles = Common.Role.Admin)]
+        public void SaveDirectAssignedVoluteersToContribution(int contributionId, List<VolunteerDTO> directAssignmentVolunteerList)
         {
             foreach (var selectedVolunteer in directAssignmentVolunteerList)
             {
                 var enrollment = new Enrollment();
 
                 enrollment.contributionId = contributionId;
-                enrollment.VolunteerID = selectedVolunteer.ID;
+                enrollment.VolunteerID = selectedVolunteer.Id;
                 enrollment.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Accepted;
                 enrollmentRepository.Save(enrollment);
             }
+        }
+
+        private AvailableVolunters GetAvailableVolunteersDTO(int id)
+        {
+            //todo cia - this and the next method should be refactor
+            var volunteersDTO = GetVolunteersDTO(id);
+
+            var selectedVolunteers = new AvailableVolunters
+            {
+                ContributionId = id,
+                VolunteersDTO = new List<VolunteerDTO>()
+            };
+
+            selectedVolunteers.VolunteersDTO.AddRange(volunteersDTO);
+
+            return selectedVolunteers;
+        }
+
+        private List<VolunteerDTO> GetVolunteersDTO(int id)
+        {
+            var volunteers = volunteerRepository.GetAvailableVolunteers(id);
+
+            var volunteersDTO = new List<VolunteerDTO>();
+
+            foreach (var volunteerItem in volunteers)
+            {
+                var volunteerDTO = new VolunteerDTO
+                {
+                    Id = volunteerItem.Id,
+                    Phone = volunteerItem.Phone,
+                    Email = volunteerItem.Email,
+                    FullName = volunteerItem.FullName,
+                    JoinHubDate = volunteerItem.JoinHubDate
+                };
+
+                volunteersDTO.Add(volunteerDTO);
+            }
+
+            return volunteersDTO;
         }
     }
 }

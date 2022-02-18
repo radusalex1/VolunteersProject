@@ -22,14 +22,12 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
-            //return await _context.Volunteers.ToListAsync();
 
             var volunteers = this.volunteerRepository.GetVolunteers();
 
             return Ok(volunteers);
         }
 
-        //todo cia - implement this: GetVolunteerWithEnrollmentsById
 
         //GET: api/VolunteersApi/5
         [HttpGet("{id}")]
@@ -61,7 +59,7 @@ namespace VolunteersProject.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!volunteerRepository.VolunteerExists(volunteer.ID))
+                if (!volunteerRepository.VolunteerExists(volunteer.Id))
                 {
                     return NotFound();
                 }
@@ -81,15 +79,14 @@ namespace VolunteersProject.Controllers
         {
             volunteerRepository.AddVolunteer(volunteer);
 
-            //return CreatedAtAction("GetVolunteer", new { id = volunteer.ID }, volunteer);
             return Ok();
+
         }
 
         // DELETE: api/VolunteersApi/5
         [HttpDelete("{id}")]
         public ActionResult DeleteVolunteer(int id)
         {
-            //var volunteer = await _context.Volunteers.FindAsync(id);
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)

@@ -12,35 +12,91 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+            @if (!string.IsNullOrEmpty(ViewBag.Contribution_Name_Err))
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <div class="col-md-12">
+                        <div class="text-danger">
+                            @Html.Raw(@ViewBag.Contribution_Name_Err)
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="Credits" class="control-label"></label>
                 <input asp-for="Credits" class="form-control" />
                 <span asp-validation-for="Credits" class="text-danger"></span>
             </div>
+            @if (!string.IsNullOrEmpty(ViewBag.Credits_Err))
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <div class="col-md-12">
+                        <div class="text-danger">
+                            @Html.Raw(@ViewBag.Credits_Err)
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div>
+                @if (!string.IsNullOrEmpty(ViewBag.Dates_Validation_Err))
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <div class="col-md-12">
+                            <div class="text-danger">
+                                @Html.Raw(@ViewBag.Dates_Validation_Err)
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="form-group">
                 <label asp-for="FinishDate" class="control-label"></label>
                 <input asp-for="FinishDate" class="form-control" />
                 <span asp-validation-for="FinishDate" class="text-danger"></span>
             </div>
+            @if (!string.IsNullOrEmpty(ViewBag.Dates_Validation_Err))
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <div class="col-md-12">
+                        <div class="text-danger">
+                            @Html.Raw(@ViewBag.Dates_Validation_Err)
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="VolunteerDeadlineConfirmation" class="control-label"></label>
                 <input asp-for="VolunteerDeadlineConfirmation" class="form-control" />
                 <span asp-validation-for="VolunteerDeadlineConfirmation" class="text-danger"></span>
             </div>
+            @if (!string.IsNullOrEmpty(ViewBag.VolunteerDeadlineConfirmation_Error))
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <div class="col-md-12">
+                        <div class="text-danger">
+                            @Html.Raw(@ViewBag.VolunteerDeadlineConfirmation_Error)
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" rows="5" cols="40">@Html.DisplayFor(model => model.Description)</textarea>
+                <textarea asp-for="Description" rows="5" cols="40"></textarea>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
