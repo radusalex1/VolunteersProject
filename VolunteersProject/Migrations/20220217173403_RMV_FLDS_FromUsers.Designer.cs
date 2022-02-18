@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VolunteersProject.Data;
 
 namespace VolunteersProject.Migrations
 {
     [DbContext(typeof(VolunteersContext))]
-    partial class VolunteersContextModelSnapshot : ModelSnapshot
+    [Migration("20220217173403_RMV_FLDS_FromUsers")]
+    partial class RMV_FLDS_FromUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -9,127 +9,142 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
+    <link rel="stylesheet1" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <title></title>
 </head>
 <br />
 <br />
-<h4 class="align-content-center"> Register new volunteer</h4>
+<center>
+    <h4 class="align-content-center" style="color:darkcyan"> Bun Venit in HCSquad </h4>
+</center>
 <hr />
-<body>
-    <div class="align-content-center">
-        <div class="col-md-4">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Surname" class="control-label"></label>
-                    <input asp-for="Surname" class="form-control" />
-                    <span asp-validation-for="Surname" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="UserName" class="control-label"></label>
-                    <input asp-for="UserName" class="form-control" />
-                    <span asp-validation-for="UserName" class="text-danger"></span>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.Username_Error))
-                {
-                    <div class="alert alert-danger alert-dismissible">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <div class="col-md-12">
-                            <div class="text-danger">
-                                @Html.Raw(@ViewBag.Username_Error)
+<body style="background-color:lightblue">
+    <center>
+        <div class="align-content-center">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Surname" class="control-label"></label>
+                        <input asp-for="Surname" class="form-control" />
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserName" class="control-label"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ViewBag.Username_Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <div class="col-md-12">
+                                <div class="text-danger">
+                                    @Html.Raw(@ViewBag.Username_Error)
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
                 <div class="form-group">
                     <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" type="password" class="form-control" />
+                    <input id="InputPassword" asp-for="Password" type="password" class="form-control" />
+                    <i id="togglePassword" class="fa fa-eye"></i>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="City" class="control-label"></label>
-                    <input asp-for="City" class="form-control" />
-                    <span asp-validation-for="City" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="BirthDate" class="control-label"></label>
-                    <input asp-for="BirthDate" class="form-control">
-                    <span asp-validation-for="BirthDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="JoinHubDate" class="control-label"></label>
-                    <input asp-for="JoinHubDate" class="form-control" />
-                    <span asp-validation-for="JoinHubDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.Email_Error))
-                {
-                    <div class="alert alert-danger alert-dismissible">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <div class="col-md-12">
-                            <div class="text-danger">
-                                @Html.Raw(@ViewBag.Email_Error)
+                    <div class="form-group">
+                        <label asp-for="City" class="control-label"></label>
+                        <input asp-for="City" class="form-control" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BirthDate" class="control-label"></label>
+                        <input asp-for="BirthDate" class="form-control">
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="JoinHubDate" class="control-label"></label>
+                        <input asp-for="JoinHubDate" class="form-control" />
+                        <span asp-validation-for="JoinHubDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ViewBag.Email_Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <div class="col-md-12">
+                                <div class="text-danger">
+                                    @Html.Raw(@ViewBag.Email_Error)
+                                </div>
                             </div>
                         </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="Phone" class="control-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
-                }
-                <div class="form-group">
-                    <label asp-for="Phone" class="control-label"></label>
-                    <input asp-for="Phone" class="form-control" />
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.Phone_Error))
-                {
-                    <div class="alert alert-danger alert-dismissible">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <div class="col-md-12">
-                            <div class="text-danger">
-                                @Html.Raw(@ViewBag.Phone_Error)
+                    @if (!string.IsNullOrEmpty(ViewBag.Phone_Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <div class="col-md-12">
+                                <div class="text-danger">
+                                    @Html.Raw(@ViewBag.Phone_Error)
+                                </div>
                             </div>
                         </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="InstagramProfile" class="control-label"></label>
+                        <input asp-for="InstagramProfile" class="form-control" />
+                        <span asp-validation-for="InstagramProfile" class="text-danger"></span>
                     </div>
-                }
-                <div class="form-group">
-                    <label asp-for="InstagramProfile" class="control-label"></label>
-                    <input asp-for="InstagramProfile" class="form-control" />
-                    <span asp-validation-for="InstagramProfile" class="text-danger"></span>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.Insta_Error))
-                {
-                    <div class="alert alert-danger alert-dismissible">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <div class="col-md-12">
-                            <div class="text-danger">
-                                @Html.Raw(@ViewBag.Insta_Error)
+                    @if (!string.IsNullOrEmpty(ViewBag.Insta_Error))
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <div class="col-md-12">
+                                <div class="text-danger">
+                                    @Html.Raw(@ViewBag.Insta_Error)
+                                </div>
                             </div>
                         </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="FaceBookProfile" class="control-label"></label>
+                        <input asp-for="FaceBookProfile" class="form-control" />
+                        <span asp-validation-for="FaceBookProfile" class="text-danger"></span>
                     </div>
-                }
-                <div class="form-group">
-                    <label asp-for="FaceBookProfile" class="control-label"></label>
-                    <input asp-for="FaceBookProfile" class="form-control" />
-                    <span asp-validation-for="FaceBookProfile" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
+    </center>
 </body>
+<script type="text/javascript">
+    var togglePassword = document.querySelector('#togglePassword');
+    var password = document.querySelector('#InputPassword');
+    togglePassword.addEventListener('click', function (e) {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
 </html>

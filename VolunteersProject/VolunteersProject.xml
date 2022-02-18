@@ -102,50 +102,6 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.Delete(System.Nullable{System.Int32})">
-            <summary>
-            Get volunteer by id.
-            </summary>
-            <param name="id">Volunteer id.</param>
-            <returns>Volunteer.</returns>
-        </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.SetVolunteerImageProfile(System.Int32)">
-            <summary>
-            Set the volunteer image profile.
-            </summary>
-            <param name="volunteerId">Volunteer id.</param>
-            <returns>Volunteer image profile as a file.</returns>
-        </member>
-        <member name="T:VolunteersProject.DTO.LoginModel">
-            <summary>
-            login model
-            </summary>
-        </member>
-        <member name="T:VolunteersProject.DTO.AvailableVolunters">
-            <summary>
-            DTO that contains available volunteers for a contribution id.
-            </summary>
-        </member>
-        <member name="P:VolunteersProject.DTO.AvailableVolunters.ContributionId">
-            <summary>
-            Gets or sets the contribution id.
-            </summary>
-        </member>
-        <member name="P:VolunteersProject.DTO.AvailableVolunters.VolunteersDTO">
-            <summary>
-            Gets or sets the volunteersDTO list.
-            </summary>
-        </member>
-        <member name="T:VolunteersProject.DTO.VolunteerDTO">
-            <summary>
-            DTO for volunteer.
-            </summary>
-        </member>
-        <member name="P:VolunteersProject.DTO.VolunteerDTO.Id">
-            <summary>
-            Gets or sets the volunteer id.
-            </summary>
-        </member>
         <member name="T:VolunteersProject.Models.AuthenticateRequest">
             <summary>
             Authentication model.
@@ -169,6 +125,51 @@
         <member name="T:VolunteersProject.Models.ErrorViewModel">
             <summary>
             Error model.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Surname">
+            <summary>
+            Gets or sets the first/sur name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.JoinHubDate">
+            <summary>
+            Get or sets the join date to the hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.InstagramProfile">
+            <summary>
+            Gets or sets the instagram profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.FaceBookProfile">
+            <summary>
+            Gets or sets the Facebook profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Name">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Power">
+            <summary>
+            the more power the more rights the user has
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Description">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.User">
+            <summary>
+            used to get logged user from dbo.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.RegisterFormModel.Name">

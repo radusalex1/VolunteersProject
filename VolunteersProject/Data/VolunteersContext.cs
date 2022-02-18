@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VolunteersProject.Models;
+using VolunteersProject.DTO;
 
 namespace VolunteersProject.Data
 {
@@ -28,6 +29,13 @@ namespace VolunteersProject.Data
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Role>().ToTable("Roles");
         }
+
+        public DbSet<VolunteersProject.DTO.EnterEmailForPasswordRecoveryDTO> EnterEmailForPasswordRecoveryDTO { get; set; }
+
+        public DbSet<VolunteersProject.DTO.NewPasswordDTO> NewPasswordDTO { get; set; }
+
+
+        public DbSet<VolunteersProject.Models.CurrentUser> CurrentUser { get; set; }
 
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
+using System;
+using VolunteersProject.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace VolunteersProject.Controllers
@@ -49,20 +51,19 @@ namespace VolunteersProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
-                    if (!string.IsNullOrEmpty(newUser.Phone) && PhoneNumberIsValid(newUser.Phone))
+                    if(!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
 
-                    if (!string.IsNullOrEmpty(newUser.InstagramProfile) && InstagramIsValid(newUser.InstagramProfile))
+                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& !InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
                         return View(newUser);
                     }
 
-                    if (!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
+                    if(!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
                     {
                         ViewBag.Email_Error = "Incorrect Email Adress";
                         return View(newUser);
@@ -70,8 +71,7 @@ namespace VolunteersProject.Controllers
 
                     var user = new User
                     {
-                        FirstName = newUser.Name,
-                        LastName = newUser.Surname,
+                 
                         UserName = newUser.UserName,
                         Password = newUser.Password,
                         Role = rolesRepository.GetUserRight()
@@ -87,23 +87,28 @@ namespace VolunteersProject.Controllers
 
                     var volunteer = new Volunteer
                     {
-                        Name = validateName(newUser.Name),
+                        Name = ValidateName(newUser.Name),
                         Surname = newUser.Surname,
-                        City = validateCity(newUser.City),
+                        City = ValidateCity(newUser.City),
                         Email = newUser.Email,
+                        Phone=newUser.Phone,
                         BirthDate = newUser.BirthDate,
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,
-                        FaceBookProfile = newUser.InstagramProfile,
+                        FaceBookProfile = newUser.FaceBookProfile,
                         User = user
                     };
 
                     volunteerRepository.AddVolunteer(volunteer);
+                    
+                    return RedirectToAction("Login", "Account");
+
                 }
-                return View();
+                return View(newUser);
             }
-            catch
+            catch(Exception ex)
             {
+                Logger.LogError(ex.Message);
                 return View();
             }
         }

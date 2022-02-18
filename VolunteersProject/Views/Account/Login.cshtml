@@ -3,10 +3,11 @@
     ViewData["Title"] = "Index";
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Login">
-            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
@@ -14,15 +15,39 @@
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
+                <input id="PasswordInput" asp-for="Password" type="password" class="form-control" />
+                <i id="togglePassword" class="fa fa-eye"></i>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
+            <div>
+                <table border="0">
+                    <tr>
+                        <td width="20%">
+                            <div>
+                                <input type="submit" value="Login" class="btn btn-primary" />
+                            </div>
+                        </td>
+                        <td width="20%">
+                            <div style="text-align:right">
+                                <a asp-action="InputEmailResetPassword"> Reset Password </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </form>
     </div>
 </div>
+
+<script type="text/javascript">
+    var togglePassword = document.querySelector('#togglePassword');
+    var password = document.querySelector('#PasswordInput');
+    togglePassword.addEventListener('click', function (e) {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

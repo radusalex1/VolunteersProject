@@ -27,7 +27,11 @@ namespace VolunteersProject.Repository
         /// <returns></returns>
         public Enrollment GetEnrollmentById(int id)
         {
-            return _context.Enrollments.FirstOrDefault(i => i.EnrollmentID.Equals(id));
+            return _context.Enrollments
+                .Include(v=>v.volunteer)
+                .Include(c=>c.contribution)
+                .FirstOrDefault(i => i.EnrollmentID.Equals(id));
+                
         }
 
         /// <summary>
@@ -38,32 +42,46 @@ namespace VolunteersProject.Repository
         {
             return _context.Enrollments;
         }
+        /// <summary>
+        /// Gets all enrollments
+        /// </summary>
+        /// <returns></returns>
         public IQueryable<Enrollment> GetEnrollments_With_Data()
         {
             IQueryable<Enrollment> enrollments = _context.Enrollments
                 .Include(e => e.volunteer)
-                .Include(c => c.contribution);
+                .Include(c => c.contribution)
+                .Where(ee => ee.VolunteerStatus == 2);
 
             return enrollments;
         }
+        /// <summary>
+        /// Save enrollment
+        /// </summary>
+        /// <param name="enrollment"></param>
         public void Save(Enrollment enrollment)
         {
             _context.Add(enrollment);
             _context.SaveChanges();
         }
 
-        //todo Radu - rename this method to something that can be understand
-        public void Update(Enrollment enrollment)
+        /// <summary>
+        /// Update to new Enrollment
+        /// </summary>
+        /// <param name="enrollment"></param>
+        public void UpdateEnrollment(Enrollment enrollment)
         {
-            //e1 => e1.contributionId == enrollment.contributionId
             var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&  e.contributionId == enrollment.contributionId);
-            
-            result.VolunteerStatus = (int)VolunteerEnrollmentStatusEnum.Declined;
+            result.VolunteerStatus = enrollment.VolunteerStatus;
             _context.SaveChanges();
         }
 
-        //todo Radu - rename this method to something that can be understand
-        public bool IfExist(Enrollment enrollment)
+        /// <summary>
+        /// true is enrollment exists, otherwise false
+        /// </summary>
+        /// <param name="enrollment"></param>
+        /// <returns></returns>
+        public bool EnrollmentExists(Enrollment enrollment)
         {
             var result = _context.Enrollments.FirstOrDefault(e => e.VolunteerID == enrollment.VolunteerID &&
                                                                 e.contributionId==enrollment.contributionId);
@@ -77,6 +95,10 @@ namespace VolunteersProject.Repository
             }
         }
 
+        /// <summary>
+        /// Delete enrollment
+        /// </summary>
+        /// <param name="enrollment"></param>
         public void DeleteEnrollment(Enrollment enrollment)
         {
             _context.Enrollments.Remove(enrollment);

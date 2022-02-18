@@ -17,8 +17,10 @@ namespace VolunteersProject.Controllers
     /// </summary>
     [Authorize]
     public class VolunteersController : GeneralConstroller
-    {
+    { 
         public IVolunteerRepository volunteerRepository;
+        public readonly IUserRepository userRepository;
+
         private int pageSize;
         private int imgWidth;
         private int imgHeight;
@@ -29,10 +31,11 @@ namespace VolunteersProject.Controllers
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, IVolunteerRepository volunteerRepository) 
-            : base(logger, configuration)
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, 
+            IVolunteerRepository volunteerRepository,IUserRepository userRepository) : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
+            this.userRepository = userRepository;
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
             imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
             imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
@@ -46,10 +49,11 @@ namespace VolunteersProject.Controllers
         /// <param name="currentFilter">Current filter.</param>
         /// <param name="pageNumber">Page number.</param>
         /// <returns></returns>
-        // GET: Volunteers
+        /// GET: Volunteers
         [Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
         public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {
+            
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
@@ -74,63 +78,69 @@ namespace VolunteersProject.Controllers
             ViewData["CurrentFilter"] = SearchString;
 
 
-            var students = volunteerRepository.GetVolunteers();
+            var volunteers = volunteerRepository.GetVolunteers();
 
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
+                volunteers = volunteers.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
-            //todo Radu - rename student/s to volunteer/s
-            students = GetSortedVolunteers(sortOrder, students);
+             volunteers = GetSortedVolunteers(sortOrder, volunteers);
 
-            return View(PaginatedList<Volunteer>.Create(students, pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Volunteer>.Create(volunteers, pageNumber ?? 1, pageSize));
         }
 
-        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
-
+        /// <summary>
+        /// Here sort volunteers
+        /// </summary>
+        /// <param name="sortOrder"></param>
+        /// <param name="volunteers"></param>
+        /// <returns></returns>
+        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> volunteers)
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    students = students.OrderByDescending(s => s.Name);
+                    volunteers = volunteers.OrderByDescending(s => s.Name);
                     break;
                 case "Age":
-                    students = students.OrderBy(s => s.BirthDate);
+                    volunteers = volunteers.OrderBy(s => s.BirthDate);
                     break;
                 case "Age_desc":
-                    students = students.OrderByDescending(s => s.BirthDate);
+                    volunteers = volunteers.OrderByDescending(s => s.BirthDate);
                     break;
                 case "City_desc":
-                    students = students.OrderByDescending(s => s.City);
+                    volunteers = volunteers.OrderByDescending(s => s.City);
                     break;
                 case "City":
-                    students = students.OrderBy(s => s.City);
+                    volunteers = volunteers.OrderBy(s => s.City);
                     break;
                 case "JoinHubDate":
-                    students = students.OrderBy(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderBy(s => s.JoinHubDate);
                     break;
                 case "JoinHubDate_desc":
-                    students = students.OrderByDescending(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderByDescending(s => s.JoinHubDate);
                     break;
                 default:
-                    students = students.OrderBy(s => s.Name);
+                    volunteers = volunteers.OrderBy(s => s.Name);
                     break;
             }
 
-            return students;
+            return volunteers;
         }
 
         /// <summary>
-        /// Here sort Students
+        /// Details of volunteer
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Volunteers/Details/5        
-        public IActionResult Details(int? id)
+        public IActionResult Details(int id)
         {
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);
 
             if (volunteer == null)
             {
@@ -182,8 +192,8 @@ namespace VolunteersProject.Controllers
                     return View(volunteer);
                 }
 
-                volunteer.City = validateCity(volunteer.City);
-                volunteer.Name = validateName(volunteer.Name);
+                volunteer.City = ValidateCity(volunteer.City);
+                volunteer.Name = ValidateName(volunteer.Name);
 
                 if (volunteer.ImageProfile != null)
                 {
@@ -262,8 +272,8 @@ namespace VolunteersProject.Controllers
                         return View(volunteer);
                     }
 
-                    volunteer.City = validateCity(volunteer.City);
-                    volunteer.Name = validateName(volunteer.Name);
+                    volunteer.City = ValidateCity(volunteer.City);
+                    volunteer.Name = ValidateName(volunteer.Name);
 
                     if (volunteer.ImageProfile != null)
                     {
@@ -325,6 +335,10 @@ namespace VolunteersProject.Controllers
 
             volunteerRepository.DeleteVolunteer(volunteer);
 
+            var user = userRepository.GetUserById(volunteer.User.Id);
+
+            userRepository.DeteleUser(user);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -354,6 +368,128 @@ namespace VolunteersProject.Controllers
                 file.CopyTo(target);
                 return target.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Edit personal info page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult PersonalInfoEdit(int id)
+        {
+            var currentVolunteer = volunteerRepository.GetVolunteerById(id);
+
+            var currentUser = new CurrentUser()
+            {
+                Name = currentVolunteer.Name,
+                Surname = currentVolunteer.Surname,
+                UserName = currentVolunteer.User.UserName,
+                City = currentVolunteer.City,
+                Email = currentVolunteer.Email,
+                Phone = currentVolunteer.Phone,
+                BirthDate = currentVolunteer.BirthDate,
+                JoinHubDate = currentVolunteer.JoinHubDate,
+                InstagramProfile = currentVolunteer.InstagramProfile,
+                FaceBookProfile = currentVolunteer.FaceBookProfile,
+                DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub,
+                ImageProfile = currentVolunteer.ImageProfile
+            };
+
+            return View("Edit_PersonalInfo", currentUser);
+          
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PersonalInfoEdit(int id, [Bind("Id,Name,Surname,UserName,City,Phone,Email,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile,ImageProfile,DescriptionContributionToHub")] CurrentUser currentUser)
+        {
+            if (id != currentUser.Id)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                var ToUpdatevolunteer = volunteerRepository.GetVolunteerById(id);
+                var ToUpdateUser = userRepository.GetUserById(ToUpdatevolunteer.User.Id);
+
+                UpdateCurrentVolunteerWithNewDataFields(currentUser, ToUpdatevolunteer);
+
+                ToUpdateUser.UserName = currentUser.UserName;
+
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Phone) && PhoneNumberIsValid(ToUpdatevolunteer.Phone) == false)
+                {
+                    ViewBag.Phone_Error = "Incorrect phone number";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.InstagramProfile) && InstagramIsValid(ToUpdatevolunteer.InstagramProfile) == false)
+                {
+                    ViewBag.Instagram_Error = "Incorrect Instragram Profile";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Email) && EmailIsValid(ToUpdatevolunteer.Email) == false)
+                {
+                    ViewBag.Email_Error = "Incorrect Email Adress";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ///if exist => error
+                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(ToUpdatevolunteer))
+                {
+                    ViewBag.ExistingEmailOrPhone = "Existing Email or Phone";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                if( !string.IsNullOrEmpty(currentUser.UserName)  && userRepository.AlreadyUserUsername_OnEditPersonalInfo(currentUser))
+                {
+                    ViewBag.UserName_Error = "Existing Username";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ToUpdatevolunteer.City = ValidateCity(ToUpdatevolunteer.City);
+                ToUpdatevolunteer.Name = ValidateName(ToUpdatevolunteer.Name);
+
+                if (ToUpdatevolunteer.ImageProfile != null)
+                {
+                    if (ValidateImageProfile(ToUpdatevolunteer, imgWidth, imgHeight))
+                    {
+                        ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                        return View("Edit_PersonalInfo", currentUser);
+                    }
+
+                    ToUpdatevolunteer.ImageProfileByteArray = GetByteArrayFromImage(ToUpdatevolunteer.ImageProfile);
+                }
+
+                volunteerRepository.UpdateVolunteer(ToUpdatevolunteer);
+                userRepository.UpdateUser(ToUpdateUser);
+
+                return RedirectToAction(nameof(Index));
+
+                //return RedirectToAction("")
+               
+            }
+            return View("Edit_PersonalInfo", currentUser);
+        }
+
+        private static void UpdateCurrentVolunteerWithNewDataFields(CurrentUser currentUser, Volunteer ToUpdatevolunteer)
+        {
+            ToUpdatevolunteer.Name = currentUser.Name;
+            ToUpdatevolunteer.Surname = currentUser.Surname;
+            ToUpdatevolunteer.City = currentUser.City;
+            ToUpdatevolunteer.Phone = currentUser.Phone;
+            ToUpdatevolunteer.Email = currentUser.Email;
+            ToUpdatevolunteer.BirthDate = currentUser.BirthDate;
+            ToUpdatevolunteer.JoinHubDate = currentUser.JoinHubDate;
+            ToUpdatevolunteer.InstagramProfile = currentUser.InstagramProfile;
+            ToUpdatevolunteer.FaceBookProfile = currentUser.FaceBookProfile;
+            ToUpdatevolunteer.DescriptionContributionToHub = currentUser.DescriptionContributionToHub;
+            ToUpdatevolunteer.ImageProfile = currentUser.ImageProfile;
         }
     }
 }

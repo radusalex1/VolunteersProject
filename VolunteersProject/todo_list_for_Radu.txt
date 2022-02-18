@@ -1,21 +1,8 @@
 //to do
 
-1.implement a real UserRepository:
--create tabel (column username, password, role, etc ...)
--create CRUD for user tabel
--create views for CRUD
-
-1.1 - document methods, classes, properties
-
-2.show error message if InstagramProfile is empty or let it empty
-
-3.show error message if FacebooProfile is empty or let it empty
-
 4.check unicity for enrollments
 
 5.add nr of records for volunteers
-
-6.put nr. of records on the view in appsettings
 
 7.add filter on enrollments
 

@@ -80,13 +80,13 @@ namespace VolunteersProject.Controllers
             }
             return enrolments;
         }
+
         /// <summary>
         /// get sorted elements;
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Enrollments/Details/5
-        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Details(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
@@ -99,10 +99,8 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Create
-        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
-            //todo cia - fill ViewData below only with not assigned data - first select a contribution and after that display only the not already assigned volunteers
             ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
             ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName");
             ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name");
@@ -130,7 +128,6 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Edit/5
-        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
 
@@ -154,7 +151,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Common.Role.Admin)]
+        
         public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentID)
@@ -166,8 +163,7 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-
-                    enrollmentRepository.Update(enrollment);
+                    enrollmentRepository.UpdateEnrollment(enrollment);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -187,7 +183,6 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Delete/5
-        [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -255,16 +250,14 @@ namespace VolunteersProject.Controllers
                 volunteerEnrollmentStatus = 3;
             }
 
-            //todo Radu - implement volunteerEnrollmentStatus column in Enrollment tbl (column type = integer)
-
             var enrollment = new Enrollment
             {
                 contributionId = contributionId,
                 VolunteerID = volunteerId,
-                VolunteerStatus = (int)volunteerEnrollmentStatus
+                VolunteerStatus = volunteerEnrollmentStatus
             };
 
-            enrollmentRepository.Update(enrollment);
+            enrollmentRepository.UpdateEnrollment(enrollment);
 
             return View("Close");
         }
@@ -272,7 +265,7 @@ namespace VolunteersProject.Controllers
         private bool EnrollmentExists(int id)
         {
             Enrollment enrollment = enrollmentRepository.GetEnrollmentById(id);
-            return enrollmentRepository.IfExist(enrollment);
+            return enrollmentRepository.EnrollmentExists(enrollment);
 
         }
     }

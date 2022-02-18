@@ -3,23 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace VolunteersProject.Models
 {
     /// <summary>
-    /// Volunteer model.
+    /// 
     /// </summary>
-    public class Volunteer
+    public class CurrentUser
     {
-        /// <summary>
-        /// Gets or sets the volunteer id.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
-        public User User { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name.
@@ -32,14 +29,24 @@ namespace VolunteersProject.Models
         /// Gets or sets the first/sur name.
         /// </summary>
         [Required]
-        [Display(Name ="Prenume",Prompt ="First Name")]
+        [Display(Name = "Prenume", Prompt = "First Name")]
         public string Surname { get; set; } = null!;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Required]
+        [Display(Name="Username",Prompt ="Username")]
+        public string UserName { get; set; } = null!;
 
         /// <summary>
         /// 
         /// </summary>
         public string City { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Required]
         [Display(Prompt = "example@example.org")]
         public string Email { get; set; } = null!;
@@ -50,41 +57,12 @@ namespace VolunteersProject.Models
         [Required]
         public string Phone { get; set; } = null!;
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime BirthDate { get; set; }
-        
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        public int Age
-        {
-            get
-            {
-                DateTime now = DateTime.Today;
-                int age = now.Year - BirthDate.Year;
-                if (now < BirthDate.AddYears(age))
-                    age--;
-                return age;
-            }
-        }
-        
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<Enrollment> Enrollments{ get; set; }
-
-        /// <summary>
-        /// Gets or sets the full name.
-        /// </summary>
-        [Display(Name="Volunteer")]
-        public string FullName
-        {
-            get
-            {
-                return $"{this.Name} {this.Surname}";
-            }
-        }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime BirthDate { get; set; }
 
         /// <summary>
         /// Get or sets the join date to the hub.
@@ -103,14 +81,9 @@ namespace VolunteersProject.Models
         /// <summary>
         /// Gets or sets the Facebook profile.
         /// </summary>
-        [Display(Name="Facebook profile link",Prompt ="Facebook profile link")]
+        [Display(Name = "Facebook profile link", Prompt = "Facebook profile link")]
         public string FaceBookProfile { get; set; }
         
-        /// <summary>
-        /// Gets or set the description contribution to hub.
-        /// </summary>
-        public string DescriptionContributionToHub { get; set; }
-
         /// <summary>
         /// Gets or sets the image profile.
         /// </summary>
@@ -118,8 +91,9 @@ namespace VolunteersProject.Models
         public IFormFile ImageProfile { get; set; }
 
         /// <summary>
-        /// Gets or sets the image profile byte array.
+        /// Gets or set the description contribution to hub.
         /// </summary>
-        public Byte[] ImageProfileByteArray { get; set; }
+        public string DescriptionContributionToHub { get; set; }
+
     }
 }

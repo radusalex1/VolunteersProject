@@ -20,7 +20,6 @@ namespace VolunteersProject.Controllers
     [Authorize]
     public class ContributionsController : GeneralConstroller
     {
-        //private readonly VolunteersContext _context;
 
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
@@ -38,12 +37,10 @@ namespace VolunteersProject.Controllers
                  IConfiguration configuration
              ) : base(logger, configuration)
         {
-            //_context = context;
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
             this.enrollmentRepository = enrollmentRepository;
             this.contributionRepository = contributionRepository;
-
         }
 
         // GET: Contributions
@@ -83,45 +80,12 @@ namespace VolunteersProject.Controllers
             return View(contributions);
         }
 
-        private static List<Contribution> SortContributions(string sortOrder, List<Contribution> contributions)
-        {
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    contributions = contributions.OrderByDescending(c => c.Name).ToList();
-                    break;
-                case "Credits":
-                    contributions = contributions.OrderBy(c => c.Credits).ToList();
-                    break;
-                case "Credits_desc":
-                    contributions = contributions.OrderByDescending(c => c.Credits).ToList();
-                    break;
-                case "sd_asc":
-                    contributions = contributions.OrderBy(c => c.StartDate).ToList();
-                    break;
-                case "sd_desc":
-                    contributions = contributions.OrderByDescending(c => c.StartDate).ToList();
-                    break;
-                case "fd_asc":
-                    contributions = contributions.OrderBy(c => c.FinishDate).ToList();
-                    break;
-                case "fd_desc":
-                    contributions = contributions.OrderByDescending(c => c.FinishDate).ToList();
-                    break;
-                default:
-                    contributions = contributions.OrderBy(c => c.Name).ToList();
-                    break;
-            }
-
-            return contributions;
-        }
+        
 
         // GET: Contributions/Details/5
         [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Details(int id)
         {
-
-
             var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
             {
@@ -155,10 +119,36 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
+               
+                if(string.IsNullOrEmpty(contribution.Name))
+                {
+                    ViewBag.Contribution_Name_Err = "Name cannot be empty!";
+                    return View(contribution);
+                }
+
+                if(contribution.Credits<=0)
+                {
+                    ViewBag.Credits_Err = "Invalid input!";
+                    return View(contribution);
+
+                }
+
+                if (contribution.StartDate > contribution.FinishDate)
+                {
+                    ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                    return View(contribution);
+                }
+
+                if(contribution.VolunteerDeadlineConfirmation>contribution.StartDate)
+                {
+                    ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date!";
+                    return View(contribution);
+                }
+
                 contributionRepository.AddContribution(contribution);
-                
                 return RedirectToAction(nameof(Index));
             }
+           
             return View(contribution);
         }
 
@@ -188,12 +178,35 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
-           
-
+          
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (string.IsNullOrEmpty(contribution.Name))
+                    {
+                        ViewBag.Contribution_Name_Err = "Name cannot be empty!";
+                        return View(contribution);
+                    }
+
+                    if (contribution.Credits <= 0)
+                    {
+                        ViewBag.Credits_Err = "Invalid input!";
+                        return View(contribution);
+
+                    }
+
+                    if (contribution.StartDate > contribution.FinishDate)
+                    {
+                        ViewBag.Dates_Validation_Err = "Start Date > Finish Date!";
+                        return View(contribution);
+                    }
+
+                    if (contribution.VolunteerDeadlineConfirmation > contribution.StartDate)
+                    {
+                        ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date!";
+                        return View(contribution);
+                    }
                     contributionRepository.UpdateContribution(contribution);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -300,6 +313,7 @@ namespace VolunteersProject.Controllers
             }
 
             return directAssignmentVolunteerList;
+
         }
 
         private List<VolunteerDTO> GetSelectedVolunteersForSendEmail(IFormCollection form, List<VolunteerDTO> availableVolunteers)

@@ -6,7 +6,7 @@ using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
-    [Route("api/[controller]")]   
+    [Route("api/[controller]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "Volunteer")]
     public class VolunteersApiController : ControllerBase
@@ -20,7 +20,6 @@ namespace VolunteersProject.Controllers
 
         // GET: api/VolunteersApi
         [HttpGet]
-        //[ApiExplorerSettings(GroupName = "Volunteer > GetVolunteers")]
         public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
 
@@ -29,11 +28,9 @@ namespace VolunteersProject.Controllers
             return Ok(volunteers);
         }
 
-        //todo cia - implement this: GetVolunteerWithEnrollmentsById
 
         //GET: api/VolunteersApi/5
         [HttpGet("{id}")]
-        //[ApiExplorerSettings(GroupName = "Volunteer > GetVolunteer")]
         public ActionResult<Volunteer> GetVolunteer(int id)
         {
             //var volunteer = await _context.Volunteers.FindAsync(id);
@@ -51,15 +48,13 @@ namespace VolunteersProject.Controllers
         //PUT: api/VolunteersApi/5
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        //[ApiExplorerSettings(GroupName = "Volunteer > UpdateVolunteer")]
-        //public async Task<IActionResult> PutVolunteer(int id, Volunteer volunteer)
         public ActionResult PutVolunteer(Volunteer volunteer)
-        {           
+        {
             //context.Entry(volunteer).State = EntityState.Modified;
 
             try
             {
-              
+
                 volunteerRepository.UpdateVolunteer(volunteer);
             }
             catch (DbUpdateConcurrencyException)
@@ -79,12 +74,9 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: api/VolunteersApi
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[ApiExplorerSettings(GroupName = "Volunteer > CreateVolunteer")]
         [HttpPost]
         public ActionResult PostVolunteer(Volunteer volunteer)
         {
-
             volunteerRepository.AddVolunteer(volunteer);
 
             return Ok();
@@ -93,7 +85,6 @@ namespace VolunteersProject.Controllers
 
         // DELETE: api/VolunteersApi/5
         [HttpDelete("{id}")]
-        //[ApiExplorerSettings(GroupName = "Volunteer > DeleteVolunteer")]
         public ActionResult DeleteVolunteer(int id)
         {
             var volunteer = volunteerRepository.GetVolunteerById(id);
@@ -103,11 +94,9 @@ namespace VolunteersProject.Controllers
                 return NotFound();
             }
 
-            
             volunteerRepository.DeleteVolunteer(volunteer);
 
-          
             return Ok();
-        }        
+        }
     }
 }
