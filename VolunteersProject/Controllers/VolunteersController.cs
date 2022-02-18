@@ -17,9 +17,10 @@ namespace VolunteersProject.Controllers
     /// </summary>
     [Authorize]
     public class VolunteersController : GeneralConstroller
-    {
+    { 
         public IVolunteerRepository volunteerRepository;
         public readonly IUserRepository userRepository;
+
         private int pageSize;
         private int imgWidth;
         private int imgHeight;
@@ -137,7 +138,6 @@ namespace VolunteersProject.Controllers
         // GET: Volunteers/Details/5        
         public IActionResult Details(int id)
         {
-
             var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
 
             ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);
@@ -368,6 +368,128 @@ namespace VolunteersProject.Controllers
                 file.CopyTo(target);
                 return target.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Edit personal info page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult PersonalInfoEdit(int id)
+        {
+            var currentVolunteer = volunteerRepository.GetVolunteerById(id);
+
+            var currentUser = new CurrentUser()
+            {
+                Name = currentVolunteer.Name,
+                Surname = currentVolunteer.Surname,
+                UserName = currentVolunteer.User.UserName,
+                City = currentVolunteer.City,
+                Email = currentVolunteer.Email,
+                Phone = currentVolunteer.Phone,
+                BirthDate = currentVolunteer.BirthDate,
+                JoinHubDate = currentVolunteer.JoinHubDate,
+                InstagramProfile = currentVolunteer.InstagramProfile,
+                FaceBookProfile = currentVolunteer.FaceBookProfile,
+                DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub,
+                ImageProfile = currentVolunteer.ImageProfile
+            };
+
+            return View("Edit_PersonalInfo", currentUser);
+          
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PersonalInfoEdit(int id, [Bind("Id,Name,Surname,UserName,City,Phone,Email,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile,ImageProfile,DescriptionContributionToHub")] CurrentUser currentUser)
+        {
+            if (id != currentUser.Id)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                var ToUpdatevolunteer = volunteerRepository.GetVolunteerById(id);
+                var ToUpdateUser = userRepository.GetUserById(ToUpdatevolunteer.User.Id);
+
+                UpdateCurrentVolunteerWithNewDataFields(currentUser, ToUpdatevolunteer);
+
+                ToUpdateUser.UserName = currentUser.UserName;
+
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Phone) && PhoneNumberIsValid(ToUpdatevolunteer.Phone) == false)
+                {
+                    ViewBag.Phone_Error = "Incorrect phone number";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.InstagramProfile) && InstagramIsValid(ToUpdatevolunteer.InstagramProfile) == false)
+                {
+                    ViewBag.Instagram_Error = "Incorrect Instragram Profile";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Email) && EmailIsValid(ToUpdatevolunteer.Email) == false)
+                {
+                    ViewBag.Email_Error = "Incorrect Email Adress";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ///if exist => error
+                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(ToUpdatevolunteer))
+                {
+                    ViewBag.ExistingEmailOrPhone = "Existing Email or Phone";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                if( !string.IsNullOrEmpty(currentUser.UserName)  && userRepository.AlreadyUserUsername_OnEditPersonalInfo(currentUser))
+                {
+                    ViewBag.UserName_Error = "Existing Username";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ToUpdatevolunteer.City = ValidateCity(ToUpdatevolunteer.City);
+                ToUpdatevolunteer.Name = ValidateName(ToUpdatevolunteer.Name);
+
+                if (ToUpdatevolunteer.ImageProfile != null)
+                {
+                    if (ValidateImageProfile(ToUpdatevolunteer, imgWidth, imgHeight))
+                    {
+                        ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                        return View("Edit_PersonalInfo", currentUser);
+                    }
+
+                    ToUpdatevolunteer.ImageProfileByteArray = GetByteArrayFromImage(ToUpdatevolunteer.ImageProfile);
+                }
+
+                volunteerRepository.UpdateVolunteer(ToUpdatevolunteer);
+                userRepository.UpdateUser(ToUpdateUser);
+
+                return RedirectToAction(nameof(Index));
+
+                //return RedirectToAction("")
+               
+            }
+            return View("Edit_PersonalInfo", currentUser);
+        }
+
+        private static void UpdateCurrentVolunteerWithNewDataFields(CurrentUser currentUser, Volunteer ToUpdatevolunteer)
+        {
+            ToUpdatevolunteer.Name = currentUser.Name;
+            ToUpdatevolunteer.Surname = currentUser.Surname;
+            ToUpdatevolunteer.City = currentUser.City;
+            ToUpdatevolunteer.Phone = currentUser.Phone;
+            ToUpdatevolunteer.Email = currentUser.Email;
+            ToUpdatevolunteer.BirthDate = currentUser.BirthDate;
+            ToUpdatevolunteer.JoinHubDate = currentUser.JoinHubDate;
+            ToUpdatevolunteer.InstagramProfile = currentUser.InstagramProfile;
+            ToUpdatevolunteer.FaceBookProfile = currentUser.FaceBookProfile;
+            ToUpdatevolunteer.DescriptionContributionToHub = currentUser.DescriptionContributionToHub;
+            ToUpdatevolunteer.ImageProfile = currentUser.ImageProfile;
         }
     }
 }

@@ -27,6 +27,12 @@ namespace VolunteersProject.Repository
         bool AlreadyUseUsername(string username);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        bool AlreadyUserUsername_OnEditPersonalInfo(CurrentUser currentUser);
+
+        /// <summary>
         /// Change password based on user id
         /// </summary>
         /// <param name="NewPassword"></param>
@@ -44,5 +50,11 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="user"></param>
         void DeteleUser(User user);
+
+        /// <summary>
+        /// Update a User
+        /// </summary>
+        /// <param name="user"></param>
+        void UpdateUser(User user);
     }
 }

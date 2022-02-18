@@ -13,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:blanchedalmond">
             <div class="container">
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" >
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="HomeIndex">Home</a>
@@ -27,6 +27,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contributions" asp-action="Index">Events</a>
                         </li>
+                        @{ if (Context.Session.GetString("userIsLogged") == "true")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Volunteers" asp-action="PersonalInfoEdit" asp-route-id=@Context.Session.GetInt32("currentVolunteerId")>Edit_profile</a>
+                                </li>
+                            }
+
+                        }
+
                         @{
                             if (Context.Session.GetString("userIsLogged") != "true")
                             {
@@ -41,18 +50,19 @@
                                 </li>
                             }
                         }
-                    </ul>
-                    @{
-                        if (Context.Session.GetString("userIsLogged") == "true")
-                        {
-                            <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
-                        }
-                    }
+
+                       @* @{
+                            if (Context.Session.GetString("userIsLogged") == "true")
+                            {
+                                <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
+                            }
+                        }*@
                 </div>
 
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

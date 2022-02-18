@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using VolunteersProject.Models;
-using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
@@ -16,8 +15,14 @@ namespace VolunteersProject.Controllers
     {
         public readonly ILogger<GeneralConstroller> Logger;
         public IConfiguration configuration;
+
         protected static int currentUserId;
-        protected static CurrentUser currentUser;
+        
+        //http.context
+        //claims principle
+
+        //protected static CurrentUser currentUser;
+        protected static int currentVolunteerId;
 
         /// <summary>
         /// Constructor

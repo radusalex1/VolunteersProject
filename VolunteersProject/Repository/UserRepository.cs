@@ -12,14 +12,15 @@ namespace VolunteersProject.Repository
     public class UserRepository : IUserRepository
     {
         private readonly VolunteersContext _context;
-
+        private readonly IVolunteerRepository _volunteerRepository;
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="context"></param>
-        public UserRepository(VolunteersContext context)
+        public UserRepository(VolunteersContext context,IVolunteerRepository volunteerRepository)
         {
             _context = context;
+            _volunteerRepository = volunteerRepository;
         }
       
         /// <summary>
@@ -57,6 +58,36 @@ namespace VolunteersProject.Repository
             return _context.Users.Any(e => e.UserName == username);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        public bool AlreadyUserUsername_OnEditPersonalInfo(CurrentUser currentUser)
+        {
+            var result = _context.Users.FirstOrDefault(u => u.UserName == currentUser.UserName);
+
+            var currentVolunteer = _volunteerRepository.GetVolunteerById(currentUser.Id);
+
+            if (result == null)
+            {
+                return false;
+            }
+
+
+            if (result.Id == currentVolunteer.User.Id)
+            {
+                return false;
+            }
+                
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="NewPassword"></param>
         public void ChangePasswordBasedOnUserId(int id, string NewPassword)
         {
             var user = _context.Users
@@ -86,6 +117,22 @@ namespace VolunteersProject.Repository
         {
             _context.Users.Remove(user);
             _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Update a user
+        /// </summary>
+        /// <param name="user"></param>
+        public void UpdateUser(User user)
+        {
+            var user_result = _context.Users
+                 .FirstOrDefault(u => u.Id == user.Id);
+
+            user_result.UserName = user.UserName;
+
+            _context.Update(user_result);
+            _context.SaveChanges();
+
         }
     }
 }

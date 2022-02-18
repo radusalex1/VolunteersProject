@@ -156,11 +156,36 @@ namespace VolunteersProject.Repository
         {
             if (volunteer.Email != null && volunteer.Phone != null)
             {
-                var result = _context.Volunteers.AsNoTracking().FirstOrDefault(
+               var result = _context.Volunteers.AsNoTracking().FirstOrDefault(
                     v => v.Phone == volunteer.Phone || 
                     v.Email == volunteer.Email);
 
-                return (result == null || result.Id == volunteer.Id) ? false : true;
+                var email_result = _context.Volunteers
+                    .FirstOrDefault(v => v.Email == volunteer.Email);
+
+                var phone_result = _context.Volunteers
+                    .FirstOrDefault(v => v.Phone == volunteer.Phone);
+
+                if (result == null)
+                {
+                    return false;
+                }
+
+                if(email_result==null && phone_result==null)
+                {
+                    ///nu mai exista nimeni cu mailul si phone-ul introduse
+                    return false;
+                }
+                else
+                {
+                    if(email_result.Id==volunteer.Id && phone_result.Id == volunteer.Id)
+                    {
+                        return false;
+                    }
+                }
+               
+                return true;
+ 
             }
 
             return false;

@@ -86,8 +86,6 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Details(int id)
         {
-
-
             var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
             {

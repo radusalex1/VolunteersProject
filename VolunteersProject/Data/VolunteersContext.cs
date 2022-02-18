@@ -34,5 +34,8 @@ namespace VolunteersProject.Data
 
         public DbSet<VolunteersProject.DTO.NewPasswordDTO> NewPasswordDTO { get; set; }
 
+
+        public DbSet<VolunteersProject.Models.CurrentUser> CurrentUser { get; set; }
+
     }
 }
