@@ -27,13 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contributions" asp-action="Index">Events</a>
                         </li>
-                        @{ if (Context.Session.GetString("userIsLogged") == "true")
+                        @{ if (Context.Session.GetString("userIsLogged") == "true" && Context.Session.GetInt32("currentVolunteerId") != -1)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Volunteers" asp-action="PersonalInfoEdit" asp-route-id=@Context.Session.GetInt32("currentVolunteerId")>Edit_profile</a>
                                 </li>
                             }
-
                         }
 
                         @{
@@ -51,12 +50,12 @@
                             }
                         }
 
-                       @* @{
-                            if (Context.Session.GetString("userIsLogged") == "true")
-                            {
-                                <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
-                            }
-                        }*@
+                        @*@{
+                                if (Context.Session.GetString("userIsLogged") == "true")
+                                {
+                                    <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
+                                }
+                         }*@
                 </div>
 
             </div>
@@ -68,6 +67,7 @@
             @RenderBody()
         </main>
     </div>
+
 
     <footer class="border-top footer text-muted">
         <div class="container">

@@ -46,7 +46,7 @@ namespace VolunteersProject.Controllers
             {
                 return string.Empty;
             }
-            return char.ToUpper(city[0]) + city.Substring(1);
+            return char.ToUpper(city[0]) + city.Substring(1).ToLower();
         }
 
         /// <summary>

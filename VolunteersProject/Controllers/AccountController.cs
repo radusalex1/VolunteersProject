@@ -38,10 +38,10 @@ namespace VolunteersProject.Controllers
         /// <param name="logger"></param>
         /// <param name="emailService"></param>
         public AccountController(IVolunteerRepository volunteerRepository,
-            IConfiguration config, 
+            IConfiguration config,
             ITokenService tokenService,
-            IUserRepository userRepository, 
-            ILogger<AccountController> logger, 
+            IUserRepository userRepository,
+            ILogger<AccountController> logger,
             IEmailService emailService) :
             base(logger, config)
         {
@@ -94,7 +94,7 @@ namespace VolunteersProject.Controllers
             IActionResult response = Unauthorized();
 
             var validUser = GetUser(userModel);
-           
+
             if (validUser != null)
             {
                 generatedToken = _tokenService.BuildToken(configuration["Jwt:Key"].ToString(), configuration["Jwt:Issuer"].ToString(), validUser);
@@ -106,10 +106,19 @@ namespace VolunteersProject.Controllers
                     currentUserId = validUser.Id;
 
                     var CurrentVolunteer = _volunteerRepository.GetVolunteerByUserId(currentUserId);
-
-                    currentVolunteerId = CurrentVolunteer.Id;
+                    //aici este o problema
+                    if (CurrentVolunteer == null)
+                    {
+                        currentVolunteerId = -1;
+                    }
+                    else
+                    { 
+                        currentVolunteerId = CurrentVolunteer.Id;
+                    }
 
                     HttpContext.Session.SetInt32("currentVolunteerId", currentVolunteerId);
+
+                    //HttpContext.Session.
 
                     //HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName + " " + validUser.LastName}");
 
@@ -252,12 +261,12 @@ namespace VolunteersProject.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult ResetPassword(int UserId,[Bind("NewPassword,ConfirmNewPassword")] NewPasswordDTO newPasswordDTO )
+        public IActionResult ResetPassword(int UserId, [Bind("NewPassword,ConfirmNewPassword")] NewPasswordDTO newPasswordDTO)
         {
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if(newPasswordDTO.NewPassword!=newPasswordDTO.ConfirmNewPassword)
+                if (newPasswordDTO.NewPassword != newPasswordDTO.ConfirmNewPassword)
                 {
                     ViewBag.NewPassword_Error = "Does not match!";
                     return View(newPasswordDTO);
