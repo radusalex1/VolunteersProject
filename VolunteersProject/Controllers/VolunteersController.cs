@@ -30,6 +30,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
+        /// <param name="userRepository"></param>
         /// <param name="configuration">Application configuration.</param>
         public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, 
             IVolunteerRepository volunteerRepository,IUserRepository userRepository) : base(logger, configuration)

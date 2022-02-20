@@ -17,12 +17,12 @@ namespace VolunteersProject.Repository
         /// constructor
         /// </summary>
         /// <param name="context"></param>
-        public UserRepository(VolunteersContext context,IVolunteerRepository volunteerRepository)
+        public UserRepository(VolunteersContext context, IVolunteerRepository volunteerRepository)
         {
             _context = context;
             _volunteerRepository = volunteerRepository;
         }
-      
+
         /// <summary>
         /// get user
         /// </summary>
@@ -37,15 +37,15 @@ namespace VolunteersProject.Repository
         }
 
         /// <summary>
-        /// add user to database
+        /// insert a user
         /// </summary>
         /// <param name="user"></param>
-        /// <returns></returns>
-        public int AddUser(User user)
+        /// <returns> true if succeded, false otherwise</returns>
+        public void AddUser(User user)
         {
             _context.Users.Add(user);
             _context.SaveChanges();
-            return user.Id; 
+
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace VolunteersProject.Repository
             {
                 return false;
             }
-                
+
             return true;
         }
 
@@ -95,7 +95,7 @@ namespace VolunteersProject.Repository
             user.Password = NewPassword;
             _context.Update(user);
             _context.SaveChanges();
-                
+
         }
 
         /// <summary>
