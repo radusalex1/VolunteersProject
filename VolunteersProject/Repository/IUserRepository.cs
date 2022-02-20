@@ -17,7 +17,7 @@ namespace VolunteersProject.Repository
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        int AddUser(User user);
+        void AddUser(User user);
 
         /// <summary>
         /// Check if user exists
