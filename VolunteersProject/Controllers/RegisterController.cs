@@ -4,6 +4,7 @@ using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Transactions;
 using VolunteersProject.DTO;
 
 namespace VolunteersProject.Controllers
@@ -15,11 +16,11 @@ namespace VolunteersProject.Controllers
         private IUserRepository userRepository;
         private IRolesRepository rolesRepository;
 
-        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration):base(logger,configuration)
+        public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration) : base(logger, configuration)
         {
             this.volunteerRepository = volunteerRepository;
             this.userRepository = userRepository;
-           this.rolesRepository = rolesRepository;
+            this.rolesRepository = rolesRepository;
         }
 
         // GET: RegisterController
@@ -48,19 +49,19 @@ namespace VolunteersProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if(!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
+                    if (!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
 
-                    if(!string.IsNullOrEmpty(newUser.InstagramProfile)&& !InstagramIsValid(newUser.InstagramProfile))
+                    if (!string.IsNullOrEmpty(newUser.InstagramProfile) && !InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
                         return View(newUser);
                     }
 
-                    if(!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
+                    if (!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
                     {
                         ViewBag.Email_Error = "Incorrect Email Adress";
                         return View(newUser);
@@ -68,19 +69,17 @@ namespace VolunteersProject.Controllers
 
                     var user = new User
                     {
-                 
+
                         UserName = newUser.UserName,
                         Password = newUser.Password,
                         Role = rolesRepository.GetUserRight()
-                    }; 
-                    
-                    if(userRepository.AlreadyUseUsername(user.UserName))
+                    };
+
+                    if (userRepository.AlreadyUseUsername(user.UserName))
                     {
                         ViewBag.Username_Error = "Username Already Use";
                         return View(newUser);
                     }
-
-                    int userId = userRepository.AddUser(user);
 
                     var volunteer = new Volunteer
                     {
@@ -88,7 +87,7 @@ namespace VolunteersProject.Controllers
                         Surname = newUser.Surname,
                         City = ValidateCity(newUser.City),
                         Email = newUser.Email,
-                        Phone=newUser.Phone,
+                        Phone = newUser.Phone,
                         BirthDate = newUser.BirthDate,
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,
@@ -96,19 +95,23 @@ namespace VolunteersProject.Controllers
                         User = user
                     };
 
+                    userRepository.AddUser(user);
+
                     volunteerRepository.AddVolunteer(volunteer);
-                    
+
                     return RedirectToAction("Login", "Account");
 
                 }
                 return View(newUser);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex.Message);
                 return View();
             }
         }
+
+
 
     }
 }
