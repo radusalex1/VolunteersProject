@@ -77,7 +77,7 @@
             Volunteer controller.
             </summary>
         </member>
-        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},VolunteersProject.Repository.IVolunteerRepository,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:VolunteersProject.Controllers.VolunteersController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.VolunteersController},Microsoft.Extensions.Configuration.IConfiguration,VolunteersProject.Repository.IVolunteerRepository)">
             <summary>
             Contructor
             </summary>
@@ -125,6 +125,51 @@
         <member name="T:VolunteersProject.Models.ErrorViewModel">
             <summary>
             Error model.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.Surname">
+            <summary>
+            Gets or sets the first/sur name.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.JoinHubDate">
+            <summary>
+            Get or sets the join date to the hub.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.InstagramProfile">
+            <summary>
+            Gets or sets the instagram profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.RegisterFormModel.FaceBookProfile">
+            <summary>
+            Gets or sets the Facebook profile.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Name">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Power">
+            <summary>
+            the more power the more rights the user has
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Role.Description">
+            <summary>
+            administrator,simple user etc;
+            </summary>
+        </member>
+        <member name="T:VolunteersProject.Models.User">
+            <summary>
+            used to get logged user from dbo.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.RegisterFormModel.Name">
