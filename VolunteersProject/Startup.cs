@@ -48,6 +48,11 @@ namespace VolunteersProject
                 options.IdleTimeout = TimeSpan.FromMinutes(35);
                
             });
+            //set session timeout
+            //services.AddSession(option =>
+            //{ 
+            //     option.IdleTimeout = TimeSpan.FromMinutes(30);
+            //});
 
             services.AddControllersWithViews();
 

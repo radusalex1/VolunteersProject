@@ -136,7 +136,7 @@ namespace VolunteersProject.Controllers
         }
 
         [Authorize]
-        [Route("mainwindow")]
+        [Route("Mainwindow")]
         [HttpGet]
         public IActionResult MainWindow()
         {
