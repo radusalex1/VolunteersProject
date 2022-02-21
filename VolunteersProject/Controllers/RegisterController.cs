@@ -4,9 +4,8 @@ using VolunteersProject.Repository;
 using VolunteersProject.Models;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Transactions;
-using VolunteersProject.DTO;
 using Microsoft.AspNetCore.Authorization;
+using VolunteersProject.Util;
 
 namespace VolunteersProject.Controllers
 {
@@ -72,7 +71,6 @@ namespace VolunteersProject.Controllers
 
                     var user = new User
                     {
-
                         UserName = newUser.UserName,
                         Password = newUser.Password,
                         Role = rolesRepository.GetUserRight()
@@ -88,7 +86,7 @@ namespace VolunteersProject.Controllers
                     {
                         Name = ValidateName(newUser.Name),
                         Surname = newUser.Surname,
-                        City = ValidateCity(newUser.City),
+                        City = Helper.FirstUpperNextLower(newUser.City),
                         Email = newUser.Email,
                         Phone = newUser.Phone,
                         BirthDate = newUser.BirthDate,
@@ -113,8 +111,5 @@ namespace VolunteersProject.Controllers
                 return View();
             }
         }
-
-
-
     }
 }
