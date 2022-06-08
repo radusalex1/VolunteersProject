@@ -17,13 +17,13 @@ namespace VolunteersProject.Controllers
     public class VolunteersApiController : ControllerBase
     {
         private IVolunteerRepository volunteerRepository;
-        //private IReportManager reportManager;
+        private IReportManager reportManager;
 
 
-        public VolunteersApiController(IVolunteerRepository repository)//, IReportManager reportManager)
+        public VolunteersApiController(IVolunteerRepository repository, IReportManager reportManager)
         {
             this.volunteerRepository = repository;
-            //this.reportManager = reportManager;
+            this.reportManager = reportManager;
         }
 
         // GET: api/VolunteersApi
@@ -112,7 +112,7 @@ namespace VolunteersProject.Controllers
         {
             var volunteers = this.volunteerRepository.GetVolunteers();
 
-            //var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteersReport", "VolunteersReport");
+            var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteersReport", "VolunteersReport");
 
             return Ok(volunteers);
         }

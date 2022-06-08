@@ -1,0 +1,17 @@
+﻿INSERT INTO [dbo].[Roles]
+           ([Name]
+           ,[Power]
+           ,[Description])
+     VALUES
+           ('Admin'
+           ,1
+           ,'Admin');
+
+INSERT INTO [dbo].[Users]
+           ([UserName]
+           ,[RoleId]
+           ,[Password])
+     VALUES
+           ('Radu_Admin'
+           ,1
+           ,'admin');
