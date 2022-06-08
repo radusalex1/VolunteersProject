@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31613.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VolunteersProject", "VolunteersProject\VolunteersProject.csproj", "{CFBA9A03-B6E0-474C-8856-805EADDBED68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailServices", "MailServices\MailServices.csproj", "{2E4E6DF0-8535-4E96-BAC8-7D25A8FE623B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailServices", "MailServices\MailServices.csproj", "{2E4E6DF0-8535-4E96-BAC8-7D25A8FE623B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolunteerOpenXmlReports", "VolunteerOpenXmlReports\VolunteerOpenXmlReports.csproj", "{3349B809-07FF-4EFD-A5E1-2076C5F2F287}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2E4E6DF0-8535-4E96-BAC8-7D25A8FE623B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E4E6DF0-8535-4E96-BAC8-7D25A8FE623B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E4E6DF0-8535-4E96-BAC8-7D25A8FE623B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3349B809-07FF-4EFD-A5E1-2076C5F2F287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3349B809-07FF-4EFD-A5E1-2076C5F2F287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3349B809-07FF-4EFD-A5E1-2076C5F2F287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3349B809-07FF-4EFD-A5E1-2076C5F2F287}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

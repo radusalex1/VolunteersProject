@@ -26,6 +26,8 @@ namespace VolunteersProject
 {
     public class Startup
     {
+        private readonly string allowedSpecificOrigins = "Volunteers_Specificorigins";
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -36,17 +38,36 @@ namespace VolunteersProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string[] corrsUrl = new string[2];
+            corrsUrl[0] = this.Configuration?.GetValue<string>("CORS:Client");
+            corrsUrl[1] = this.Configuration?.GetValue<string>("CORS:Api");
+
             services.AddDbContext<VolunteersContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+
+            services.AddCors(options =>
+            {
+               options.AddPolicy(
+                    this.allowedSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins(corrsUrl)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithExposedHeaders("Content-Disposition");
+                    });
+            });
+
             ////here is session timeSpan
             services.AddMvc();
-            services.AddSession(options=>
+            services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(35);
-               
+
             });
             //set session timeout
             //services.AddSession(option =>
@@ -147,7 +168,7 @@ namespace VolunteersProject
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
 
-            
+
         }
 
 
@@ -168,7 +189,7 @@ namespace VolunteersProject
             app.UseSession();
 
             app.Use(async (context, next) =>
-            {               
+            {
                 var token = ApplicationValues.JwtToken;
 
                 if (!string.IsNullOrEmpty(token))

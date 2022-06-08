@@ -7,7 +7,6 @@ using VolunteersProject.Repository;
 namespace VolunteersProject.Controllers
 {
     [Route("api/[controller]")]
-    //[RoutePrefix("api/[controller]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "Volunteer")]
     public class VolunteersApiController : ControllerBase
@@ -74,9 +73,7 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: api/VolunteersApi
-        //[HttpPost("InsertEmployeeDetails")]
-        [HttpPost]
-        [Route("insertVolunteer")]
+        [HttpPost("insertVolunteer")]
         public ActionResult PostVolunteer(Volunteer volunteer)
         {
             volunteerRepository.AddVolunteer(volunteer);
