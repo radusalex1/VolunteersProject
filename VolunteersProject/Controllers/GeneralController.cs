@@ -11,9 +11,9 @@ namespace VolunteersProject.Controllers
     /// <summary>
     /// General Controller
     /// </summary>
-    public class GeneralConstroller : Controller
+    public class GeneralController : Controller
     {
-        public readonly ILogger<GeneralConstroller> Logger;
+        public readonly ILogger<GeneralController> Logger;
         public IConfiguration configuration;
 
         protected static int currentUserId;
@@ -29,7 +29,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="configuration"></param>
-        public GeneralConstroller(ILogger<GeneralConstroller> logger, IConfiguration configuration)
+        public GeneralController(ILogger<GeneralController> logger, IConfiguration configuration)
         {
             this.Logger = logger;
             this.configuration = configuration;

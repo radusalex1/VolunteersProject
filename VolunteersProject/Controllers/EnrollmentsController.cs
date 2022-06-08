@@ -15,7 +15,7 @@ using VolunteersProject.Repository;
 namespace VolunteersProject.Controllers
 {
     [Authorize]
-    public class EnrollmentsController : GeneralConstroller
+    public class EnrollmentsController : GeneralController
     {
         private readonly VolunteersContext _context;
 

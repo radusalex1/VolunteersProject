@@ -16,7 +16,7 @@ using VolunteersProject.Services;
 
 namespace VolunteersProject.Controllers
 {
-    public class AccountController : GeneralConstroller
+    public class AccountController : GeneralController
     {
 
         private readonly IUserRepository _userRepository;

@@ -10,7 +10,7 @@ using VolunteersProject.Util;
 namespace VolunteersProject.Controllers
 {
     [AllowAnonymous]
-    public class RegisterController : GeneralConstroller
+    public class RegisterController : GeneralController
     {
         private IVolunteerRepository volunteerRepository;
         private IUserRepository userRepository;

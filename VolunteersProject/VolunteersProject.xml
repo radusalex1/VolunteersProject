@@ -98,54 +98,54 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="T:VolunteersProject.Controllers.GeneralConstroller">
+        <member name="T:VolunteersProject.Controllers.GeneralController">
             <summary>
             General Controller
             </summary>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.GeneralConstroller},Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.#ctor(Microsoft.Extensions.Logging.ILogger{VolunteersProject.Controllers.GeneralController},Microsoft.Extensions.Configuration.IConfiguration)">
             <summary>
             Constructor
             </summary>
             <param name="logger"></param>
             <param name="configuration"></param>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.ValidateCity(System.String)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.ValidateCity(System.String)">
             <summary>
             Validates city(to capitals)
             </summary>
             <param name="city"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.ValidateName(System.String)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.ValidateName(System.String)">
             <summary>
             Validates Name(all capitals)
             </summary>
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.PhoneNumberIsValid(System.String)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.PhoneNumberIsValid(System.String)">
             <summary>
             Validates Phone number
             </summary>
             <param name="phoneNumber"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.InstagramIsValid(System.String)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.InstagramIsValid(System.String)">
             <summary>
             Validates Instagram
             </summary>
             <param name="instagramProfile"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.EmailIsValid(System.String)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.EmailIsValid(System.String)">
             <summary>
             Returns true is email is valid, false otherwise
             </summary>
             <param name="email"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.ValidateImageProfile(VolunteersProject.Models.Volunteer,System.Int32,System.Int32)">
+        <member name="M:VolunteersProject.Controllers.GeneralController.ValidateImageProfile(VolunteersProject.Models.Volunteer,System.Int32,System.Int32)">
             <summary>
             Validates Image profile
             </summary>
@@ -154,7 +154,7 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:VolunteersProject.Controllers.GeneralConstroller.SortContributions(System.String,System.Collections.Generic.List{VolunteersProject.Models.Contribution})">
+        <member name="M:VolunteersProject.Controllers.GeneralController.SortContributions(System.String,System.Collections.Generic.List{VolunteersProject.Models.Contribution})">
             <summary>
             Method to sort events by criterias.
             </summary>

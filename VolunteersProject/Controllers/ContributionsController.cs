@@ -18,7 +18,7 @@ using VolunteersProject.DTO;
 namespace VolunteersProject.Controllers
 {
     [Authorize]
-    public class ContributionsController : GeneralConstroller
+    public class ContributionsController : GeneralController
     {
 
         private IVolunteerRepository volunteerRepository;

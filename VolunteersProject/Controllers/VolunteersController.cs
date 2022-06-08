@@ -16,7 +16,7 @@ namespace VolunteersProject.Controllers
     /// Volunteer controller.
     /// </summary>
     [Authorize]
-    public class VolunteersController : GeneralConstroller
+    public class VolunteersController : GeneralController
     { 
         public IVolunteerRepository volunteerRepository;
         public readonly IUserRepository userRepository;

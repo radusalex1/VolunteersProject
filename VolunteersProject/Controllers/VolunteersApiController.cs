@@ -1,29 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
+using VolunteerOpenXmlReports;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VolunteersProject.Controllers
 {
     [Route("api/[controller]")]
     //[RoutePrefix("api/[controller]")]
+    [AllowAnonymous]
     [ApiController]
     [ApiExplorerSettings(GroupName = "Volunteer")]
     public class VolunteersApiController : ControllerBase
     {
         private IVolunteerRepository volunteerRepository;
+        //private IReportManager reportManager;
 
-        public VolunteersApiController(IVolunteerRepository repository)
+
+        public VolunteersApiController(IVolunteerRepository repository)//, IReportManager reportManager)
         {
             this.volunteerRepository = repository;
+            //this.reportManager = reportManager;
         }
 
         // GET: api/VolunteersApi
         [HttpGet("getVolunteers")]
         public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
-
             var volunteers = this.volunteerRepository.GetVolunteers();
 
             return Ok(volunteers);
@@ -98,6 +104,17 @@ namespace VolunteersProject.Controllers
             volunteerRepository.DeleteVolunteer(volunteer);
 
             return Ok();
+        }
+
+        // GET: api/VolunteersApi
+        [HttpGet("getVolunteersReport")]
+        public ActionResult<IEnumerable<Volunteer>> GetVolunteersReport()
+        {
+            var volunteers = this.volunteerRepository.GetVolunteers();
+
+            //var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteersReport", "VolunteersReport");
+
+            return Ok(volunteers);
         }
     }
 }

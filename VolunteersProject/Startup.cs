@@ -21,6 +21,7 @@ using VolunteersProject.Common;
 using VolunteersProject.Data;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
+//using VolunteerOpenXmlReports;
 
 namespace VolunteersProject
 {
@@ -168,7 +169,7 @@ namespace VolunteersProject
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddTransient<IEmailService, EmailService>();
 
-
+            //services.AddTransient<IReportManager, ReportManager>();
         }
 
 

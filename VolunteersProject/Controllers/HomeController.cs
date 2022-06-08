@@ -13,7 +13,7 @@ namespace VolunteersProject.Controllers
     /// <summary>
     /// Contructor
     /// </summary>
-    public class HomeController : GeneralConstroller
+    public class HomeController : GeneralController
     {
 
         private IVolunteerRepository volunteerRepository;

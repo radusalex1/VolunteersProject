@@ -15,7 +15,7 @@ namespace VolunteerOpenXmlReports
             
             Type entType = typeof(T);
 
-
+            return new DataTable();
         }
 
         private static object CreateTable<T>(List<string> customHeaderList)
