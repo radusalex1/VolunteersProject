@@ -70,21 +70,34 @@ namespace VolunteerOpenXmlReports
 
             var someArray = Configuration.GetSection($"{reportName}CellNames").GetChildren().Select(x => x.Value).ToArray();
 
-            ProcessReportSettings<List<string>>(someArray, templateHeaderCustomColumnNameList);
+            ProcessReportSettings($"{reportName}CellNames", someArray);
 
-            someArray = Configuration.GetSection($"{reportName}CellFormat").GetChildren().Select(x => x.Value).ToArray();         
+            someArray = Configuration.GetSection($"{reportName}CellFormat").GetChildren().Select(x => x.Value).ToArray();
 
-            ProcessReportSettings<List<UInt32Value>>(someArray, templateHeaderCustomColumnFormatList);
+            ProcessReportSettings($"{reportName}CellNames", someArray);
         }
 
-        private void ProcessReportSettings<T>(string[] someArray, T templateHeaderCustomList)
+        private void ProcessReportSettings(string reportGroup, string[] someArray)
         {
-            //foreach (var item in someArray)
-            //{
-            //    templateHeaderCustomList.Add(item);
-            //}
+            foreach (var item in someArray)
+            {
+                switch (reportGroup)
+                {
+                    case "VolunteerReportCellNames":
+                        {
+                            templateHeaderCustomColumnNameList.Add(item);
+                            break;
+                        }
+                    case "VolunteerReportCellFormat":
+                        {
+                            templateHeaderCustomColumnFormatList.Add(Convert.ToUInt32(item));
+                            break;
+                        }
+                    default:
+                        break;
+                }             
+            }
         }
-       
 
         private byte[] CreateSpreahsheetWorkbook(List<string> headerList, object dataTable)
         {

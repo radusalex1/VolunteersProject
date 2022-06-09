@@ -112,7 +112,7 @@ namespace VolunteersProject.Controllers
         {
             var volunteers = this.volunteerRepository.GetVolunteers();
 
-            var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteersReport", "VolunteersReport");
+            var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteerReport", "VolunteerReport");
 
             return Ok(volunteers);
         }
