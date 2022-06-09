@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace VolunteerOpenXmlReports
 {
@@ -20,7 +21,7 @@ namespace VolunteerOpenXmlReports
         private int rowIndexDataStart = 1;
         private string reportName;
         private string sheetTitle;
-        private List<string> headerList = new ();
+        private List<string> headerList = new();
 
         private UInt32Value noStyle = UInt32Value.FromUInt32(999);
         private UInt32Value stringDefStyle = UInt32Value.FromUInt32(0);
@@ -40,7 +41,7 @@ namespace VolunteerOpenXmlReports
             Configuration = configuration;
         }
 
-        public byte[] ProcessData<T>(List<T> listData, string reportName, string sheetTile = null)
+        public byte[] ProcessData<T>(List<T> listData, string reportName, string sheetTitle = null)
         {
             this.reportName = reportName;
             this.sheetTitle = sheetTitle;
@@ -51,7 +52,7 @@ namespace VolunteerOpenXmlReports
 
             var dataTable = Utility.ListToDataTable(listData, templateHeaderCustomColumnNameList);
 
-            if(ShowHeader)
+            if (ShowHeader)
             {
                 headerList = Utility.CreateHeaderList(dataTable.Columns, templateHeaderCustomColumnNameList);
             }
@@ -61,12 +62,29 @@ namespace VolunteerOpenXmlReports
 
         private void ReadSettingsFromConfiguration()
         {
-            APP_SETTINGS_SECTION = reportName;
-            APP_SETTINGS_KEY = "cellNames";
+            //APP_SETTINGS_SECTION = reportName;
+            //APP_SETTINGS_KEY = "cellNames";
 
-            var section = Configuration.GetSection($"{APP_SETTINGS_SECTION}:{APP_SETTINGS_KEY}");
+            //var section = Configuration.GetSection($"{APP_SETTINGS_SECTION}:{APP_SETTINGS_KEY}");
             //var cellNames = section.Get<string[]>();
+
+            var someArray = Configuration.GetSection($"{reportName}CellNames").GetChildren().Select(x => x.Value).ToArray();
+
+            ProcessReportSettings<List<string>>(someArray, templateHeaderCustomColumnNameList);
+
+            someArray = Configuration.GetSection($"{reportName}CellFormat").GetChildren().Select(x => x.Value).ToArray();         
+
+            ProcessReportSettings<List<UInt32Value>>(someArray, templateHeaderCustomColumnFormatList);
         }
+
+        private void ProcessReportSettings<T>(string[] someArray, T templateHeaderCustomList)
+        {
+            //foreach (var item in someArray)
+            //{
+            //    templateHeaderCustomList.Add(item);
+            //}
+        }
+       
 
         private byte[] CreateSpreahsheetWorkbook(List<string> headerList, object dataTable)
         {
@@ -97,7 +115,7 @@ namespace VolunteerOpenXmlReports
         }
 
         private void WriteHeader(SheetData sheetData, List<string> headerList)
-        {           
+        {
             var cellItems = new List<Cell>();
 
             foreach (var item in headerList)
