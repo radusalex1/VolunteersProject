@@ -108,13 +108,18 @@ namespace VolunteersProject.Controllers
 
         // GET: api/VolunteersApi
         [HttpGet("getVolunteersReport")]
-        public ActionResult<IEnumerable<Volunteer>> GetVolunteersReport()
+        public ActionResult<object> GetVolunteersReport()
         {
             var volunteers = this.volunteerRepository.GetVolunteers();
 
             var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteerReport", "VolunteerReport");
 
-            return Ok(volunteers);
+            //return Ok(volunteers);
+
+            
+            return File(result,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "test" + ".xlsx");
         }
     }
 }

@@ -74,13 +74,15 @@ namespace VolunteerOpenXmlReports
 
             someArray = Configuration.GetSection($"{reportName}CellFormat").GetChildren().Select(x => x.Value).ToArray();
 
-            ProcessReportSettings($"{reportName}CellNames", someArray);
+            ProcessReportSettings($"{reportName}CellFormat", someArray);
         }
 
         private void ProcessReportSettings(string reportGroup, string[] someArray)
         {
             foreach (var item in someArray)
             {
+                //if (!string.IsNullOrEmpty(item))
+                //{
                 switch (reportGroup)
                 {
                     case "VolunteerReportCellNames":
@@ -95,7 +97,8 @@ namespace VolunteerOpenXmlReports
                         }
                     default:
                         break;
-                }             
+                }
+                //}
             }
         }
 
@@ -105,20 +108,110 @@ namespace VolunteerOpenXmlReports
 
             using (var memoryStream = new MemoryStream())
             {
-                using (var spreadSheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
+                //using (var spreadSheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
+                //{
+                //    WorkbookPart workbookpart = spreadSheetDocument.AddWorkbookPart();
+                //    workbookpart.Workbook = new Workbook();
+
+                //    WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+                //    worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+                //    // create sheet data
+                //    var sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+
+                //    WriteHeader(sheetData, headerList);
+
+                //    //WriteDataContent();
+
+                //    worksheetPart.Worksheet.Save();
+
+                //    // create the sheet properties
+                //    var sheetsCount = spreadSheetDocument.WorkbookPart.Workbook.Sheets.Count() + 100;
+
+                //    spreadSheetDocument.WorkbookPart.Workbook.Sheets.AppendChild(new Sheet()
+                //    {
+                //        Id = spreadSheetDocument.WorkbookPart.GetIdOfPart(worksheetPart),
+                //        SheetId = (uint)spreadSheetDocument.WorkbookPart.Workbook.Sheets.Count() + 1,
+                //        Name = "MyFirstSheet"
+                //    });
+
+                //    // save the workbook
+                //    spreadSheetDocument.WorkbookPart.Workbook.Save();
+                //}
+
+                //works
+                //using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create("c:\\Test\\Test1.xlsx", SpreadsheetDocumentType.Workbook))
+                //{
+                //    WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
+                //    workbookpart.Workbook = new Workbook();
+
+                //    // Add a WorksheetPart to the WorkbookPart.
+                //    WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+                //    worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+                //    // Add Sheets to the Workbook.
+                //    Sheets sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
+
+                //    // Append a new worksheet and associate it with the workbook.
+                //    Sheet sheet = new Sheet()
+                //    {
+                //        Id = spreadsheetDocument.WorkbookPart.
+                //        GetIdOfPart(worksheetPart),
+                //        SheetId = 1,
+                //        Name = "mySheet"
+                //    };
+                //    sheets.Append(sheet);
+
+                //    workbookpart.Workbook.Save();
+                //}
+
+
+                using (var spreadsheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
+                //using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create("C:\\test\\mytest.xlsx", SpreadsheetDocumentType.Workbook))
                 {
-                    WorkbookPart workbookpart = spreadSheetDocument.AddWorkbookPart();
+                    // Add a WorkbookPart to the document.
+                    WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
                     workbookpart.Workbook = new Workbook();
 
+                    // Add a WorksheetPart to the WorkbookPart.
                     WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-                    worksheetPart.Worksheet = new Worksheet(new SheetData());
+                    SheetData sheetData = new SheetData();
+                    worksheetPart.Worksheet = new Worksheet(sheetData);
 
-                    // create sheet data
-                    var sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
+                    // Add Sheets to the Workbook.
+                    Sheets sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
+
+                    // Append a new worksheet and associate it with the workbook.
+                    Sheet sheet = new Sheet()
+                    {
+                        Id = spreadsheetDocument.WorkbookPart.
+                        GetIdOfPart(worksheetPart),
+                        SheetId = 1,
+                        Name = "baubau"//ViewBag.Title
+                    };
+
+                    //Row row = new Row() { RowIndex = 1 };
+                    //Cell header1 = new Cell() { CellReference = "A1", CellValue = new CellValue("Interval Period Timestamp"), DataType = CellValues.String };
+                    //row.Append(header1);
+                    //Cell header2 = new Cell() { CellReference = "B1", CellValue = new CellValue("Settlement Interval"), DataType = CellValues.String };
+                    //row.Append(header2);
+                    //Cell header3 = new Cell() { CellReference = "C1", CellValue = new CellValue("Aggregated Consumption Factor"), DataType = CellValues.String };
+                    //row.Append(header3);
+                    //Cell header4 = new Cell() { CellReference = "D1", CellValue = new CellValue("Loss Adjusted Aggregated Consumption"), DataType = CellValues.String };
+                    //row.Append(header4);
+
+                    //sheetData.Append(row);
 
                     WriteHeader(sheetData, headerList);
 
-                    //WriteDataContent();
+                    sheets.Append(sheet);
+
+                    workbookpart.Workbook.Save();
+
+                    // Close the document.
+                    spreadsheetDocument.Close();
+                    //return View();
+
                 }
 
                 byteArray = memoryStream.ToArray();
@@ -137,7 +230,7 @@ namespace VolunteerOpenXmlReports
                 {
                     CellValue = new CellValue(item),
                     DataType = CellValues.String,
-                    StyleIndex = boldDefStyle
+                    //StyleIndex = boldDefStyle
                 };
 
                 cellItems.Add(cell);

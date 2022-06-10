@@ -51,7 +51,9 @@ https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-
 	https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
 
 //OpenXml framework
-https://www.todaysoftmag.com/article/848/getting-started-with-openxml
-https://stackoverflow.com/questions/55612337/openxml-change-excel-cell-format-date-and-number-when-exporting-from-datagri
+	bad - https://www.todaysoftmag.com/article/848/getting-started-with-openxml
+	bad - https://stackoverflow.com/questions/55612337/openxml-change-excel-cell-format-date-and-number-when-exporting-from-datagri
+
+https://stackoverflow.com/questions/44572018/using-open-xml-to-create-excel-file
 	
 
