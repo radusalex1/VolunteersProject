@@ -17,7 +17,7 @@ namespace VolunteersProject.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets or sets user.
         /// </summary>
         public User User { get; set; }
 
@@ -36,7 +36,7 @@ namespace VolunteersProject.Models
         public string Surname { get; set; } = null!;
 
         /// <summary>
-        /// 
+        /// Gets or sets city.
         /// </summary>
         public string City { get; set; }
 
@@ -50,6 +50,9 @@ namespace VolunteersProject.Models
         [Required]
         public string Phone { get; set; } = null!;
 
+        /// <summary>
+        /// gets or sets birth date.
+        /// </summary>
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime BirthDate { get; set; }
@@ -70,7 +73,7 @@ namespace VolunteersProject.Models
         }
         
         /// <summary>
-        /// 
+        /// Gets or sets enrollments collection.
         /// </summary>
         public ICollection<Enrollment> Enrollments{ get; set; }
 

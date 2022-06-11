@@ -55,7 +55,7 @@ namespace VolunteerOpenXmlReports
 
             if (ShowHeader)
             {
-                headerList = Utility.CreateHeaderList(dataTable.Columns, templateHeaderCustomColumnNameList);
+                headerList = Utility.CreateHeaderList(dataTable.Columns);
             }
 
             return CreateSpreahsheetWorkbook(headerList, dataTable);
@@ -94,32 +94,19 @@ namespace VolunteerOpenXmlReports
             }
         }
 
+        /// <summary>
+        /// Write header and content to the worksheet,
+        /// </summary>
+        /// <param name="headerList">Header list.</param>
+        /// <param name="dataTable">Content.</param>
+        /// <returns></returns>
         private byte[] CreateSpreahsheetWorkbook(List<string> headerList, DataTable dataTable)
         {
             byte[] byteArray;
 
             using (var memoryStream = new MemoryStream())
             {
-                //using (var spreadSheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
-                //{
-                //    WorkbookPart workbookpart = spreadSheetDocument.AddWorkbookPart();
-                //    workbookpart.Workbook = new Workbook();
-
-                //    WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-                //    worksheetPart.Worksheet = new Worksheet(new SheetData());
-
-                //    // create sheet data
-                //    var sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
-
-                //    WriteHeader(sheetData, headerList);
-
-                //    //WriteDataContent();
-                
-                //}               
-
-
                 using (var spreadsheetDocument = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook))
-                //using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create("C:\\test\\mytest.xlsx", SpreadsheetDocumentType.Workbook))
                 {
                     // Add a WorkbookPart to the document.
                     WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
@@ -134,15 +121,18 @@ namespace VolunteerOpenXmlReports
                     Sheets sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
 
                     // Append a new worksheet and associate it with the workbook.
-                    Sheet sheet = new Sheet()
+                    var sheet = new Sheet()
                     {
                         Id = spreadsheetDocument.WorkbookPart.
                         GetIdOfPart(worksheetPart),
                         SheetId = 1,
-                        Name = "baubau"//ViewBag.Title
+                        Name = sheetTitle
                     };
 
-                    WriteHeader(sheetData, headerList);
+                    if (ShowHeader)
+                    {
+                        WriteHeader(sheetData, headerList);
+                    }
 
                     WriteData(sheetData, dataTable);
 
@@ -157,6 +147,7 @@ namespace VolunteerOpenXmlReports
             return byteArray;
         }
 
+        //todo cia - need to set the style
         private void WriteData(SheetData sheetData, DataTable dataTable)
         {
             foreach (DataRow rowItem in dataTable.Rows)
@@ -179,6 +170,7 @@ namespace VolunteerOpenXmlReports
             }
         }
 
+        //todo cia - need to set the style
         private void WriteHeader(SheetData sheetData, List<string> headerList)
         {
             var cellItems = new List<Cell>();

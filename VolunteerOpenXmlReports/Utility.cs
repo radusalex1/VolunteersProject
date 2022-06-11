@@ -10,12 +10,16 @@ namespace VolunteerOpenXmlReports
 {
     internal class Utility
     {
+        /// <summary>
+        /// Create datatable from a list of objects depends on the custom header list.
+        /// </summary>
+        /// <typeparam name="T">Object to be mapped to datatable.</typeparam>
+        /// <param name="lst">List of objects.</param>
+        /// <param name="customHeaderList">Custom header list that will include or not a column in the target datatable. 
+        /// If it will includeded it will set the right name of the header columns  </param>
+        /// <returns></returns>
         public static DataTable ListToDataTable<T>(IList<T> lst, List<string> customHeaderList)
-        {
-            //var currentDT = CreateTable<T>(customHeaderList);
-            //Type entType = typeof(T);
-            //DataTable table = new DataTable();
-
+        {            
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(T));
 
             DataTable table = new DataTable();
@@ -24,7 +28,7 @@ namespace VolunteerOpenXmlReports
             int idx = 0;
             foreach (PropertyDescriptor prop in properties)
             {
-                if (IsValidColumn(customHeaderList[idx]))
+                if (IsColumnVisible(customHeaderList[idx]))
                 {
                     table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
                 }
@@ -39,7 +43,7 @@ namespace VolunteerOpenXmlReports
                 DataRow row = table.NewRow();
                 foreach (PropertyDescriptor prop in properties)
                 {
-                    if (IsValidColumn(customHeaderList[idx]))
+                    if (IsColumnVisible(customHeaderList[idx]))
                     {
                         row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
                     }
@@ -52,19 +56,12 @@ namespace VolunteerOpenXmlReports
             return table;
         }
 
-        private static bool IsValidColumn(string customColumnName)
+        private static bool IsColumnVisible(string customColumnName)
         {
             return !string.IsNullOrEmpty(customColumnName);
         }
-       
-
-        //private static object CreateTable<T>(List<string> customHeaderList)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        ///
-        internal static List<string> CreateHeaderList(DataColumnCollection columns, List<string> templateHeaderCustomColumnNamelist)
+             
+        internal static List<string> CreateHeaderList(DataColumnCollection columns)
         {
             //todo - refactor this method
             //return templateHeaderCustomColumnNamelist;
