@@ -423,7 +423,7 @@
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.User">
             <summary>
-            
+            Gets or sets user.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.Name">
@@ -438,12 +438,17 @@
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.City">
             <summary>
-            
+            Gets or sets city.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.Phone">
             <summary>
             Get or sets the phone.
+            </summary>
+        </member>
+        <member name="P:VolunteersProject.Models.Volunteer.BirthDate">
+            <summary>
+            gets or sets birth date.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.Age">
@@ -453,7 +458,7 @@
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.Enrollments">
             <summary>
-            
+            Gets or sets enrollments collection.
             </summary>
         </member>
         <member name="P:VolunteersProject.Models.Volunteer.FullName">
