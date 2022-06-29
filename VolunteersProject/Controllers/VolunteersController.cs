@@ -1,32 +1,61 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using VolunteersProject.Data;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
-    public class VolunteersController : Controller
-    {
-        private readonly VolunteersContext _context;
-        private IVolunteerRepository repository;
+    /// <summary>
+    /// Volunteer controller.
+    /// </summary>
+    [Authorize]
+    public class VolunteersController : GeneralConstroller
+    { 
+        public IVolunteerRepository volunteerRepository;
+        public readonly IUserRepository userRepository;
 
-        public VolunteersController(VolunteersContext context, IVolunteerRepository repository)
+        private int pageSize;
+        private int imgWidth;
+        private int imgHeight;
+
+        /// <summary>
+        /// Contructor
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="volunteerRepository">Volunteer repository.</param>
+        /// <param name="userRepository"></param>
+        /// <param name="configuration">Application configuration.</param>
+        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, 
+            IVolunteerRepository volunteerRepository,IUserRepository userRepository) : base(logger, configuration)
         {
-            _context = context;
-            this.repository = repository;
+            this.volunteerRepository = volunteerRepository;
+            this.userRepository = userRepository;
+            pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
+            imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
+            imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
         }
 
-        // GET: Volunteers
-        public async Task<IActionResult> Index(
-            string sortOrder,
-            string SearchString,
-            string currentFilter,
-            int? pageNumber)
+        /// <summary>
+        /// Display a list of volunteers.
+        /// </summary>
+        /// <param name="sortOrder">Sort order.</param>
+        /// <param name="SearchString">Search string.</param>
+        /// <param name="currentFilter">Current filter.</param>
+        /// <param name="pageNumber">Page number.</param>
+        /// <returns></returns>
+        /// GET: Volunteers
+        [Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
+        public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {
+            
+            this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
 
@@ -49,72 +78,70 @@ namespace VolunteersProject.Controllers
 
             ViewData["CurrentFilter"] = SearchString;
 
-            var students = from s in _context.Volunteers
-                           select s;
 
-            //var students1 = repository.GetVolunteers();s
+            var volunteers = volunteerRepository.GetVolunteers();
+
 
             if (!String.IsNullOrEmpty(SearchString))
             {
-                students = students.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
+                volunteers = volunteers.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
-            students = GetSortedVolunteers(sortOrder, students);
+             volunteers = GetSortedVolunteers(sortOrder, volunteers);
 
-            int pageSize = 5;
-
-            return View(await PaginatedList<Volunteer>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Volunteer>.Create(volunteers, pageNumber ?? 1, pageSize));
         }
 
-        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> students)
+        /// <summary>
+        /// Here sort volunteers
+        /// </summary>
+        /// <param name="sortOrder"></param>
+        /// <param name="volunteers"></param>
+        /// <returns></returns>
+        private IQueryable<Volunteer> GetSortedVolunteers(string sortOrder, IQueryable<Volunteer> volunteers)
         {
             switch (sortOrder)
             {
                 case "name_desc":
-                    students = students.OrderByDescending(s => s.Name);
+                    volunteers = volunteers.OrderByDescending(s => s.Name);
                     break;
                 case "Age":
-                    students = students.OrderBy(s => s.BirthDate);
+                    volunteers = volunteers.OrderBy(s => s.BirthDate);
                     break;
                 case "Age_desc":
-                    students = students.OrderByDescending(s => s.BirthDate);
+                    volunteers = volunteers.OrderByDescending(s => s.BirthDate);
                     break;
                 case "City_desc":
-                    students = students.OrderByDescending(s => s.City);
+                    volunteers = volunteers.OrderByDescending(s => s.City);
                     break;
                 case "City":
-                    students = students.OrderBy(s => s.City);
+                    volunteers = volunteers.OrderBy(s => s.City);
                     break;
                 case "JoinHubDate":
-                    students = students.OrderBy(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderBy(s => s.JoinHubDate);
                     break;
                 case "JoinHubDate_desc":
-                    students = students.OrderByDescending(s => s.JoinHubDate);
+                    volunteers = volunteers.OrderByDescending(s => s.JoinHubDate);
                     break;
                 default:
-                    students = students.OrderBy(s => s.Name);
+                    volunteers = volunteers.OrderBy(s => s.Name);
                     break;
             }
 
-            return students;
-        }/// <summary>
-        /// Here sort Students
+            return volunteers;
+        }
+
+        /// <summary>
+        /// Details of volunteer
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-       
-        // GET: Volunteers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Volunteers/Details/5        
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            
-            var volunteer = await _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefaultAsync(m => m.ID == id);
+            var volunteer = volunteerRepository.GetVolunteerWithEnrollmentsById(id);
+
+            ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(volunteer);
 
             if (volunteer == null)
             {
@@ -125,72 +152,146 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Volunteers/Create
+        [Authorize(Roles = Common.Role.Admin)]
         public IActionResult Create()
         {
-            return View();
-        }
-
-        // POST: Volunteers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
-        {
-            if (ModelState.IsValid)
+            var volunteer = new Volunteer
             {
-                _context.Add(volunteer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+                BirthDate = DateTime.Today,
+                JoinHubDate = DateTime.Today
+            };
             return View(volunteer);
         }
 
+        // POST: Volunteers/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Common.Role.Admin)]
+        public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
+                {
+                    ViewBag.Alert = "Incorrect phone number";
+                    return View(volunteer);
+                }
+                if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
+                {
+                    ViewBag.Alert = "Incorrect Instragram Profile";
+                    return View(volunteer);
+                }
+                if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
+                {
+                    ViewBag.Alert = "Incorrect Email Adress";
+                    return View(volunteer);
+                }
+                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
+                {
+                    ViewBag.Alert = "Existing Volunteer";
+                    return View(volunteer);
+                }
+
+                volunteer.City = ValidateCity(volunteer.City);
+                volunteer.Name = ValidateName(volunteer.Name);
+
+                if (volunteer.ImageProfile != null)
+                {
+                    if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
+                    {
+                        ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                        return View(volunteer);
+                    }
+
+                    volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+                }
+
+                volunteerRepository.AddVolunteer(volunteer);
+
+                ViewBag.Alert = "Volunteer added successfully";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(volunteer);
+        }
+
+        [Authorize(Roles = Common.Role.Admin)]
         // GET: Volunteers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //var volunteer = await _context.Volunteers.FindAsync(id);
-            //var volunteer = repository.GetVolunteers();
-
-            var volunteer = await _context.Volunteers
-                .Include(e => e.Enrollments)
-                .ThenInclude(c => c.contribution)
-                     .FirstOrDefaultAsync(m => m.ID == id);
+            var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
             {
                 return NotFound();
             }
+
             return View(volunteer);
         }
 
         // POST: Volunteers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = Common.Role.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub")] Volunteer volunteer)
+        public IActionResult Edit(int id, [Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
-            if (id != volunteer.ID)
+            if (id != volunteer.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(volunteer);
-                    await _context.SaveChangesAsync();
+                    if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
+                    {
+                        ViewBag.Alert = "Incorrect phone number";
+                        return View(volunteer);
+                    }
+                    if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
+                    {
+                        ViewBag.Alert = "Incorrect Instragram Profile";
+                        return View(volunteer);
+                    }
+                    if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
+                    {
+                        ViewBag.Alert = "Incorrect Email Adress";
+                        return View(volunteer);
+                    }
+                    if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
+                    {
+                        ViewBag.Alert = "Existing Volunteer";
+                        return View(volunteer);
+                    }
+
+                    volunteer.City = ValidateCity(volunteer.City);
+                    volunteer.Name = ValidateName(volunteer.Name);
+
+                    if (volunteer.ImageProfile != null)
+                    {
+                        if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
+                        {
+                            ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                            return View(volunteer);
+                        }
+
+                        volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+                    }
+
+                    volunteerRepository.UpdateVolunteer(volunteer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VolunteerExists(volunteer.ID))
+                    if (!volunteerRepository.VolunteerExists(volunteer.Id))
                     {
                         return NotFound();
                     }
@@ -199,21 +300,23 @@ namespace VolunteersProject.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(volunteer);
         }
 
+        /// <summary>
+        /// Get volunteer by id.
+        /// </summary>
+        /// <param name="id">Volunteer id.</param>
+        /// <returns>Volunteer.</returns>
         // GET: Volunteers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Authorize(Roles = Common.Role.Admin)]
+        public IActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var volunteer = volunteerRepository.GetVolunteerById(id);
 
-            var volunteer = await _context.Volunteers
-                .FirstOrDefaultAsync(m => m.ID == id);
             if (volunteer == null)
             {
                 return NotFound();
@@ -223,19 +326,171 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: Volunteers/Delete/5
+        [Authorize(Roles = Common.Role.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var volunteer = await _context.Volunteers.FindAsync(id);
-            _context.Volunteers.Remove(volunteer);
-            await _context.SaveChangesAsync();
+
+            var volunteer = volunteerRepository.GetVolunteerById(id);
+
+            volunteerRepository.DeleteVolunteer(volunteer);
+
+            var user = userRepository.GetUserById(volunteer.User.Id);
+
+            userRepository.DeteleUser(user);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool VolunteerExists(int id)
+        /// <summary>
+        /// Set the volunteer image profile.
+        /// </summary>
+        /// <param name="volunteerId">Volunteer id.</param>
+        /// <returns>Volunteer image profile as a file.</returns>
+        [Authorize(Roles = Common.Role.Admin)]
+        [HttpGet]
+        public IActionResult SetVolunteerImageProfile(int volunteerId)
         {
-            return _context.Volunteers.Any(e => e.ID == id);
+            var volunteer = volunteerRepository.GetVolunteerById(volunteerId);
+
+            if (volunteer != null && volunteer.ImageProfileByteArray != null)
+            {
+                return File(volunteer.ImageProfileByteArray, "image/png");
+            }
+
+            return null;
+        }
+
+        private byte[] GetByteArrayFromImage(IFormFile file)
+        {
+            using (var target = new MemoryStream())
+            {
+                file.CopyTo(target);
+                return target.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Edit personal info page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult PersonalInfoEdit(int id)
+        {
+            var currentVolunteer = volunteerRepository.GetVolunteerById(id);
+
+            var currentUser = new CurrentUser()
+            {
+                Name = currentVolunteer.Name,
+                Surname = currentVolunteer.Surname,
+                UserName = currentVolunteer.User.UserName,
+                City = currentVolunteer.City,
+                Email = currentVolunteer.Email,
+                Phone = currentVolunteer.Phone,
+                BirthDate = currentVolunteer.BirthDate,
+                JoinHubDate = currentVolunteer.JoinHubDate,
+                InstagramProfile = currentVolunteer.InstagramProfile,
+                FaceBookProfile = currentVolunteer.FaceBookProfile,
+                DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub,
+                ImageProfile = currentVolunteer.ImageProfile
+            };
+
+            return View("Edit_PersonalInfo", currentUser);
+          
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PersonalInfoEdit(int id, [Bind("Id,Name,Surname,UserName,City,Phone,Email,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile,ImageProfile,DescriptionContributionToHub")] CurrentUser currentUser)
+        {
+            if (id != currentUser.Id)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                var ToUpdatevolunteer = volunteerRepository.GetVolunteerById(id);
+                var ToUpdateUser = userRepository.GetUserById(ToUpdatevolunteer.User.Id);
+
+                UpdateCurrentVolunteerWithNewDataFields(currentUser, ToUpdatevolunteer);
+
+                ToUpdateUser.UserName = currentUser.UserName;
+
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Phone) && PhoneNumberIsValid(ToUpdatevolunteer.Phone) == false)
+                {
+                    ViewBag.Phone_Error = "Incorrect phone number";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.InstagramProfile) && InstagramIsValid(ToUpdatevolunteer.InstagramProfile) == false)
+                {
+                    ViewBag.Instagram_Error = "Incorrect Instragram Profile";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Email) && EmailIsValid(ToUpdatevolunteer.Email) == false)
+                {
+                    ViewBag.Email_Error = "Incorrect Email Adress";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ///if exist => error
+                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(ToUpdatevolunteer))
+                {
+                    ViewBag.ExistingEmailOrPhone = "Existing Email or Phone";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                if( !string.IsNullOrEmpty(currentUser.UserName)  && userRepository.AlreadyUserUsername_OnEditPersonalInfo(currentUser))
+                {
+                    ViewBag.UserName_Error = "Existing Username";
+                    return View("Edit_PersonalInfo", currentUser);
+                }
+
+                ToUpdatevolunteer.City = ValidateCity(ToUpdatevolunteer.City);
+                ToUpdatevolunteer.Name = ValidateName(ToUpdatevolunteer.Name);
+
+                if (ToUpdatevolunteer.ImageProfile != null)
+                {
+                    if (ValidateImageProfile(ToUpdatevolunteer, imgWidth, imgHeight))
+                    {
+                        ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                        return View("Edit_PersonalInfo", currentUser);
+                    }
+
+                    ToUpdatevolunteer.ImageProfileByteArray = GetByteArrayFromImage(ToUpdatevolunteer.ImageProfile);
+                }
+
+                volunteerRepository.UpdateVolunteer(ToUpdatevolunteer);
+                userRepository.UpdateUser(ToUpdateUser);
+
+                return RedirectToAction(nameof(Index));
+
+                //return RedirectToAction("")
+               
+            }
+            return View("Edit_PersonalInfo", currentUser);
+        }
+
+        private static void UpdateCurrentVolunteerWithNewDataFields(CurrentUser currentUser, Volunteer ToUpdatevolunteer)
+        {
+            ToUpdatevolunteer.Name = currentUser.Name;
+            ToUpdatevolunteer.Surname = currentUser.Surname;
+            ToUpdatevolunteer.City = currentUser.City;
+            ToUpdatevolunteer.Phone = currentUser.Phone;
+            ToUpdatevolunteer.Email = currentUser.Email;
+            ToUpdatevolunteer.BirthDate = currentUser.BirthDate;
+            ToUpdatevolunteer.JoinHubDate = currentUser.JoinHubDate;
+            ToUpdatevolunteer.InstagramProfile = currentUser.InstagramProfile;
+            ToUpdatevolunteer.FaceBookProfile = currentUser.FaceBookProfile;
+            ToUpdatevolunteer.DescriptionContributionToHub = currentUser.DescriptionContributionToHub;
+            ToUpdatevolunteer.ImageProfile = currentUser.ImageProfile;
         }
     }
 }

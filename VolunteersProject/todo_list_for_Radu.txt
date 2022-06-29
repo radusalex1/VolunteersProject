@@ -1,0 +1,21 @@
+//to do
+
+4.check unicity for enrollments
+
+5.add nr of records for volunteers
+
+7.add filter on enrollments
+
+7.1.add pagination for enrollments
+
+8.add filter on voluteer*events
+
+9.rename event in enrollments in the view
+
+10. move jwt token from session to a "general" method -- only if the others are done
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<VolunteersProject.Models.Contribution>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="HomeIndex" asp-route-sortOrder="@ViewData["NameSortParam"]">@Html.DisplayNameFor(model => model.Name)</a>
+            </th>
+            <th>
+                <a asp-action="HomeIndex" asp-route-sortOrder="@ViewData["CreditsSortParam"]">@Html.DisplayNameFor(model => model.Credits)</a>
+            </th>
+            <th>
+                <a asp-action="HomeIndex" asp-route-sortOrder="@ViewData["StartDateSortParam"]">@Html.DisplayNameFor(model => model.StartDate)</a>
+            </th>
+            <th>
+                <a asp-action="HomeIndex" asp-route-sortOrder="@ViewData["FinishDateSortParam"]">@Html.DisplayNameFor(model => model.FinishDate)</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Credits)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinishDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

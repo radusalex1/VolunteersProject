@@ -1,0 +1,77 @@
+﻿@model VolunteersProject.DTO.AvailableVolunters
+
+@{
+    ViewData["Title"] = "Assign volunteer to contribution";
+}
+
+<h1>Assign </h1>
+<form asp-action="Assign" method="post">
+    @Html.HiddenFor(m => m.ContributionId)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VolunteersDTO[0].FullName)
+                </th>
+                
+                <th>
+                    @Html.DisplayNameFor(model => model.VolunteersDTO[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VolunteersDTO[0].Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VolunteersDTO[0].JoinHubDate)
+                </th>
+                <th>
+                    Send invitation email
+                </th>
+                <th>
+                    Assign to event
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.VolunteersDTO)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                   
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JoinHubDate)
+                    </td>
+                    <td>
+                        @if (!item.IsSelected)
+                        {
+                            @Html.CheckBox("chk_emailInvitation_" + item.Id, false, new { name = "assignChkBx" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("chk_emailInvitation_" + item.Id, true, new { name = "assignChkBx" })
+                        }
+                    </td>
+                    <td>
+                        @Html.CheckBox("chk_directAssignment_" + item.Id, false, new { name = "directAssignmentChkBx" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <input type="submit" name="Save" value="Send Email" class="btn btn-primary" />
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+</form>
