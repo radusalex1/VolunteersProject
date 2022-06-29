@@ -59,7 +59,6 @@ namespace VolunteersProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-
             this.Logger.LogInformation("HttpGet Login()");
 
             return View("Login");
@@ -304,8 +303,15 @@ namespace VolunteersProject.Controllers
             emailMessage.Content = $"Clink on {link} for password reset";
 
             _emailService.Send(emailMessage);
-
         }
+
+        //[AllowAnonymous]
+        //[Route("RegisterUser")]
+        //[HttpPost]
+        //public IActionResult RegisterUser()
+        //{
+        //    return RedirectToAction("Create", "Register");
+        //}
 
         private string GetLink(string email)
         {

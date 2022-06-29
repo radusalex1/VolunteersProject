@@ -20,7 +20,7 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div>
-                <table border="0">
+                <table border="0" cellpadding="0" cellspacing="0">
                     <tr>
                         <td width="20%">
                             <div>
@@ -31,6 +31,15 @@
                             <div style="text-align:right">
                                 <a asp-action="InputEmailResetPassword"> Reset Password </a>
                             </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="20%">
+                            <div>
+                                <input type="button" class="btn btn-primary" value="Register user" onclick="window.location= '@Url.Action( "Create", "Register")'" />
+                            </div>
+                        </td>                  
+                        <td width="20%">
                         </td>
                     </tr>
                 </table>
@@ -50,6 +59,8 @@
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
 
