@@ -55,5 +55,8 @@ https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-
 	bad - https://stackoverflow.com/questions/55612337/openxml-change-excel-cell-format-date-and-number-when-exporting-from-datagri
 
 https://stackoverflow.com/questions/44572018/using-open-xml-to-create-excel-file
+
+//Custom authorize attribute
+https://www.craftedforeveryone.com/adding-your-own-custom-authorize-attribute-to-asp-net-core-2-2-and-above/
 	
 

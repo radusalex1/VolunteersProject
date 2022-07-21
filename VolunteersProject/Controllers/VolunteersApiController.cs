@@ -106,6 +106,7 @@ namespace VolunteersProject.Controllers
             return Ok();
         }
 
+        [ApiExplorerSettings(GroupName = "Reports")]
         // GET: api/VolunteersApi
         [HttpGet("getVolunteersReport")]
         public ActionResult<object> GetVolunteersReport()
