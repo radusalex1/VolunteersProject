@@ -10,4 +10,11 @@ namespace VolunteersProject.Common
         public const string Admin = "Admin";
         public const string User = "User";
     }
+
+    public enum EnumRole
+    {
+        Admin = 0,
+        PowerUser = 1,
+        User = 2
+    }
 }
