@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using VolunteersProject.Models;
 
 namespace VolunteersProject.Data
@@ -11,7 +9,8 @@ namespace VolunteersProject.Data
         public static void Initialize(VolunteersContext context)
         {
             context.Database.EnsureCreated();
-            if(context.Volunteers.Any())
+
+            if (context.Volunteers.Any())
             {
                 return;
             }
@@ -26,11 +25,11 @@ namespace VolunteersProject.Data
                 new Volunteer{Name="Laura",Surname="Norman",City="Brasov",JoinHubDate=DateTime.Parse("2002-09-01"),BirthDate=DateTime.Parse("2001-06-06")},
                 new Volunteer{Name="Nino",Surname="Olivetto",City="Brasov",JoinHubDate=DateTime.Parse("2002-09-01"),BirthDate=DateTime.Parse("2002-12-12")}
             };
-            foreach(Volunteer v in volunteers)
+            foreach (Volunteer v in volunteers)
             {
                 context.Volunteers.Add(v);
             }
-            context.SaveChanges();
+            //context.SaveChanges();
 
             var contributions = new Contribution[]
             {
@@ -47,7 +46,7 @@ namespace VolunteersProject.Data
             {
                 context.Contributions.Add(c);
             }
-            context.SaveChanges();
+            //context.SaveChanges();
 
             var enrollments = new Enrollment[]
                 {
@@ -63,12 +62,25 @@ namespace VolunteersProject.Data
                     new Enrollment{VolunteerID=5,contributionId=1},
                     new Enrollment{VolunteerID=6,contributionId=1},
                 };
-            foreach(Enrollment e in enrollments)
+            foreach (Enrollment e in enrollments)
             {
                 context.Enrollments.Add(e);
             }
-            context.SaveChanges();
 
+            //context.SaveChanges();
+
+            var roles = new Role[]
+               {
+                    new Role{Id=1,Name="Admin", Power=0, Description="admin"},
+                    new Role{Id=2,Name="PowerUser", Power=1, Description="power user"},
+                    new Role{Id=3,Name="User", Power=2, Description="user"}
+               };
+            foreach (Role e in roles)
+            {
+                context.Roles.Add(e);
+            }
+
+            context.SaveChanges();
         }
     }
 }
