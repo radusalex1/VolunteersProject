@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using VolunteersProject.Common;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Filters
 {
     public class VolunteersCustomAuthorization : AuthorizeAttribute, IAuthorizationFilter
-    {
-        public EnumRole Permissions { get; set; } //Permission string to get from controller
+    {    
+        public EnumRole UserRolePermission { get; set; } //Permission string to get from controller
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
@@ -35,18 +37,27 @@ namespace VolunteersProject.Filters
             //{
             //    if (assignedPermissionsForUser.Contains(x))
             //        return; //User Authorized. Wihtout setting any result value and just returning is sufficent for authorizing user
-            //}
+            //}            
 
-            //get role fo the current User
-            var currentUserRoleId = 2;
+            var enumRoleValues = Enum.GetValues(typeof(EnumRole));            
 
-            if (currentUserRoleId <= (int)Permissions)
+            foreach (var claim in context.HttpContext.User.Claims)
             {
-                return; //User Authorized. Wihtout setting any result value and just returning is sufficent for authorizing user
+                if (claim.Type.ToLower().Contains("/role"))
+                {
+                    foreach (var enumRoleValue in enumRoleValues)
+                    {                        
+                        if (claim.Value.ToLower() == enumRoleValue.ToString().ToLower())
+                        {
+                            if ((EnumRole)enumRoleValue <= UserRolePermission)
+                            {
+                                return; //User Authorized. Wihtout setting any result value and just returning is sufficent for authorizing user
+                            }
+                        }                        
+                    }
+                }
             }
 
-            //context.Result = new UnauthorizedResult();
-           
             context.Result = new RedirectResult("NotAuthorized");
 
             return;

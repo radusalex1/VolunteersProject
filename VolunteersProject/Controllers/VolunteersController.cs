@@ -59,7 +59,7 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         /// GET: Volunteers
         //[Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.User)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {            
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
@@ -160,7 +160,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Volunteers/Create
         //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create()
         {
             var volunteer = new Volunteer
@@ -175,8 +175,8 @@ namespace VolunteersProject.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Common.Role.Admin)]
-        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        //[Authorize(Roles = Common.Role.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
