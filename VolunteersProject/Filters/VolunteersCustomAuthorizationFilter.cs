@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
 using VolunteersProject.Common;
 
 namespace VolunteersProject.Filters
@@ -46,7 +45,9 @@ namespace VolunteersProject.Filters
                 return; //User Authorized. Wihtout setting any result value and just returning is sufficent for authorizing user
             }
 
-            context.Result = new UnauthorizedResult();
+            //context.Result = new UnauthorizedResult();
+           
+            context.Result = new RedirectResult("NotAuthorized");
 
             return;
         }
