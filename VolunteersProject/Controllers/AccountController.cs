@@ -154,7 +154,7 @@ namespace VolunteersProject.Controllers
 
             ViewBag.Message = BuildMessage(token, 50);
 
-            return RedirectToAction("HomeIndex", "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

@@ -25,9 +25,9 @@ namespace VolunteersProject.Controllers
         }
 
         [Authorize]
-        public IActionResult HomeIndex(string sortOrder)
+        public IActionResult Index(string sortOrder)
         {
-            Logger.LogInformation("HttpGet HomeIndex()");
+            Logger.LogInformation("HttpGet Index()");
 
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["CreditsSortParam"] = sortOrder == "Credits" ? "Credits_desc" : "Credits";
