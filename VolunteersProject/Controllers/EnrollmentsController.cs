@@ -32,12 +32,13 @@ namespace VolunteersProject.Controllers
         /// <param name="logger"></param>
         /// <param name="configuration"></param>
         public EnrollmentsController(
+            IUserRepository userRepository,
             IEnrollmentRepository enrollmentRepository,
             IVolunteerRepository volunteerRepository,
             IContributionRepository contributionRepository,
             ILogger<VolunteersController> logger,
             IConfiguration configuration)
-                : base(logger, configuration)
+                : base(logger, configuration, userRepository)
         {
             this.enrollmentRepository = enrollmentRepository;
             this.volunteerRepository = volunteerRepository;

@@ -11,6 +11,7 @@ using VolunteersProject.Common;
 using VolunteersProject.Filters;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
+using VolunteersProject.Util;
 
 namespace VolunteersProject.Controllers
 {
@@ -21,8 +22,7 @@ namespace VolunteersProject.Controllers
     //[VolunteersCustomAuthorization]
     public class VolunteersController : GeneralController
     { 
-        public IVolunteerRepository volunteerRepository;
-        public readonly IUserRepository userRepository;
+        public IVolunteerRepository volunteerRepository;        
 
         private int pageSize;
         private int imgWidth;
@@ -35,11 +35,15 @@ namespace VolunteersProject.Controllers
         /// <param name="volunteerRepository">Volunteer repository.</param>
         /// <param name="userRepository"></param>
         /// <param name="configuration">Application configuration.</param>
-        public VolunteersController(ILogger<VolunteersController> logger, IConfiguration configuration, 
-            IVolunteerRepository volunteerRepository,IUserRepository userRepository) : base(logger, configuration)
+        public VolunteersController(
+            ILogger<VolunteersController> logger, 
+            IConfiguration configuration,            
+            IUserRepository userRepository,
+            IVolunteerRepository volunteerRepository) 
+            : base(logger, configuration, userRepository)
         {
             this.volunteerRepository = volunteerRepository;
-            this.userRepository = userRepository;
+            
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
             imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
             imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
@@ -177,17 +181,17 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
+                if (!string.IsNullOrEmpty(volunteer.Phone) && Helper.PhoneNumberIsValid(volunteer.Phone) == false)
                 {
                     ViewBag.Alert = "Incorrect phone number";
                     return View(volunteer);
                 }
-                if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
+                if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && Helper.InstagramIsValid(volunteer.InstagramProfile) == false)
                 {
                     ViewBag.Alert = "Incorrect Instragram Profile";
                     return View(volunteer);
                 }
-                if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
+                if (!string.IsNullOrEmpty(volunteer.Email) && Helper.EmailIsValid(volunteer.Email) == false)
                 {
                     ViewBag.Alert = "Incorrect Email Adress";
                     return View(volunteer);
@@ -198,12 +202,12 @@ namespace VolunteersProject.Controllers
                     return View(volunteer);
                 }
 
-                volunteer.City = ValidateCity(volunteer.City);
-                volunteer.Name = ValidateName(volunteer.Name);
+                volunteer.City = Helper.ValidateCity(volunteer.City);
+                volunteer.Name = Helper.ValidateName(volunteer.Name);
 
                 if (volunteer.ImageProfile != null)
                 {
-                    if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
+                    if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imgWidth, imgHeight))
                     {
                         ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
                         return View(volunteer);
@@ -259,17 +263,17 @@ namespace VolunteersProject.Controllers
             {
                 try
                 {
-                    if (!string.IsNullOrEmpty(volunteer.Phone) && PhoneNumberIsValid(volunteer.Phone) == false)
+                    if (!string.IsNullOrEmpty(volunteer.Phone) && Helper.PhoneNumberIsValid(volunteer.Phone) == false)
                     {
                         ViewBag.Alert = "Incorrect phone number";
                         return View(volunteer);
                     }
-                    if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && InstagramIsValid(volunteer.InstagramProfile) == false)
+                    if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && Helper.InstagramIsValid(volunteer.InstagramProfile) == false)
                     {
                         ViewBag.Alert = "Incorrect Instragram Profile";
                         return View(volunteer);
                     }
-                    if (!string.IsNullOrEmpty(volunteer.Email) && EmailIsValid(volunteer.Email) == false)
+                    if (!string.IsNullOrEmpty(volunteer.Email) && Helper.EmailIsValid(volunteer.Email) == false)
                     {
                         ViewBag.Alert = "Incorrect Email Adress";
                         return View(volunteer);
@@ -280,12 +284,12 @@ namespace VolunteersProject.Controllers
                         return View(volunteer);
                     }
 
-                    volunteer.City = ValidateCity(volunteer.City);
-                    volunteer.Name = ValidateName(volunteer.Name);
+                    volunteer.City = Helper.ValidateCity(volunteer.City);
+                    volunteer.Name = Helper.ValidateName(volunteer.Name);
 
                     if (volunteer.ImageProfile != null)
                     {
-                        if (ValidateImageProfile(volunteer, imgWidth, imgHeight))
+                        if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imgWidth, imgHeight))
                         {
                             ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
                             return View(volunteer);
@@ -434,17 +438,17 @@ namespace VolunteersProject.Controllers
 
                 ToUpdateUser.UserName = currentUser.UserName;
 
-                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Phone) && PhoneNumberIsValid(ToUpdatevolunteer.Phone) == false)
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Phone) && Helper.PhoneNumberIsValid(ToUpdatevolunteer.Phone) == false)
                 {
                     ViewBag.Phone_Error = "Incorrect phone number";
                     return View("Edit_PersonalInfo", currentUser);
                 }
-                if (!string.IsNullOrEmpty(ToUpdatevolunteer.InstagramProfile) && InstagramIsValid(ToUpdatevolunteer.InstagramProfile) == false)
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.InstagramProfile) && Helper.InstagramIsValid(ToUpdatevolunteer.InstagramProfile) == false)
                 {
                     ViewBag.Instagram_Error = "Incorrect Instragram Profile";
                     return View("Edit_PersonalInfo", currentUser);
                 }
-                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Email) && EmailIsValid(ToUpdatevolunteer.Email) == false)
+                if (!string.IsNullOrEmpty(ToUpdatevolunteer.Email) && Helper.EmailIsValid(ToUpdatevolunteer.Email) == false)
                 {
                     ViewBag.Email_Error = "Incorrect Email Adress";
                     return View("Edit_PersonalInfo", currentUser);
@@ -463,12 +467,12 @@ namespace VolunteersProject.Controllers
                     return View("Edit_PersonalInfo", currentUser);
                 }
 
-                ToUpdatevolunteer.City = ValidateCity(ToUpdatevolunteer.City);
-                ToUpdatevolunteer.Name = ValidateName(ToUpdatevolunteer.Name);
+                ToUpdatevolunteer.City = Helper.ValidateCity(ToUpdatevolunteer.City);
+                ToUpdatevolunteer.Name = Helper.ValidateName(ToUpdatevolunteer.Name);
 
                 if (ToUpdatevolunteer.ImageProfile != null)
                 {
-                    if (ValidateImageProfile(ToUpdatevolunteer, imgWidth, imgHeight))
+                    if (Helper.ValidateImageProfile(ToUpdatevolunteer.ImageProfile.Length, imgWidth, imgHeight))
                     {
                         ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
                         return View("Edit_PersonalInfo", currentUser);
@@ -486,7 +490,7 @@ namespace VolunteersProject.Controllers
                
             }
             return View("Edit_PersonalInfo", currentUser);
-        }
+        }       
 
         private static void UpdateCurrentVolunteerWithNewDataFields(CurrentUser currentUser, Volunteer ToUpdatevolunteer)
         {

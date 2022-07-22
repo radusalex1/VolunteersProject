@@ -12,16 +12,20 @@ namespace VolunteersProject.Controllers
     /// </summary>
     public class HomeController : GeneralController
     {
-
         private IVolunteerRepository volunteerRepository;
 
-        public HomeController(IVolunteerRepository volunteerRepository,ILogger<HomeController> logger, IConfiguration configuration) :base(logger,configuration)
+        public HomeController(
+            IVolunteerRepository volunteerRepository,
+            ILogger<HomeController> logger,
+            IConfiguration configuration,
+            IUserRepository userRepository)
+            : base(logger, configuration, userRepository)
         {
             this.volunteerRepository = volunteerRepository;
-        }       
+        }
 
         [Authorize]
-        public IActionResult HomeIndex(string sortOrder )
+        public IActionResult HomeIndex(string sortOrder)
         {
             Logger.LogInformation("HttpGet HomeIndex()");
 
@@ -34,13 +38,13 @@ namespace VolunteersProject.Controllers
 
             var CurrentVolunteer = volunteerRepository.GetVolunteerByUserId(LoggedUserId);
 
-            var Contributions = volunteerRepository.GetContributionsByVolunteer(CurrentVolunteer) ;
+            var Contributions = volunteerRepository.GetContributionsByVolunteer(CurrentVolunteer);
 
             Contributions = SortContributions(sortOrder, Contributions);
 
             ViewBag.TotalPoints = volunteerRepository.GetVolunteerTotalPoints(CurrentVolunteer);
 
-            return View("HomeView",Contributions);
+            return View("HomeView", Contributions);
         }
 
     }

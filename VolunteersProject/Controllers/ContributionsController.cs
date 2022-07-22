@@ -19,7 +19,6 @@ namespace VolunteersProject.Controllers
     [Authorize]
     public class ContributionsController : GeneralController
     {
-
         private IVolunteerRepository volunteerRepository;
         private IEmailService emailService;
         private IEnrollmentRepository enrollmentRepository;
@@ -28,13 +27,14 @@ namespace VolunteersProject.Controllers
         public ContributionsController
              (
                  ILogger<ContributionsController> logger,
+                 IUserRepository userRepository,
                  VolunteersContext context,
                  IVolunteerRepository volunteerRepository,
                  IEmailService emailService,
                  IEnrollmentRepository enrollmentRepository,
                  IContributionRepository contributionRepository,
                  IConfiguration configuration
-             ) : base(logger, configuration)
+             ) : base(logger, configuration, userRepository)
         {
             this.volunteerRepository = volunteerRepository;
             this.emailService = emailService;
@@ -79,7 +79,7 @@ namespace VolunteersProject.Controllers
             return View(contributions);
         }
 
-        
+
 
         // GET: Contributions/Details/5
         [Authorize(Roles = Common.Role.Admin)]
@@ -118,14 +118,14 @@ namespace VolunteersProject.Controllers
         {
             if (ModelState.IsValid)
             {
-               
-                if(string.IsNullOrEmpty(contribution.Name))
+
+                if (string.IsNullOrEmpty(contribution.Name))
                 {
                     ViewBag.Contribution_Name_Err = "Name cannot be empty!";
                     return View(contribution);
                 }
 
-                if(contribution.Credits<=0)
+                if (contribution.Credits <= 0)
                 {
                     ViewBag.Credits_Err = "Invalid input!";
                     return View(contribution);
@@ -138,7 +138,7 @@ namespace VolunteersProject.Controllers
                     return View(contribution);
                 }
 
-                if(contribution.VolunteerDeadlineConfirmation>contribution.StartDate)
+                if (contribution.VolunteerDeadlineConfirmation > contribution.StartDate)
                 {
                     ViewBag.VolunteerDeadlineConfirmation_Error = "This date cannot be after Start Date!";
                     return View(contribution);
@@ -147,7 +147,7 @@ namespace VolunteersProject.Controllers
                 contributionRepository.AddContribution(contribution);
                 return RedirectToAction(nameof(Index));
             }
-           
+
             return View(contribution);
         }
 
@@ -177,7 +177,7 @@ namespace VolunteersProject.Controllers
         [Authorize(Roles = Common.Role.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
-          
+
             if (ModelState.IsValid)
             {
                 try
@@ -234,7 +234,7 @@ namespace VolunteersProject.Controllers
             }
 
             var contribution = contributionRepository.GetContributionById(id);
-            
+
             if (contribution == null)
             {
                 return NotFound();
@@ -266,9 +266,9 @@ namespace VolunteersProject.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Common.Role.Admin)]
         public ActionResult Assign(IFormCollection form, int contributionId)
-        {            
+        {
             var selectedVolunteers = GetAvailableVolunteersDTO(contributionId);
-            
+
             var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, selectedVolunteers.VolunteersDTO);
 
             UpdateToPending(contributionId, sendInvitationEmailList);
@@ -360,7 +360,7 @@ namespace VolunteersProject.Controllers
                $"Click on {link} for more details.";
 
                 var emailSender = configuration.GetSection("AppSettings").GetSection("EmailSender").Value;
-                
+
                 emailMessage.FromAddresses = new List<EmailAddress>
                 {
                     new EmailAddress { Address = emailSender }

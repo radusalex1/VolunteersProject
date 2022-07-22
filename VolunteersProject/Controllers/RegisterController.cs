@@ -17,7 +17,7 @@ namespace VolunteersProject.Controllers
         private IRolesRepository rolesRepository;
 
         public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration)
-            : base(logger, configuration)
+            : base(logger, configuration, userRepository)
         {
             this.volunteerRepository = volunteerRepository;
             this.userRepository = userRepository;
@@ -51,19 +51,19 @@ namespace VolunteersProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (!string.IsNullOrEmpty(newUser.Phone) && !PhoneNumberIsValid(newUser.Phone))
+                    if (!string.IsNullOrEmpty(newUser.Phone) && !Helper.PhoneNumberIsValid(newUser.Phone))
                     {
                         ViewBag.Phone_Error = "Incorrect phone number";
                         return View(newUser);
                     }
 
-                    if (!string.IsNullOrEmpty(newUser.InstagramProfile) && !InstagramIsValid(newUser.InstagramProfile))
+                    if (!string.IsNullOrEmpty(newUser.InstagramProfile) && !Helper.InstagramIsValid(newUser.InstagramProfile))
                     {
                         ViewBag.Insta_Error = "Incorrect Instragram Profile";
                         return View(newUser);
                     }
 
-                    if (!string.IsNullOrEmpty(newUser.Email) && EmailIsValid(newUser.Email) == false)
+                    if (!string.IsNullOrEmpty(newUser.Email) && Helper.EmailIsValid(newUser.Email) == false)
                     {
                         ViewBag.Email_Error = "Incorrect Email Adress";
                         return View(newUser);
@@ -84,7 +84,7 @@ namespace VolunteersProject.Controllers
 
                     var volunteer = new Volunteer
                     {
-                        Name = ValidateName(newUser.Name),
+                        Name = Helper.ValidateName(newUser.Name),
                         Surname = newUser.Surname,
                         City = Helper.FirstUpperNextLower(newUser.City),
                         Email = newUser.Email,

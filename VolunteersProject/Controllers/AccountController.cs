@@ -13,13 +13,13 @@ using VolunteersProject.DTO;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 using VolunteersProject.Services;
+using VolunteersProject.Util;
 
 namespace VolunteersProject.Controllers
 {
     public class AccountController : GeneralController
     {
-
-        private readonly IUserRepository _userRepository;
+        //private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private readonly IVolunteerRepository _volunteerRepository;
         private IEmailService _emailService;
@@ -43,11 +43,11 @@ namespace VolunteersProject.Controllers
             IUserRepository userRepository,
             ILogger<AccountController> logger,
             IEmailService emailService) :
-            base(logger, config)
+            base(logger, config, userRepository)
         {
             _volunteerRepository = volunteerRepository;
             _tokenService = tokenService;
-            _userRepository = userRepository;
+            //_userRepository = userRepository;
             _emailService = emailService;
         }
 
@@ -230,7 +230,7 @@ namespace VolunteersProject.Controllers
             {
                 return View("RecoverPasswordGetEmail", enterEmailForPasswordRecoveryDTO);
             }
-            if (string.IsNullOrEmpty(email) == false && !EmailIsValid(email))
+            if (string.IsNullOrEmpty(email) == false && !Helper.EmailIsValid(email))
             {
                 ViewBag.Email_Error = "Wrong Email.";
                 return View("RecoverPasswordGetEmail", enterEmailForPasswordRecoveryDTO);
@@ -270,7 +270,7 @@ namespace VolunteersProject.Controllers
                     ViewBag.NewPassword_Error = "Does not match!";
                     return View(newPasswordDTO);
                 }
-                _userRepository.ChangePasswordBasedOnUserId(UserId, newPasswordDTO.NewPassword);
+                userRepository.ChangePasswordBasedOnUserId(UserId, newPasswordDTO.NewPassword);
             }
             else
             {
@@ -304,15 +304,7 @@ namespace VolunteersProject.Controllers
 
             _emailService.Send(emailMessage);
         }
-
-        //[AllowAnonymous]
-        //[Route("RegisterUser")]
-        //[HttpPost]
-        //public IActionResult RegisterUser()
-        //{
-        //    return RedirectToAction("Create", "Register");
-        //}
-
+       
         private string GetLink(string email)
         {
 
@@ -347,7 +339,7 @@ namespace VolunteersProject.Controllers
         private User GetUser(LoginModel userModel)
         {
             //Write your code here to authenticate the user
-            return _userRepository.GetUser(userModel);
+            return userRepository.GetUser(userModel);
         }
     }
 }
