@@ -69,16 +69,16 @@ namespace VolunteersProject.Data
 
             //context.SaveChanges();
 
-            var roles = new Role[]
-               {
-                    new Role{Id=1,Name="Admin", Power=0, Description="admin"},
-                    new Role{Id=2,Name="PowerUser", Power=1, Description="power user"},
-                    new Role{Id=3,Name="User", Power=2, Description="user"}
-               };
-            foreach (Role e in roles)
-            {
-                context.Roles.Add(e);
-            }
+            //var roles = new Role[]
+            //   {
+            //        new Role{Id=1,Name="Admin", Power=0, Description="admin"},
+            //        new Role{Id=2,Name="PowerUser", Power=1, Description="power user"},
+            //        new Role{Id=3,Name="User", Power=2, Description="user"}
+            //   };
+            //foreach (Role e in roles)
+            //{
+            //    context.Roles.Add(e);
+            //}
 
             context.SaveChanges();
         }

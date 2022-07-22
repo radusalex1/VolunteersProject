@@ -39,7 +39,7 @@ namespace VolunteersProject.Filters
             //}
 
             //get role fo the current User
-            var currentUserRoleId = 1;
+            var currentUserRoleId = 2;
 
             if (currentUserRoleId <= (int)Permissions)
             {

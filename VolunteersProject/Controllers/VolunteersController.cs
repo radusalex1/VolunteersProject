@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -155,6 +156,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Volunteers/Create
         //[Authorize(Roles = Common.Role.Admin)]
+        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         public IActionResult Create()
         {
             var volunteer = new Volunteer
@@ -169,8 +171,8 @@ namespace VolunteersProject.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
+        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
             if (ModelState.IsValid)
@@ -220,8 +222,8 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
-        //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
+        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         // GET: Volunteers/Edit/5
         public IActionResult Edit(int id)
         {
@@ -243,8 +245,8 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[System.Web.Http.Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [System.Web.Http.Authorize(Roles = Common.Role.Admin)]
+        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
@@ -317,8 +319,8 @@ namespace VolunteersProject.Controllers
         /// <param name="id">Volunteer id.</param>
         /// <returns>Volunteer.</returns>
         // GET: Volunteers/Delete/5
-        //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
+        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         public IActionResult Delete(int? id)
         {
             var volunteer = volunteerRepository.GetVolunteerById(id);
@@ -332,8 +334,8 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: Volunteers/Delete/5
-        //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
+        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -355,8 +357,8 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="volunteerId">Volunteer id.</param>
         /// <returns>Volunteer image profile as a file.</returns>
-        //[Authorize(Roles = Common.Role.Admin)]
-        [VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [Authorize(Roles = Common.Role.Admin)]
+        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
         [HttpGet]
         public IActionResult SetVolunteerImageProfile(int volunteerId)
         {

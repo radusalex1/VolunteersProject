@@ -13,8 +13,8 @@ namespace VolunteersProject.Common
 
     public enum EnumRole
     {
-        Admin = 0,
-        PowerUser = 1,
+        Admin = 1,
+        //PowerUser = 1,
         User = 2
     }
 }
