@@ -40,12 +40,15 @@ namespace VolunteersProject.Models
         /// </summary>
         public string City { get; set; }
 
+        /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
         [Required]
-        [Display(Prompt = "example@example.org")]
+        [Display(Prompt = "example@example.org")]        
         public string Email { get; set; } = null!;
 
         /// <summary>
-        /// Get or sets the phone.
+        /// Get or sets phone.
         /// </summary>
         [Required]
         public string Phone { get; set; } = null!;
