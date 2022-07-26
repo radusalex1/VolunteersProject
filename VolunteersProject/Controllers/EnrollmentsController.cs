@@ -8,13 +8,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VolunteersProject.Common;
 using VolunteersProject.Data;
+using VolunteersProject.Filters;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
-{
-    [Authorize]
+{    
     public class EnrollmentsController : GeneralController
     {
         private readonly VolunteersContext _context;
@@ -46,7 +47,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments
-        [Authorize(Roles = Common.Role.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Index(string SortOrder)
         {
 
@@ -88,6 +89,7 @@ namespace VolunteersProject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: Enrollments/Details/5
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public async Task<IActionResult> Details(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
@@ -100,6 +102,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Create
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create()
         {
             ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
@@ -114,6 +117,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public async Task<IActionResult> Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
@@ -129,6 +133,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Edit/5
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public async Task<IActionResult> Edit(int id)
         {
 
@@ -152,7 +157,7 @@ namespace VolunteersProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentID)
@@ -184,6 +189,7 @@ namespace VolunteersProject.Controllers
         }
 
         // GET: Enrollments/Delete/5
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -203,7 +209,7 @@ namespace VolunteersProject.Controllers
         // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Common.Role.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
@@ -267,7 +273,6 @@ namespace VolunteersProject.Controllers
         {
             Enrollment enrollment = enrollmentRepository.GetEnrollmentById(id);
             return enrollmentRepository.EnrollmentExists(enrollment);
-
         }
     }
 }

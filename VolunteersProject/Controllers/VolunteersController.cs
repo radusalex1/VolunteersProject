@@ -57,8 +57,7 @@ namespace VolunteersProject.Controllers
         /// <param name="currentFilter">Current filter.</param>
         /// <param name="pageNumber">Page number.</param>
         /// <returns></returns>
-        /// GET: Volunteers
-        //[Authorize(Roles = Common.Role.Admin + "," + Common.Role.User)]
+        /// GET: Volunteers        
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Index(string sortOrder, string SearchString, string currentFilter, int? pageNumber)
         {            
@@ -158,8 +157,7 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
-        // GET: Volunteers/Create
-        //[Authorize(Roles = Common.Role.Admin)]
+        // GET: Volunteers/Create        
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create()
         {
@@ -174,8 +172,7 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.       
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        //[Authorize(Roles = Common.Role.Admin)]
+        [ValidateAntiForgeryToken]       
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         {
@@ -226,8 +223,7 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
-        [Authorize(Roles = Common.Role.Admin)]
-        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         // GET: Volunteers/Edit/5
         public IActionResult Edit(int id)
         {
@@ -323,8 +319,7 @@ namespace VolunteersProject.Controllers
         /// <param name="id">Volunteer id.</param>
         /// <returns>Volunteer.</returns>
         // GET: Volunteers/Delete/5
-        [Authorize(Roles = Common.Role.Admin)]
-        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Delete(int? id)
         {
             var volunteer = volunteerRepository.GetVolunteerById(id);
@@ -338,8 +333,7 @@ namespace VolunteersProject.Controllers
         }
 
         // POST: Volunteers/Delete/5
-        [Authorize(Roles = Common.Role.Admin)]
-        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -361,8 +355,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="volunteerId">Volunteer id.</param>
         /// <returns>Volunteer image profile as a file.</returns>
-        [Authorize(Roles = Common.Role.Admin)]
-        //[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         [HttpGet]
         public IActionResult SetVolunteerImageProfile(int volunteerId)
         {
