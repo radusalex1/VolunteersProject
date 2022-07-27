@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VolunteersProject.Models
 {
@@ -60,5 +62,15 @@ namespace VolunteersProject.Models
         [Display(Name = "Facebook profile link", Prompt = "Facebook profile link")]
         public string FaceBookProfile { get; set; }
 
+        /// <summary>
+        /// Gets or sets the image profile.
+        /// </summary>
+        [NotMapped]
+        public IFormFile ImageProfile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image profile byte array.
+        /// </summary>
+        public Byte[] ImageProfileByteArray { get; set; }
     }
 }

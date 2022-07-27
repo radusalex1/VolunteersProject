@@ -15,6 +15,7 @@ namespace VolunteersProject.Controllers
         private IVolunteerRepository volunteerRepository;
         private IUserRepository userRepository;
         private IRolesRepository rolesRepository;
+        private int imageFileLengthLimit;
 
         public RegisterController(IVolunteerRepository volunteerRepository, IUserRepository userRepository, IRolesRepository rolesRepository, ILogger<RegisterController> logger, IConfiguration configuration)
             : base(logger, configuration, userRepository)
@@ -22,6 +23,8 @@ namespace VolunteersProject.Controllers
             this.volunteerRepository = volunteerRepository;
             this.userRepository = userRepository;
             this.rolesRepository = rolesRepository;
+
+            imageFileLengthLimit = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("imageFileLengthLimit").Value);
         }
         
         // GET: RegisterController
@@ -45,7 +48,7 @@ namespace VolunteersProject.Controllers
         // POST: RegisterController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Name,Surname,UserName,Password,City,Email,Phone,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile")] RegisterFormModel newUser)
+        public ActionResult Create([Bind("Name,Surname,UserName,Password,City,Email,Phone,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile,ImageProfile")] RegisterFormModel newUser)
         {
             try
             {
@@ -78,13 +81,30 @@ namespace VolunteersProject.Controllers
 
                     if (userRepository.AlreadyUseUsername(user.UserName))
                     {
-                        ViewBag.Username_Error = "Username Already Use";
+                        ViewBag.Username_Error = "User name already used.";
                         return View(newUser);
+                    }
+
+                    //todo Radu - add validations for volunteer
+                    //facebook
+
+                    if (newUser.ImageProfile != null)
+                    {
+                        if (Helper.ValidateImageProfile(newUser.ImageProfile.Length, imageFileLengthLimit))
+                        {
+                            ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imageFileLengthLimit} bytes.";
+
+                            var currentUser = userRepository.GetUserById(currentUserId);
+
+                            return View("Edit_PersonalInfo", currentUser);
+                        }
+
+                        newUser.ImageProfileByteArray = Helper.GetByteArrayFromImage(newUser.ImageProfile);
                     }
 
                     var volunteer = new Volunteer
                     {
-                        Name = Helper.ValidateName(newUser.Name),
+                        Name = Helper.FormatName(newUser.Name),
                         Surname = newUser.Surname,
                         City = Helper.FirstUpperNextLower(newUser.City),
                         Email = newUser.Email,
@@ -93,6 +113,7 @@ namespace VolunteersProject.Controllers
                         JoinHubDate = newUser.JoinHubDate,
                         InstagramProfile = newUser.InstagramProfile,
                         FaceBookProfile = newUser.FaceBookProfile,
+                        ImageProfileByteArray = Helper.GetByteArrayFromImage(newUser.ImageProfile),
                         User = user
                     };
 
