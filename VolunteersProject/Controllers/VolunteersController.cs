@@ -173,7 +173,7 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.       
         //[HttpPost]
-        //[ValidateAntiForgeryToken]       
+        //[ValidateAntiForgeryToken]
         //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         //public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
         //{
@@ -200,8 +200,8 @@ namespace VolunteersProject.Controllers
         //            return View(volunteer);
         //        }
 
-        //        volunteer.City = Helper.ValidateCity(volunteer.City);
-        //        volunteer.Name = Helper.ValidateName(volunteer.Name);
+        //        volunteer.City = Helper.FirstUpperNextLower(volunteer.City);
+        //        volunteer.Name = Helper.FormatName(volunteer.Name);
 
         //        if (volunteer.ImageProfile != null)
         //        {
@@ -211,7 +211,7 @@ namespace VolunteersProject.Controllers
         //                return View(volunteer);
         //            }
 
-        //            volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+        //            volunteer.ImageProfileByteArray = Helper.GetByteArrayFromImage(volunteer.ImageProfile);
         //        }
 
         //        volunteerRepository.AddVolunteer(volunteer);
@@ -281,8 +281,8 @@ namespace VolunteersProject.Controllers
                         return View(volunteer);
                     }
 
-                    volunteer.City = Helper.ValidateCity(volunteer.City);
-                    volunteer.Name = Helper.ValidateName(volunteer.Name);
+                    volunteer.City = Helper.FirstUpperNextLower(volunteer.City);
+                    volunteer.Name = Helper.FormatName(volunteer.Name);
 
                     if (volunteer.ImageProfile != null)
                     {
@@ -292,7 +292,7 @@ namespace VolunteersProject.Controllers
                             return View(volunteer);
                         }
 
-                        volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+                        volunteer.ImageProfileByteArray = Helper.GetByteArrayFromImage(volunteer.ImageProfile);
                     }
 
                     volunteerRepository.UpdateVolunteer(volunteer);
@@ -373,16 +373,7 @@ namespace VolunteersProject.Controllers
             }
 
             return null;
-        }
-
-        private byte[] GetByteArrayFromImage(IFormFile file)
-        {
-            using (var target = new MemoryStream())
-            {
-                file.CopyTo(target);
-                return target.ToArray();
-            }
-        }
+        }        
 
         /// <summary>
         /// Edit personal info page
@@ -415,11 +406,11 @@ namespace VolunteersProject.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get personalInfoEdit.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="currentUser"></param>
-        /// <returns></returns>
+        /// <param name="id">Current user id.</param>
+        /// <param name="currentUser">current user.</param>
+        /// <returns>Return PersonalInfoEdit.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult PersonalInfoEdit(int id, [Bind("Id,Name,Surname,UserName,City,Phone,Email,BirthDate,JoinHubDate,InstagramProfile,FaceBookProfile,ImageProfile,DescriptionContributionToHub")] CurrentUser currentUser)
@@ -467,8 +458,7 @@ namespace VolunteersProject.Controllers
                     return View("Edit_PersonalInfo", currentUser);
                 }
 
-                ToUpdatevolunteer.City = Helper.ValidateCity(ToUpdatevolunteer.City);
-                ToUpdatevolunteer.Name = Helper.ValidateName(ToUpdatevolunteer.Name);
+                ToUpdatevolunteer.City = Helper.FormatName(ToUpdatevolunteer.Name);
 
                 if (ToUpdatevolunteer.ImageProfile != null)
                 {
@@ -478,17 +468,15 @@ namespace VolunteersProject.Controllers
                         return View("Edit_PersonalInfo", currentUser);
                     }
 
-                    ToUpdatevolunteer.ImageProfileByteArray = GetByteArrayFromImage(ToUpdatevolunteer.ImageProfile);
+                    ToUpdatevolunteer.ImageProfileByteArray = Helper.GetByteArrayFromImage(ToUpdatevolunteer.ImageProfile);
                 }
 
                 volunteerRepository.UpdateVolunteer(ToUpdatevolunteer);
                 userRepository.UpdateUser(ToUpdateUser);
 
-                return RedirectToAction(nameof(Index));
-
-                //return RedirectToAction("")
-               
+                return RedirectToAction(nameof(Index));               
             }
+
             return View("Edit_PersonalInfo", currentUser);
         }       
 
