@@ -58,7 +58,7 @@ namespace VolunteersProject.Filters
                 }
             }
 
-            context.Result = new RedirectResult("NotAuthorized");
+            context.Result = new RedirectResult("../NotAuthorized");
 
             return;
         }
