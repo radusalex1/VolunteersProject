@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,14 +21,16 @@ namespace VolunteersProject.Controllers
     //[VolunteersCustomAuthorization]
     public class VolunteersController : GeneralController
     { 
+        /// <summary>
+        /// Interface for volunteer repository
+        /// </summary>
         public IVolunteerRepository volunteerRepository;        
 
         private int pageSize;
-        private int imgWidth;
-        private int imgHeight;
+        private int imageFileLengthLimit;        
 
         /// <summary>
-        /// Contructor
+        /// Contructor.
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="volunteerRepository">Volunteer repository.</param>
@@ -45,8 +46,8 @@ namespace VolunteersProject.Controllers
             this.volunteerRepository = volunteerRepository;
             
             pageSize = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("PageSize").Value);
-            imgWidth = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileWidth").Value);
-            imgHeight = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("ImageProfileHeight").Value);
+
+            imageFileLengthLimit = Convert.ToInt32(configuration.GetSection("AppSettings").GetSection("imageFileLengthLimit").Value);           
         }
 
         /// <summary>
@@ -64,12 +65,10 @@ namespace VolunteersProject.Controllers
             this.Logger.LogInformation("HttpGet VolunteersContr Index()");
 
             ViewData["CurrentSort"] = sortOrder;
-
             ViewData["FullNameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["AgeSortParam"] = sortOrder == "Age" ? "Age_desc" : "Age";
             ViewData["CitySortParam"] = sortOrder == "City" ? "City_desc" : "City";
             ViewData["JoinHubDateParam"] = sortOrder == "JoinHubDate" ? "JoinHubDate_desc" : "JoinHubDate";
-
             ViewData["NameFilter"] = SearchString;
 
 
@@ -84,16 +83,14 @@ namespace VolunteersProject.Controllers
 
             ViewData["CurrentFilter"] = SearchString;
 
-
             var volunteers = volunteerRepository.GetVolunteers();
-
 
             if (!String.IsNullOrEmpty(SearchString))
             {
                 volunteers = volunteers.Where(s => s.Name.Contains(SearchString) || s.Surname.Contains(SearchString));
             }
 
-             volunteers = GetSortedVolunteers(sortOrder, volunteers);
+            volunteers = GetSortedVolunteers(sortOrder, volunteers);
 
             return View(PaginatedList<Volunteer>.Create(volunteers, pageNumber ?? 1, pageSize));
         }
@@ -157,81 +154,85 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
+        /// <summary>
+        /// Create votunteer.
+        /// </summary>
+        /// <returns></returns>
         // GET: Volunteers/Create        
-        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public IActionResult Create()
-        {
-            var volunteer = new Volunteer
-            {
-                BirthDate = DateTime.Today,
-                JoinHubDate = DateTime.Today
-            };
-            return View(volunteer);
-        }
+        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
+        //public IActionResult Create()
+        //{
+        //    var volunteer = new Volunteer
+        //    {
+        //        BirthDate = DateTime.Today,
+        //        JoinHubDate = DateTime.Today
+        //    };
+        //    return View(volunteer);
+        //}
 
         // POST: Volunteers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.       
-        [HttpPost]
-        [ValidateAntiForgeryToken]       
-        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
-        {
-            if (ModelState.IsValid)
-            {
-                if (!string.IsNullOrEmpty(volunteer.Phone) && Helper.PhoneNumberIsValid(volunteer.Phone) == false)
-                {
-                    ViewBag.Alert = "Incorrect phone number";
-                    return View(volunteer);
-                }
-                if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && Helper.InstagramIsValid(volunteer.InstagramProfile) == false)
-                {
-                    ViewBag.Alert = "Incorrect Instragram Profile";
-                    return View(volunteer);
-                }
-                if (!string.IsNullOrEmpty(volunteer.Email) && Helper.EmailIsValid(volunteer.Email) == false)
-                {
-                    ViewBag.Alert = "Incorrect Email Adress";
-                    return View(volunteer);
-                }
-                if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
-                {
-                    ViewBag.Alert = "Existing Volunteer";
-                    return View(volunteer);
-                }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]       
+        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
+        //public IActionResult Create([Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (!string.IsNullOrEmpty(volunteer.Phone) && Helper.PhoneNumberIsValid(volunteer.Phone) == false)
+        //        {
+        //            ViewBag.Alert = "Incorrect phone number";
+        //            return View(volunteer);
+        //        }
+        //        if (!string.IsNullOrEmpty(volunteer.InstagramProfile) && Helper.InstagramIsValid(volunteer.InstagramProfile) == false)
+        //        {
+        //            ViewBag.Alert = "Incorrect Instragram Profile";
+        //            return View(volunteer);
+        //        }
+        //        if (!string.IsNullOrEmpty(volunteer.Email) && Helper.EmailIsValid(volunteer.Email) == false)
+        //        {
+        //            ViewBag.Alert = "Incorrect Email Adress";
+        //            return View(volunteer);
+        //        }
+        //        if (volunteerRepository.CheckVolunteerExistByPhoneOrEmail(volunteer))
+        //        {
+        //            ViewBag.Alert = "Existing Volunteer";
+        //            return View(volunteer);
+        //        }
 
-                volunteer.City = Helper.ValidateCity(volunteer.City);
-                volunteer.Name = Helper.ValidateName(volunteer.Name);
+        //        volunteer.City = Helper.ValidateCity(volunteer.City);
+        //        volunteer.Name = Helper.ValidateName(volunteer.Name);
 
-                if (volunteer.ImageProfile != null)
-                {
-                    if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imgWidth, imgHeight))
-                    {
-                        ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
-                        return View(volunteer);
-                    }
+        //        if (volunteer.ImageProfile != null)
+        //        {
+        //            if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imageFileLengthLimit))
+        //            {
+        //                ViewBag.Alert = $"Profile image to big. Please use an image file having no more than {imageFileLengthLimit} bytes.";
+        //                return View(volunteer);
+        //            }
 
-                    volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
-                }
+        //            volunteer.ImageProfileByteArray = GetByteArrayFromImage(volunteer.ImageProfile);
+        //        }
 
-                volunteerRepository.AddVolunteer(volunteer);
+        //        volunteerRepository.AddVolunteer(volunteer);
 
-                ViewBag.Alert = "Volunteer added successfully";
+        //        ViewBag.Alert = "Volunteer added successfully";
 
-                return RedirectToAction(nameof(Index));
-            }
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
-            return View(volunteer);
-        }
+        //    return View(volunteer);
+        //}
 
+        /// <summary>
+        /// Edit volunteer.
+        /// </summary>
+        /// <param name="id">Volunteer id.</param>
+        /// <returns></returns>
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         // GET: Volunteers/Edit/5
         public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -245,8 +246,8 @@ namespace VolunteersProject.Controllers
         // POST: Volunteers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [System.Web.Http.Authorize(Roles = Common.Role.Admin)]
-        ////[VolunteersCustomAuthorization(Permissions = EnumRole.Admin)]
+        //[System.Web.Http.Authorize(Roles = Common.Role.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,Name,Surname,City,BirthDate,JoinHubDate,Email,Phone,InstagramProfile,FaceBookProfile,DescriptionContributionToHub,ImageProfile")] Volunteer volunteer)
@@ -285,9 +286,9 @@ namespace VolunteersProject.Controllers
 
                     if (volunteer.ImageProfile != null)
                     {
-                        if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imgWidth, imgHeight))
+                        if (Helper.ValidateImageProfile(volunteer.ImageProfile.Length, imageFileLengthLimit))
                         {
-                            ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                            ViewBag.Alert = $"Profile image to big. Please use an image having no more than {imageFileLengthLimit} pixels.";
                             return View(volunteer);
                         }
 
@@ -332,6 +333,11 @@ namespace VolunteersProject.Controllers
             return View(volunteer);
         }
 
+        /// <summary>
+        /// Delete volunteer.
+        /// </summary>
+        /// <param name="id">Volunteer id.</param>
+        /// <returns></returns>
         // POST: Volunteers/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         [HttpPost, ActionName("Delete")]
@@ -422,6 +428,7 @@ namespace VolunteersProject.Controllers
             {
                 return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 var ToUpdatevolunteer = volunteerRepository.GetVolunteerById(id);
@@ -465,9 +472,9 @@ namespace VolunteersProject.Controllers
 
                 if (ToUpdatevolunteer.ImageProfile != null)
                 {
-                    if (Helper.ValidateImageProfile(ToUpdatevolunteer.ImageProfile.Length, imgWidth, imgHeight))
+                    if (Helper.ValidateImageProfile(ToUpdatevolunteer.ImageProfile.Length, imageFileLengthLimit))
                     {
-                        ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imgWidth}*{imgHeight} pixels.";
+                        ViewBag.Image_Error = $"Profile image to big. Please use an image having no more than {imageFileLengthLimit} bytes.";
                         return View("Edit_PersonalInfo", currentUser);
                     }
 

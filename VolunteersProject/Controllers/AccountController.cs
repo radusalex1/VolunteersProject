@@ -18,15 +18,12 @@ using VolunteersProject.Util;
 namespace VolunteersProject.Controllers
 {
     public class AccountController : GeneralController
-    {
-        //private readonly IUserRepository _userRepository;
+    {        
         private readonly ITokenService _tokenService;
         private readonly IVolunteerRepository _volunteerRepository;
         private IEmailService _emailService;
-
         private string generatedToken = null;
         private string loggedUser;
-
 
         /// <summary>
         /// Contructor
@@ -35,8 +32,8 @@ namespace VolunteersProject.Controllers
         /// <param name="config">Inject config service.</param>
         /// <param name="tokenService">Inject jwt token service.</param>
         /// <param name="userRepository">Inject user repository service.</param>
-        /// <param name="logger"></param>
-        /// <param name="emailService"></param>
+        /// <param name="logger">Logger.</param>
+        /// <param name="emailService">Email service.</param>
         public AccountController(IVolunteerRepository volunteerRepository,
             IConfiguration config,
             ITokenService tokenService,
@@ -46,8 +43,7 @@ namespace VolunteersProject.Controllers
             base(logger, config, userRepository)
         {
             _volunteerRepository = volunteerRepository;
-            _tokenService = tokenService;
-            //_userRepository = userRepository;
+            _tokenService = tokenService;            
             _emailService = emailService;
         }
 
@@ -104,15 +100,15 @@ namespace VolunteersProject.Controllers
 
                     currentUserId = validUser.Id;
 
-                    var CurrentVolunteer = _volunteerRepository.GetVolunteerByUserId(currentUserId);
+                    var currentVolunteer = _volunteerRepository.GetVolunteerByUserId(currentUserId);
                     //aici este o problema
-                    if (CurrentVolunteer == null)
+                    if (currentVolunteer == null)
                     {
                         currentVolunteerId = -1;
                     }
                     else
                     { 
-                        currentVolunteerId = CurrentVolunteer.Id;
+                        currentVolunteerId = currentVolunteer.Id;
                     }
 
                     HttpContext.Session.SetInt32("currentVolunteerId", currentVolunteerId);
@@ -155,6 +151,7 @@ namespace VolunteersProject.Controllers
             ViewBag.Message = BuildMessage(token, 50);
 
             return RedirectToAction("Index", "Home");
+            //return RedirectToAction("Index", "Volunteers");
         }
 
         /// <summary>
