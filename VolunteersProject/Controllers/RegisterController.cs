@@ -34,8 +34,8 @@ namespace VolunteersProject.Controllers
         {
             var newUser = new RegisterFormModel
             {
-                BirthDate = System.DateTime.Today,
-                JoinHubDate = System.DateTime.Today
+                BirthDate = DateTime.Today,
+                JoinHubDate = DateTime.Today
             };
 
             return View(newUser);
@@ -101,7 +101,6 @@ namespace VolunteersProject.Controllers
                     volunteerRepository.AddVolunteer(volunteer);
 
                     return RedirectToAction("Login", "Account");
-
                 }
                 return View(newUser);
             }

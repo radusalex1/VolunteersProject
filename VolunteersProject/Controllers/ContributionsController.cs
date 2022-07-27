@@ -82,7 +82,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Contributions/Details/5        
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
-        public async IActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
