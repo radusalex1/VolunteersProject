@@ -1,11 +1,13 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace VolunteersProject.Util
 {
     /// <summary>
     /// Helper class for extension methods.
     /// </summary>
-    public static class Helper
+    internal static class Helper
     {
         /// <summary>
         /// Make upper the first character, make lower the rest.
@@ -28,7 +30,7 @@ namespace VolunteersProject.Util
         /// Validates Instagram
         /// </summary>
         /// <param name="instagramProfile"></param>
-        /// <returns></returns>
+        /// <returns>Return true if volunteer instagram is valid, otherwise false.</returns>
         public static bool InstagramIsValid(string instagramProfile)
         {
             //to do: move this to appConfig
@@ -49,7 +51,7 @@ namespace VolunteersProject.Util
         /// Returns true is email is valid, false otherwise
         /// </summary>
         /// <param name="email"></param>
-        /// <returns></returns>
+        /// <returns>Return true if volunteer email is valid, otherwise false.</returns>
         public static bool EmailIsValid(string email)
         {
             if (email.Trim().EndsWith("."))
@@ -71,7 +73,7 @@ namespace VolunteersProject.Util
         /// Validates Phone number
         /// </summary>
         /// <param name="phoneNumber"></param>
-        /// <returns></returns>
+        /// <returns>Return true if volunteer phone is valid, otherwise false.</returns>
         public static bool PhoneNumberIsValid(string phoneNumber)
         {
             //to do: move this to appConfig
@@ -91,36 +93,35 @@ namespace VolunteersProject.Util
         /// Validates Image profile
         /// </summary>
         /// <param name="imageProfileLength">Image profile length.</param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        public static bool ValidateImageProfile(long imageProfileLength, int width, int height)
+        /// <param name="imageFileLengthLimit">Image file length.</param>        
+        /// <returns>Return true if volunteer image profile is valid, otherwise false.</returns>
+        public static bool ValidateImageProfile(long imageProfileLength, int imageFileLengthLimit)
         {
-            return (imageProfileLength > width * height) ? true : false;
-        }
-
-        /// <summary>
-        /// Validates city(to capitals)
-        /// </summary>
-        /// <param name="city"></param>
-        /// <returns></returns>
-        public static string ValidateCity(string city)
-        {
-            if (string.IsNullOrEmpty(city))
-            {
-                return string.Empty;
-            }
-            return char.ToUpper(city[0]) + city.Substring(1).ToLower();
-        }
+            return (imageProfileLength > imageFileLengthLimit) ? true : false;
+        }       
 
         /// <summary>
         /// Validates Name(all capitals)
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static string ValidateName(string name)
+        public static string FormatName(string name)
         {
             return name.ToUpper();            
+        }
+
+        /// <summary>
+        /// get byte array from file
+        /// </summary>
+        /// <param name="file">File.</param>
+        /// <returns>Return byte array.</returns>
+        public static byte[] GetByteArrayFromImage(IFormFile file)
+        {
+            using (var target = new MemoryStream())
+            {
+                file.CopyTo(target);
+                return target.ToArray();
+            }
         }
     }
 }
