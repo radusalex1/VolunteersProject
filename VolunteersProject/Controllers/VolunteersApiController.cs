@@ -28,7 +28,7 @@ namespace VolunteersProject.Controllers
 
         // GET: api/VolunteersApi
         [HttpGet("getVolunteers")]
-        public IActionResult<IEnumerable<Volunteer>> GetVolunteers()
+        public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
             var volunteers = this.volunteerRepository.GetVolunteers();
 
@@ -37,7 +37,7 @@ namespace VolunteersProject.Controllers
 
         //GET: api/VolunteersApi/5
         [HttpGet("getVolunteer/{id}")]
-        public IActionResult<Volunteer> GetVolunteer(int id)
+        public ActionResult<Volunteer> GetVolunteer(int id)
         {
             var volunteer = this.volunteerRepository.GetVolunteerById(id);
 
