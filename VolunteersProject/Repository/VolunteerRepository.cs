@@ -13,6 +13,8 @@ namespace VolunteersProject.Repository
     {
         private readonly VolunteersContext _context;
 
+        private const int volunteerIdCreation = 0;
+
         /// <summary>
         /// Contructor
         /// </summary>
@@ -30,9 +32,9 @@ namespace VolunteersProject.Repository
         public List<Volunteer> GetAvailableVolunteers(int contributionId)
         {
             var volunteers = _context.Volunteers
+            //.AsNoTracking()
              .Include(e => e.Enrollments)
              .ThenInclude(c => c.contribution);
-            
 
             var volunteersAssigned = volunteers.Where(v => v.Enrollments.Any(c => c.contribution.Id == contributionId));
 
@@ -40,7 +42,7 @@ namespace VolunteersProject.Repository
 
             var volunteersWithNoAnyAssignments = volunteers.Where(v => v.Enrollments.Count == 0);
 
-            var test =  volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
+            var test = volunteersAvailable.Union(volunteersWithNoAnyAssignments).ToList();
 
             return test;
         }
@@ -57,8 +59,9 @@ namespace VolunteersProject.Repository
                 return null;
             }
 
-            return _context.Volunteers
-                .Include(u=>u.User)
+            return _context
+                .Volunteers
+                .Include(u => u.User)
                 .FirstOrDefault(i => i.Id.Equals(id));
         }
 
@@ -75,27 +78,26 @@ namespace VolunteersProject.Repository
                 return v;
             }
 
-            var result = _context.Enrollments
-                   .Include(c => c.contribution)
-                       .Where(r => r.VolunteerID == id).ToList();
-            
-             if(result==null)
-             {
-                  var result1 = _context.Volunteers
-                        .FirstOrDefault(v => v.Id == id);
-            
-                    result1.Enrollments = new List<Enrollment>();
+            var result = _context
+                .Enrollments
+                .Include(c => c.contribution)
+                .Where(r => r.VolunteerID == id).ToList();
+
+            if (result == null)
+            {
+                var result1 = _context.Volunteers
+                      .FirstOrDefault(v => v.Id == id);
+
+                result1.Enrollments = new List<Enrollment>();
 
                 return result1;
-
-             }
+            }
 
             Volunteer vResult = new Volunteer();
             vResult = GetVolunteerById(id);
             vResult.Enrollments = result;
 
             return vResult;
-
         }
 
         /// <summary>
@@ -104,7 +106,10 @@ namespace VolunteersProject.Repository
         /// <returns>List of all volunteers.</returns>
         public IQueryable<Volunteer> GetVolunteers()
         {
-            return _context.Volunteers;
+            return _context
+                .Volunteers
+               //.AsNoTracking()
+               ;
         }
 
         /// <summary>
@@ -134,7 +139,10 @@ namespace VolunteersProject.Repository
         /// <returns>True if exist, otherwise false.</returns>
         public bool VolunteerExists(int id)
         {
-            return _context.Volunteers.Any(e => e.Id == id);
+            return _context
+                .Volunteers
+               //.AsNoTracking()
+                .Any(e => e.Id == id);
         }
 
         /// <summary>
@@ -154,134 +162,130 @@ namespace VolunteersProject.Repository
         /// <returns>True if exist, otherwise false.</returns>
         public bool CheckVolunteerExistByPhoneOrEmail(Volunteer volunteer)
         {
-            if (volunteer.Email != null && volunteer.Phone != null)
+            Volunteer result;
+
+            if (volunteer.Id != volunteerIdCreation)
             {
-               var result = _context.Volunteers.AsNoTracking().FirstOrDefault(
-                    v => v.Phone == volunteer.Phone || 
-                    v.Email == volunteer.Email);
-
-                var email_result = _context.Volunteers
-                    .FirstOrDefault(v => v.Email == volunteer.Email);
-
-                var phone_result = _context.Volunteers
-                    .FirstOrDefault(v => v.Phone == volunteer.Phone);
-
-                if (result == null)
-                {
-                    return false;
-                }
-
-                if(email_result==null && phone_result==null)
-                {
-                    ///nu mai exista nimeni cu mailul si phone-ul introduse
-                    return false;
-                }
-                else
-                {
-                    if(email_result.Id==volunteer.Id && phone_result.Id == volunteer.Id)
-                    {
-                        return false;
-                    }
-                }
-               
-                return true;
- 
+                //update
+                result = _context
+                    .Volunteers
+                   //.AsNoTracking()
+                    .FirstOrDefault(
+                        v => (v.Phone == volunteer.Phone ||
+                        v.Email == volunteer.Email)
+                        && v.Id != volunteer.Id);
             }
+            else
+            {
+                //create
+                result = _context
+                    .Volunteers
+                   //.AsNoTracking()
+                    .FirstOrDefault(
+                        v => (v.Phone == volunteer.Phone ||
+                        v.Email == volunteer.Email)
+                        && v.Id != volunteerIdCreation);
+            }           
+
+            if (result != null)
+            {
+                return true;
+            }           
 
             return false;
         }
 
         /// <summary>
-        /// Return points of volunteer
+        /// Return points of volunteer.
         /// </summary>
-        /// <param name="volunteer"></param>
-        /// <returns></returns>
+        /// <param name="volunteer">Volunteer.</param>
+        /// <returns>Nr. of points of a volunteer.</returns>
         public int GetVolunteerTotalPoints(Volunteer volunteer)
         {
-
-            if(volunteer==null)
+            if (volunteer == null)
             {
                 return 0;
             }
-            
+
             var result = _context.Enrollments
+               //.AsNoTracking()
                 .Include(e => e.volunteer)
                 .Include(c => c.contribution)
-                .Where(e => e.volunteer.Id == volunteer.Id && e.VolunteerStatus==2).ToList();
+                .Where(e => e.volunteer.Id == volunteer.Id && e.VolunteerStatus == 2).ToList();
 
             return result.Sum(item => item.contribution.Credits);
-          
-            
         }
 
         /// <summary>
         /// Return the volunteer with the useriD given as parameter
         /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        public Volunteer GetVolunteerByUserId(int Id)
+        /// <param name="userId">User id.</param>
+        /// <returns>Return volunteer.</returns>
+        public Volunteer GetVolunteerByUserId(int userId)
         {
-            if(Id==null)
-            {
-                Volunteer v = new Volunteer();
-                v.Id = 0;
-                return v;
-            }
-            return _context.Volunteers
-                .FirstOrDefault(v => v.User.Id == Id);
-
+            return _context
+                .Volunteers
+               //.AsNoTracking()
+                .FirstOrDefault(v => v.User.Id == userId);
         }
 
         /// <summary>
-        /// return list of contributions of volunteer given as parameter to be displayed on HomePage;
+        /// Get list of contributions of volunteer given as parameter to be displayed on HomePage.
         /// </summary>
-        /// <param name="volunteer"></param>
-        /// <returns></returns>
+        /// <param name="volunteer">Volunteer</param>
+        /// <returns>List fo contributions.</returns>
         public List<Contribution> GetContributionsByVolunteer(Volunteer volunteer)
         {
-            List<Contribution> result = new List<Contribution>();
+            var result = new List<Contribution>();
 
-            if(volunteer==null)
+            if (volunteer == null)
             {
                 return result;
             }
 
             var tempEnrollemts = _context.Enrollments
+                .AsNoTracking()
                 .Include(v => v.volunteer)
                 .Include(c => c.contribution)
-                .Where(v => v.volunteer.Id == volunteer.Id && v.VolunteerStatus==2).AsNoTracking().ToList();
+                .Where(v => v.volunteer.Id == volunteer.Id && v.VolunteerStatus == 2)
+                .ToList();
 
-            foreach(Enrollment e in tempEnrollemts)
+            foreach (Enrollment e in tempEnrollemts)
             {
-               result.Add(e.contribution);
+                result.Add(e.contribution);
             }
 
             return result;
-           
         }
 
-        public bool EmailExists(string Email)
+        /// <summary>
+        /// Check exist email.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <returns>Return true if exist, otherwise false.</returns>
+        public bool EmailExists(string email)
         {
-            
-            var result = _context.Volunteers
-                   .FirstOrDefault(v => v.Email == Email);
+            var result = _context
+                .Volunteers
+               //.AsNoTracking()
+                .FirstOrDefault(v => v.Email == email);
 
-                if(result!=null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            
+            return result != null;
         }
 
-        public int ReturnUserIdBasedOnEmail(string Email)
+        /// <summary>
+        /// Get user id by email.
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns>Return user id.</returns>
+        public int ReturnUserIdBasedOnEmail(string email)
         {
-            var volunteer = _context.Volunteers
-                .Include(u=>u.User)
-                .FirstOrDefault(v => v.Email == Email);
+            var volunteer = _context
+                .Volunteers
+               //.AsNoTracking()
+                .Include(u => u.User)
+                .FirstOrDefault(v => v.Email == email);
+
             return volunteer.User.Id;
         }
     }
