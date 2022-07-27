@@ -81,7 +81,7 @@ namespace VolunteersProject.Controllers
         [AllowAnonymous]
         [Route("Login")]
         [HttpPost]
-        public IActionResult Login(LoginModel userModel)
+        public ActionResult Login(LoginModel userModel)
         {
             this.Logger.LogInformation("httpPost Login()");
 
@@ -137,7 +137,7 @@ namespace VolunteersProject.Controllers
         [Authorize]
         [Route("Mainwindow")]
         [HttpGet]
-        public IActionResult MainWindow()
+        public ActionResult MainWindow()
         {
             string token = ApplicationValues.JwtToken;
 
@@ -202,7 +202,7 @@ namespace VolunteersProject.Controllers
                 action = "Logout";
             }
 
-            return Content($"<a class=\"nav-link text-dark\" asp-area=\"\" asp-controller=\"Account\" asp-action=\"{ action}\">Login</a>");
+            return Content($"<a class=\"nav-link text-dark\" asp-area=\"\" asp-controller=\"Account\" asp-action=\"{action}\">Login</a>");
         }
 
         /// <summary>

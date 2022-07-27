@@ -1,19 +1,18 @@
 ﻿using MailServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using VolunteersProject.Data;
-using VolunteersProject.Models;
-using VolunteersProject.Repository;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authorization;
 using VolunteersProject.Common;
-using Microsoft.Extensions.Logging;
+using VolunteersProject.Data;
 using VolunteersProject.DTO;
 using VolunteersProject.Filters;
+using VolunteersProject.Models;
+using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
@@ -45,7 +44,7 @@ namespace VolunteersProject.Controllers
 
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         // GET: Contributions
-        public async Task<IActionResult> Index(string sortOrder)
+        public ActionResult Index(string sortOrder)
         {
             this.Logger.LogInformation("HttpGet ContributionsController Index()");
 
@@ -83,7 +82,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Contributions/Details/5        
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
-        public async Task<IActionResult> Details(int id)
+        public async IActionResult Details(int id)
         {
             var contribution = contributionRepository.GetContributionById(id);
             if (contribution == null)
@@ -114,7 +113,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Create([Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        public ActionResult Create([Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
@@ -151,7 +150,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Contributions/Edit/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
             if (id == null)
             {
@@ -173,7 +172,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
+        public IActionResult Edit(int id, [Bind("Id,Name,Credits,StartDate,FinishDate,Description,VolunteerDeadlineConfirmation")] Contribution contribution)
         {
             if (ModelState.IsValid)
             {
@@ -222,7 +221,7 @@ namespace VolunteersProject.Controllers
 
         // GET: Contributions/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (id == null)
             {
@@ -243,7 +242,7 @@ namespace VolunteersProject.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
             var contribution = contributionRepository.GetContributionById(id);
             contributionRepository.DeleteContribution(contribution);
@@ -251,7 +250,7 @@ namespace VolunteersProject.Controllers
         }
 
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Assign(int id)
+        public IActionResult Assign(int id)
         {
             var selectedVolunteers = GetAvailableVolunteersDTO(id);
 
@@ -433,6 +432,6 @@ namespace VolunteersProject.Controllers
             }
 
             return volunteersDTO;
-        }
+        }        
     }
 }

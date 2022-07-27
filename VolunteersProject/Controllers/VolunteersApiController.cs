@@ -28,20 +28,17 @@ namespace VolunteersProject.Controllers
 
         // GET: api/VolunteersApi
         [HttpGet("getVolunteers")]
-        public ActionResult<IEnumerable<Volunteer>> GetVolunteers()
+        public IActionResult<IEnumerable<Volunteer>> GetVolunteers()
         {
             var volunteers = this.volunteerRepository.GetVolunteers();
 
             return Ok(volunteers);
         }
 
-
         //GET: api/VolunteersApi/5
         [HttpGet("getVolunteer/{id}")]
-        public ActionResult<Volunteer> GetVolunteer(int id)
+        public IActionResult<Volunteer> GetVolunteer(int id)
         {
-            //var volunteer = await _context.Volunteers.FindAsync(id);
-
             var volunteer = this.volunteerRepository.GetVolunteerById(id);
 
             if (volunteer == null)
@@ -55,7 +52,7 @@ namespace VolunteersProject.Controllers
         //PUT: api/VolunteersApi/5
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public ActionResult PutVolunteer(Volunteer volunteer)
+        public IActionResult PutVolunteer(Volunteer volunteer)
         {
             //context.Entry(volunteer).State = EntityState.Modified;
 
@@ -83,7 +80,7 @@ namespace VolunteersProject.Controllers
         //[HttpPost("InsertEmployeeDetails")]
         [HttpPost]
         [Route("insertVolunteer")]
-        public ActionResult PostVolunteer(Volunteer volunteer)
+        public IActionResult PostVolunteer(Volunteer volunteer)
         {
             volunteerRepository.AddVolunteer(volunteer);
 
@@ -92,7 +89,7 @@ namespace VolunteersProject.Controllers
 
         // DELETE: api/VolunteersApi/5
         [HttpDelete("{id}")]
-        public ActionResult DeleteVolunteer(int id)
+        public IActionResult DeleteVolunteer(int id)
         {
             var volunteer = volunteerRepository.GetVolunteerById(id);
 
@@ -116,7 +113,6 @@ namespace VolunteersProject.Controllers
             var result = reportManager.ProcessData<Volunteer>(volunteers.ToList(), "VolunteerReport", "VolunteerReport");
 
             //return Ok(volunteers);
-
             
             return File(result,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

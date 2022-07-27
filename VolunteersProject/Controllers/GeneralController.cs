@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
@@ -14,24 +13,40 @@ namespace VolunteersProject.Controllers
     /// </summary>
     public class GeneralController : Controller
     {
+        /// <summary>
+        /// Logger.
+        /// </summary>
         public readonly ILogger<GeneralController> Logger;
+
+        /// <summary>
+        /// configuration
+        /// </summary>
         public IConfiguration configuration;
 
+        /// <summary>
+        /// User repository.
+        /// </summary>
         public readonly IUserRepository userRepository;
 
+        /// <summary>
+        /// Current user id.
+        /// </summary>
         protected static int currentUserId;
-        
+
+        /// <summary>
+        /// Current volunteer id.
+        /// </summary>
+        protected static int currentVolunteerId;
+
         //http.context
         //claims principle
-
-        //protected static CurrentUser currentUser;
-        protected static int currentVolunteerId;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="configuration"></param>
+        /// <param name="logger">Logger.</param>
+        /// <param name="configuration">Configuration.</param>
+        /// <param name="userRepository">User repository.</param>
         public GeneralController(ILogger<GeneralController> logger, IConfiguration configuration, IUserRepository userRepository)
         {
             this.Logger = logger;
@@ -56,9 +71,9 @@ namespace VolunteersProject.Controllers
         /// <summary>
         /// Method to sort events by criterias.
         /// </summary>
-        /// <param name="sortOrder"></param>
-        /// <param name="contributions"></param>
-        /// <returns></returns>
+        /// <param name="sortOrder">Sort criteria</param>
+        /// <param name="contributions">List of contributions.</param>
+        /// <returns>List of sorted contributions.</returns>
         protected static List<Contribution> SortContributions(string sortOrder, List<Contribution> contributions)
         {
             switch (sortOrder)

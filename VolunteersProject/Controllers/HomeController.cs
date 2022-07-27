@@ -46,6 +46,5 @@ namespace VolunteersProject.Controllers
 
             return View("HomeView", Contributions);
         }
-
     }
 }

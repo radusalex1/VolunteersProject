@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using VolunteersProject.Common;
 using VolunteersProject.Data;
 using VolunteersProject.Filters;
@@ -15,7 +13,7 @@ using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
-{    
+{
     public class EnrollmentsController : GeneralController
     {
         private readonly VolunteersContext _context;
@@ -90,7 +88,7 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         // GET: Enrollments/Details/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
             if (enrollment == null)
@@ -118,7 +116,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
+        public ActionResult Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
             {
@@ -134,9 +132,8 @@ namespace VolunteersProject.Controllers
 
         // GET: Enrollments/Edit/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
 
             if (enrollment == null)
@@ -158,7 +155,7 @@ namespace VolunteersProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
+        public ActionResult Edit(int id, [Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentID)
             {
@@ -184,13 +181,14 @@ namespace VolunteersProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
             return View(enrollment);
         }
 
         // GET: Enrollments/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (id == null)
             {
@@ -210,7 +208,7 @@ namespace VolunteersProject.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
             enrollmentRepository.DeleteEnrollment(enrollment);
