@@ -327,7 +327,7 @@ namespace VolunteersProject.Controllers
             }
             catch(Exception ex)
             {
-                var errMsg = $"An error occurs on assign volunteers to contribution id {contributionId} by email.{ex.Message}";
+                var errMsg = $"An error occurs on assign volunteers to contribution id='{contributionId}' by email. {ex.Message}";
 
                 Logger.LogError(errMsg);
 
