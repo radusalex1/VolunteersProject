@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VolunteersProject.Models
 {
     /// <summary>
-    /// 
+    /// Curent user model.
     /// </summary>
     public class CurrentUser
     {
@@ -85,7 +85,7 @@ namespace VolunteersProject.Models
         /// Gets or sets the image profile.
         /// </summary>
         [NotMapped]
-        public IFormFile ImageProfile { get; set; }
+        public IFormFile ImageProfile { get; set; }        
 
         /// <summary>
         /// Gets or set the description contribution to hub.

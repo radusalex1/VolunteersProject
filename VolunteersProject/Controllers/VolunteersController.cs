@@ -361,7 +361,7 @@ namespace VolunteersProject.Controllers
         /// </summary>
         /// <param name="volunteerId">Volunteer id.</param>
         /// <returns>Volunteer image profile as a file.</returns>
-        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
+        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         [HttpGet]
         public IActionResult SetVolunteerImageProfile(int volunteerId)
         {
@@ -387,6 +387,7 @@ namespace VolunteersProject.Controllers
 
             var currentUser = new CurrentUser()
             {
+                Id = currentVolunteer.Id,
                 Name = currentVolunteer.Name,
                 Surname = currentVolunteer.Surname,
                 UserName = currentVolunteer.User.UserName,
@@ -397,9 +398,8 @@ namespace VolunteersProject.Controllers
                 JoinHubDate = currentVolunteer.JoinHubDate,
                 InstagramProfile = currentVolunteer.InstagramProfile,
                 FaceBookProfile = currentVolunteer.FaceBookProfile,
-                DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub,
-                ImageProfile = currentVolunteer.ImageProfile
-            };
+                DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub                        
+        };
 
             return View("Edit_PersonalInfo", currentUser);
           
