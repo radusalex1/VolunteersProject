@@ -61,11 +61,9 @@ namespace VolunteersProject.Controllers
         /// <returns></returns>
         public IActionResult NotAuthorized()
         {
-            var errorViewModel = new ErrorViewModel();
-
-            errorViewModel.ErrorMessage = "You are not authorized to view this page. Click back to return to previous page.";
-
-            return View("NotAuthorized", errorViewModel);
+            var errorViewModel = new ErrorViewModel(0, false, "You are not authorized to view this page. Click back to return to previous page.");
+            
+            return View("Error", errorViewModel);
         }
 
         /// <summary>
