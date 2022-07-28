@@ -401,8 +401,7 @@ namespace VolunteersProject.Controllers
                 DescriptionContributionToHub = currentVolunteer.DescriptionContributionToHub                        
         };
 
-            return View("Edit_PersonalInfo", currentUser);
-          
+            return View("Edit_PersonalInfo", currentUser);          
         }
 
         /// <summary>
