@@ -61,7 +61,6 @@ namespace VolunteersProject.Controllers
 
                 if (contributions == null)
                 {
-
                     return RedirectToAction("Error", "Account", new { errorMessage = "Contribution is null." });
                 }
 
@@ -152,17 +151,13 @@ namespace VolunteersProject.Controllers
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var contribution = contributionRepository.GetContributionById(id);
 
             if (contribution == null)
             {
                 return NotFound();
             }
+
             return View(contribution);
         }
 
@@ -222,12 +217,7 @@ namespace VolunteersProject.Controllers
         // GET: Contributions/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Delete(int id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+        {          
             var contribution = contributionRepository.GetContributionById(id);
 
             if (contribution == null)
@@ -266,8 +256,21 @@ namespace VolunteersProject.Controllers
 
             var sendInvitationEmailList = GetSelectedVolunteersForSendEmail(form, selectedVolunteers.VolunteersDTO);
 
-            UpdateToPending(contributionId, sendInvitationEmailList);
-            SendEmail(contributionId, sendInvitationEmailList);
+            try
+            {
+                SendEmail(contributionId, sendInvitationEmailList);
+                UpdateToPending(contributionId, sendInvitationEmailList);
+            }
+            catch(Exception ex)
+            {
+                var errMsg = $"An error occurs on assign volunteers to contribution id {contributionId} by email.{ex.Message}";
+
+                Logger.LogError(errMsg);
+
+                var errorViewModel = new ErrorViewModel(0, false, errMsg);
+                                
+                return View("Error", errorViewModel);
+            }            
 
             var directAssignmentVolunteerList = GetSelectedVolunteersForDirectAssignment(form, selectedVolunteers.VolunteersDTO);
             SaveDirectAssignedVoluteersToContribution(contributionId, directAssignmentVolunteerList);
