@@ -15,12 +15,10 @@ using VolunteersProject.Repository;
 namespace VolunteersProject.Controllers
 {
     /// <summary>
-    /// Enreollments class.
+    /// Enrollments class.
     /// </summary>
     public class EnrollmentsController : GeneralController
     {
-        private readonly VolunteersContext _context;
-
         private IEnrollmentRepository enrollmentRepository;
         private IVolunteerRepository volunteerRepository;
         private IContributionRepository contributionRepository;
@@ -108,45 +106,10 @@ namespace VolunteersProject.Controllers
         }
 
         /// <summary>
-        /// Create enrollment.
+        /// Edit enrollment.
         /// </summary>
-        /// <returns></returns>
-        // GET: Enrollments/Create
-        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        //public IActionResult Create()
-        //{
-        //    ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
-        //    ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName");
-        //    ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name");
-
-        //    return View();
-        //}
-
-        /// <summary>
-        /// Create enrollment.
-        /// </summary>
-        /// <param name="enrollment">Enrollment.</param>
-        /// <returns></returns>
-        // POST: Enrollments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        //public ActionResult Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        enrollmentRepository.Save(enrollment);
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
-
-        //    return View(enrollment);
-        //}
-
+        /// <param name="id">Enrollment id.</param>
+        /// <returns>Edit enrollment.</returns>
         // GET: Enrollments/Edit/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Edit(int id)
@@ -166,6 +129,12 @@ namespace VolunteersProject.Controllers
             return View(enrollment);
         }
 
+        /// <summary>
+        /// Edit enrollment.
+        /// </summary>
+        /// <param name="id">Enrollment id.</param>
+        /// <param name="enrollment">Enrollment.</param>
+        /// <returns>Edit enrollment.</returns>
         // POST: Enrollments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -203,15 +172,15 @@ namespace VolunteersProject.Controllers
             return View(enrollment);
         }
 
+        /// <summary>
+        /// Delete enrollment.
+        /// </summary>
+        /// <param name="id">Enrollment id.</param>
+        /// <returns>Delete enrollment.</returns>
         // GET: Enrollments/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var enrollment = enrollmentRepository.GetEnrollmentById(id);
             if (enrollment == null)
             {
@@ -221,6 +190,11 @@ namespace VolunteersProject.Controllers
             return View(enrollment);
         }
 
+        /// <summary>
+        /// Delete enrollment.
+        /// </summary>
+        /// <param name="id">Enrollment id.</param>
+        /// <returns>Delete enrollment.</returns>
         // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -234,6 +208,12 @@ namespace VolunteersProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Volunteer email answer.
+        /// </summary>
+        /// <param name="contributionId">Contribution id.</param>
+        /// <param name="volunteerId">Volunteer id.</param>
+        /// <returns>Volunteer email answer.</returns>
         // GET: Enrollments/VolunteerEmailAnswer/5/1
         public ActionResult VolunteerEmailAnswer(int contributionId, int volunteerId)
         {
@@ -258,6 +238,13 @@ namespace VolunteersProject.Controllers
             return View(volunteerEmailAnswer);
         }
 
+        /// <summary>
+        /// Save volunteer email answer having accept or decline status.
+        /// </summary>
+        /// <param name="form">Form collention.</param>
+        /// <param name="contributionId">Contribution id.</param>
+        /// <param name="volunteerId">Volunteer id.</param>
+        /// <returns>Save volunteer email answer.</returns>
         [HttpPost]
         public ActionResult SaveVolunteerEmailAnswer(IFormCollection form, int contributionId, int volunteerId)
         {

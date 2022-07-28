@@ -15,8 +15,10 @@ using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
-{
-    [Authorize]
+{ 
+    /// <summary>
+    /// Contribution class.
+    /// </summary>
     public class ContributionsController : GeneralController
     {
         private IVolunteerRepository volunteerRepository;
@@ -24,11 +26,20 @@ namespace VolunteersProject.Controllers
         private IEnrollmentRepository enrollmentRepository;
         private IContributionRepository contributionRepository;
 
+        /// <summary>
+        /// Contructor.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="userRepository">User repository.</param>        
+        /// <param name="volunteerRepository">Volunteer repository.</param>
+        /// <param name="emailService">Email service.</param>
+        /// <param name="enrollmentRepository">Enollment repository.</param>
+        /// <param name="contributionRepository">Contribution repository.</param>
+        /// <param name="configuration">Configuration.</param>
         public ContributionsController
              (
                  ILogger<ContributionsController> logger,
                  IUserRepository userRepository,
-                 VolunteersContext context,
                  IVolunteerRepository volunteerRepository,
                  IEmailService emailService,
                  IEnrollmentRepository enrollmentRepository,
@@ -42,6 +53,11 @@ namespace VolunteersProject.Controllers
             this.contributionRepository = contributionRepository;
         }
 
+        /// <summary>
+        /// Get list of contributions.
+        /// </summary>
+        /// <param name="sortOrder">Sort order.</param>
+        /// <returns>List of contributions.</returns>
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         // GET: Contributions
         public ActionResult Index(string sortOrder)
@@ -79,6 +95,11 @@ namespace VolunteersProject.Controllers
             return View(contributions);
         }
 
+        /// <summary>
+        /// Get contribution to display.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Contribution to display.</returns>
         // GET: Contributions/Details/5        
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Details(int id)
@@ -92,6 +113,10 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Create contribution.
+        /// </summary>
+        /// <returns>Create contribution.</returns>
         // GET: Contributions/Create
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Create()
@@ -106,6 +131,11 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Create contribution.
+        /// </summary>
+        /// <param name="contribution">Contribution.</param>
+        /// <returns>Create contribution.</returns>
         // POST: Contributions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -147,6 +177,11 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Edit contribution.
+        /// </summary>
+        /// <param name="id">Contribution id.</param>
+        /// <returns>Edit contribution.</returns>
         // GET: Contributions/Edit/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Edit(int id)
@@ -161,6 +196,12 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Edit contribution.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="contribution"></param>
+        /// <returns></returns>
         // POST: Contributions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -214,6 +255,11 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Delete contribution.
+        /// </summary>
+        /// <param name="id">Contribution id.</param>
+        /// <returns>Delete contribution.</returns>
         // GET: Contributions/Delete/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Delete(int id)
@@ -228,6 +274,11 @@ namespace VolunteersProject.Controllers
             return View(contribution);
         }
 
+        /// <summary>
+        /// Delete contribution.
+        /// </summary>
+        /// <param name="id">Contribution id.</param>
+        /// <returns>Delete contribution.</returns>
         // POST: Contributions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -235,10 +286,17 @@ namespace VolunteersProject.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             var contribution = contributionRepository.GetContributionById(id);
+
             contributionRepository.DeleteContribution(contribution);
+
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Assign volunteer to contribution.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public IActionResult Assign(int id)
         {
@@ -247,6 +305,12 @@ namespace VolunteersProject.Controllers
             return View(selectedVolunteers);
         }
 
+        /// <summary>
+        /// Assign volunteer to contribution.
+        /// </summary>
+        /// <param name="form">Corm collection.</param>
+        /// <param name="contributionId">Contribution id.</param>
+        /// <returns>Assign volunteer to contribution.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
@@ -333,8 +397,9 @@ namespace VolunteersProject.Controllers
         }
 
         /// <summary>
-        /// Send email to selected volunteers
+        /// Send email to selected volunteers.
         /// </summary>
+        /// <param name="contributionId">Contribution id.</param>
         /// <param name="sendInvitationEmailList">Selected volunteer list.</param>
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
         public void SendEmail(int contributionId, List<VolunteerDTO> sendInvitationEmailList)
