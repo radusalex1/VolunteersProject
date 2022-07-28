@@ -14,6 +14,9 @@ using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
 {
+    /// <summary>
+    /// Enreollments class.
+    /// </summary>
     public class EnrollmentsController : GeneralController
     {
         private readonly VolunteersContext _context;
@@ -23,13 +26,14 @@ namespace VolunteersProject.Controllers
         private IContributionRepository contributionRepository;
 
         /// <summary>
-        /// constructor
+        /// Constructor
         /// </summary>
-        /// <param name="enrollmentRepository"></param>
-        /// <param name="volunteerRepository"></param>
-        /// <param name="contributionRepository"></param>
-        /// <param name="logger"></param>
-        /// <param name="configuration"></param>
+        /// <param name="userRepository">User repository.</param>
+        /// <param name="enrollmentRepository">Enrollment repository.</param>
+        /// <param name="volunteerRepository">Volunteer repository.</param>
+        /// <param name="contributionRepository">Contribution repository.</param>
+        /// <param name="logger">Logger.</param>
+        /// <param name="configuration">Configuration.</param>
         public EnrollmentsController(
             IUserRepository userRepository,
             IEnrollmentRepository enrollmentRepository,
@@ -44,11 +48,15 @@ namespace VolunteersProject.Controllers
             this.contributionRepository = contributionRepository;
         }
 
+        /// <summary>
+        /// Get a list of enrollments.
+        /// </summary>
+        /// <param name="SortOrder">Sort order.</param>
+        /// <returns>Return list of enrollments.</returns>
         // GET: Enrollments
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Index(string SortOrder)
         {
-
             this.Logger.LogInformation("HttpGet EnrollmentsController Index()");
 
             IQueryable<Enrollment> enrollments = enrollmentRepository.GetEnrollments_With_Data();
@@ -82,10 +90,10 @@ namespace VolunteersProject.Controllers
         }
 
         /// <summary>
-        /// get sorted elements;
+        /// Display selected enrollment.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Enrollment id.</param>
+        /// <returns>Display selected enrollment.</returns>
         // GET: Enrollments/Details/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.User)]
         public IActionResult Details(int id)
@@ -99,36 +107,45 @@ namespace VolunteersProject.Controllers
             return View(enrollment);
         }
 
+        /// <summary>
+        /// Create enrollment.
+        /// </summary>
+        /// <returns></returns>
         // GET: Enrollments/Create
-        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public IActionResult Create()
-        {
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
-            ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName");
-            ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name");
+        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
+        //public IActionResult Create()
+        //{
+        //    ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id");
+        //    ViewData["VolunteerFullName"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "FullName");
+        //    ViewData["ContributionName"] = new SelectList(contributionRepository.GetContributions(), "Id", "Name");
 
-            return View();
-        }
+        //    return View();
+        //}
 
+        /// <summary>
+        /// Create enrollment.
+        /// </summary>
+        /// <param name="enrollment">Enrollment.</param>
+        /// <returns></returns>
         // POST: Enrollments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
-        public ActionResult Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
-        {
-            if (ModelState.IsValid)
-            {
-                enrollmentRepository.Save(enrollment);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
+        //public ActionResult Create([Bind("EnrollmentID,contributionId,VolunteerID")] Enrollment enrollment)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        enrollmentRepository.Save(enrollment);
 
-                return RedirectToAction(nameof(Index));
-            }
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
-            ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
+        //    ViewData["VolunteerID"] = new SelectList(volunteerRepository.GetVolunteers(), "Id", "Id", enrollment.VolunteerID);
 
-            return View(enrollment);
-        }
+        //    return View(enrollment);
+        //}
 
         // GET: Enrollments/Edit/5
         [VolunteersCustomAuthorization(UserRolePermission = EnumRole.Admin)]
