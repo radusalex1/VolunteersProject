@@ -27,37 +27,35 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contributions" asp-action="Index">Events</a>
                         </li>
-                        @{ if (Context.Session.GetString("userIsLogged") == "true" && Context.Session.GetInt32("currentVolunteerId") != -1)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Volunteers" asp-action="PersonalInfoEdit" asp-route-id=@Context.Session.GetInt32("currentVolunteerId")>Edit_profile</a>
-                                </li>
-                            }
-                        }
-
                         @{
-                            if (Context.Session.GetString("userIsLogged") != "true")
+                            if (Context.Session.GetString("userIsLogged") == "true" )
+                            {
+                                if (Context.Session.GetInt32("currentVolunteerId") != -1)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Volunteers" asp-action="PersonalInfoEdit" asp-route-id=@Context.Session.GetInt32("currentVolunteerId")>Edit_profile</a>
+                                    </li>
+                                }
+
+                                 <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                </li>                                                               
+                            }
+                            else
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ReloadLogin">Login</a>
                                 </li>
                             }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
-                                </li>
-                            }
+                        }                                           
+                    </ul>
+                    @{
+                        if (Context.Session.GetString("userIsLogged") == "true" )
+                        {
+                            <a class="nav-link text-dark">Logged user: <span style="color:blue; text-align:right">@Context.Session.GetString("LoggedUser")</span></a>
                         }
-
-                        @*@{
-                                if (Context.Session.GetString("userIsLogged") == "true")
-                                {
-                                    <a class="nav-link text-dark">Logged user: <span style="color:blue">@Context.Session.GetString("LoggedUser")</span></a>
-                                }
-                         }*@
+                    }
                 </div>
-
             </div>
         </nav>
     </header>

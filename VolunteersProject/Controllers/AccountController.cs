@@ -111,11 +111,9 @@ namespace VolunteersProject.Controllers
                         currentVolunteerId = currentVolunteer.Id;
                     }
 
-                    HttpContext.Session.SetInt32("currentVolunteerId", currentVolunteerId);
+                    HttpContext.Session.SetInt32("currentVolunteerId", currentVolunteerId);                    
 
-                    //HttpContext.Session.
-
-                    //HttpContext.Session.SetString("LoggedUser", $"{validUser.FirstName + " " + validUser.LastName}");
+                    HttpContext.Session.SetString("LoggedUser", $"{validUser.UserName}");
 
                     return RedirectToAction("MainWindow");
                 }
@@ -304,7 +302,6 @@ namespace VolunteersProject.Controllers
        
         private string GetLink(string email)
         {
-
             //localhost: 9307/Enrollments/VolunteerEmailAnswer?contributionId = 4&volunteerId = 35
             //http://localhost:9307/account/resetpassword?email=radus_alexandru@yahoo.com
 
