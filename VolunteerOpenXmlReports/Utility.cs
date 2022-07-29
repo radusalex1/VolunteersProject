@@ -37,9 +37,10 @@ namespace VolunteerOpenXmlReports
             }
 
             //create table content
-            idx = 0;
+            
             foreach (T item in lst)
             {
+                idx = 0;
                 DataRow row = table.NewRow();
                 foreach (PropertyDescriptor prop in properties)
                 {
