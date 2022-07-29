@@ -1,5 +1,4 @@
 ﻿using MailServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,14 +7,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using VolunteersProject.Common;
-using VolunteersProject.Data;
 using VolunteersProject.DTO;
 using VolunteersProject.Filters;
 using VolunteersProject.Models;
 using VolunteersProject.Repository;
 
 namespace VolunteersProject.Controllers
-{ 
+{
     /// <summary>
     /// Contribution class.
     /// </summary>
